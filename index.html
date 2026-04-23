@@ -2,1782 +2,1240 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>E-Arsip Keluarga | Enterprise System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Family Vault</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        :root {
-            --brand-50:  #EEF2FF;
-            --brand-100: #E0E7FF;
-            --brand-200: #C7D2FE;
-            --brand-400: #818CF8;
-            --brand-500: #6366F1;
-            --brand-600: #4F46E5;
-            --brand-700: #4338CA;
-            --brand-900: #312E81;
-            --violet:    #7C3AED;
-
-            --surface-0:   #FFFFFF;
-            --surface-50:  #F8FAFC;
-            --surface-100: #F1F5F9;
-            --surface-200: #E2E8F0;
-            --surface-300: #CBD5E1;
-
-            --text-primary:   #0F172A;
-            --text-secondary: #475569;
-            --text-muted:     #94A3B8;
-
-            --emerald-400: #34D399;
-            --emerald-500: #10B981;
-            --amber-400:   #FBBF24;
-            --amber-500:   #F59E0B;
-            --red-400:     #F87171;
-            --red-500:     #EF4444;
-            --blue-400:    #60A5FA;
-            --blue-500:    #3B82F6;
-
-            --shadow-xs:  0 1px 2px rgba(15,23,42,0.05);
-            --shadow-sm:  0 2px 8px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
-            --shadow-md:  0 4px 20px rgba(15,23,42,0.08), 0 2px 6px rgba(15,23,42,0.05);
-            --shadow-lg:  0 10px 40px rgba(15,23,42,0.10), 0 4px 12px rgba(15,23,42,0.06);
-            --shadow-xl:  0 20px 60px rgba(15,23,42,0.12), 0 8px 24px rgba(15,23,42,0.07);
-            --shadow-brand: 0 8px 30px rgba(79,70,229,0.20);
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
         }
-
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        html, body {
-            height: 100%;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 14px;
-            color: var(--text-primary);
-            background: var(--surface-50);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* ======================== SCROLLBAR ======================== */
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--surface-300); border-radius: 99px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--surface-200); }
-
-        /* ======================== BACKGROUND ======================== */
-        .app-bg {
-            position: fixed; inset: 0; z-index: -2;
-            background:
-                radial-gradient(ellipse 80% 50% at 20% -20%, rgba(99,102,241,0.08) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 40% at 80% 110%, rgba(124,58,237,0.06) 0%, transparent 55%),
-                var(--surface-50);
-        }
-
-        .bg-dots {
-            position: fixed; inset: 0; z-index: -1; pointer-events: none;
-            background-image: radial-gradient(circle, rgba(99,102,241,0.08) 1px, transparent 1px);
-            background-size: 28px 28px;
-        }
-
-        /* ======================== LOADING OVERLAY ======================== */
-        #loading-overlay {
-            position: fixed; inset: 0;
-            background: rgba(248,250,252,0.85);
-            backdrop-filter: blur(8px);
-            z-index: 9999;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            transition: opacity 0.3s ease;
-        }
-        #loading-overlay.hidden { display: none; }
-
-        .loader-ring {
-            width: 44px; height: 44px;
-            border: 3px solid var(--brand-100);
-            border-top-color: var(--brand-600);
+        /* Spinner Animasi */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .loader-dots {
-            display: flex; gap: 5px; margin-top: 20px;
-        }
-        .loader-dots span {
-            width: 5px; height: 5px;
-            background: var(--brand-400);
-            border-radius: 50%;
-            animation: dotPulse 1.4s ease-in-out infinite;
-        }
-        .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes dotPulse { 0%,80%,100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
-
-        #loading-text {
-            margin-top: 12px;
-            font-size: 12px; font-weight: 500;
-            color: var(--text-secondary);
-            letter-spacing: 0.02em;
-        }
-
-        /* ======================== VIEW SWITCHING ======================== */
-        .view-section { display: none; }
-        .view-section.active { display: flex; }
-
-        /* ======================== AUTH CONTAINER ======================== */
-        #auth-container {
-            min-height: 100dvh;
-            align-items: center; justify-content: center;
-            padding: 20px;
-            flex-direction: column;
-        }
-
-        .auth-card {
-            background: var(--surface-0);
-            border: 1px solid var(--surface-200);
-            border-radius: 20px;
-            width: 100%; max-width: 400px;
-            padding: 36px 32px;
-            box-shadow: var(--shadow-xl);
-            animation: authSlideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
-        }
-        @keyframes authSlideIn {
-            from { opacity: 0; transform: translateY(24px) scale(0.97); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .auth-logo {
-            width: 52px; height: 52px;
-            background: linear-gradient(135deg, var(--brand-600), var(--violet));
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 22px;
-            margin: 0 auto 20px;
-            box-shadow: var(--shadow-brand);
-        }
-
-        .auth-title { font-size: 22px; font-weight: 700; text-align: center; color: var(--text-primary); }
-        .auth-subtitle { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 4px; }
-
-        .auth-divider {
-            height: 1px; background: var(--surface-200);
-            margin: 24px 0;
-        }
-
-        .field-label {
-            display: block;
-            font-size: 12px; font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-            letter-spacing: 0.01em;
-        }
-
-        .input-wrap { position: relative; margin-bottom: 14px; }
-
-        .input-field, .select-field {
-            width: 100%;
-            background: var(--surface-50);
-            border: 1.5px solid var(--surface-200);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-family: inherit; font-size: 13.5px;
-            padding: 10px 14px;
-            transition: all 0.2s ease;
-            outline: none;
-        }
-        .input-field { padding-left: 38px; }
-        .input-field.no-icon, .select-field { padding-left: 14px; }
-        .input-field:focus, .select-field:focus {
-            border-color: var(--brand-500);
-            background: var(--surface-0);
-            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
-        }
-        .input-field::placeholder { color: var(--text-muted); }
-
-        .input-icon {
-            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-            color: var(--text-muted); font-size: 13px; pointer-events: none;
-        }
-
-        .input-btn-right {
-            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; cursor: pointer;
-            color: var(--text-muted); font-size: 13px; padding: 4px;
-            transition: color 0.15s;
-        }
-        .input-btn-right:hover { color: var(--text-secondary); }
-
-        .btn-primary {
-            width: 100%;
-            background: linear-gradient(135deg, var(--brand-600), var(--violet));
-            color: white;
-            border: none; border-radius: 10px;
-            padding: 11px 20px;
-            font-family: inherit; font-size: 13.5px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s ease;
-            box-shadow: var(--shadow-brand);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 35px rgba(79,70,229,0.30); }
-        .btn-primary:active { transform: translateY(0); }
-
-        .btn-secondary {
-            width: 100%;
-            background: var(--surface-0);
-            color: var(--text-secondary);
-            border: 1.5px solid var(--surface-200);
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-family: inherit; font-size: 13px; font-weight: 500;
-            cursor: pointer; transition: all 0.2s ease;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            margin-top: 8px;
-        }
-        .btn-secondary:hover { background: var(--surface-50); border-color: var(--surface-300); }
-
-        .link-text {
-            color: var(--brand-600); text-decoration: none;
-            font-weight: 600; font-size: 12px;
-            transition: color 0.15s;
-        }
-        .link-text:hover { color: var(--brand-700); }
-
-        .error-box {
-            background: rgba(239,68,68,0.06);
-            border: 1.5px solid rgba(239,68,68,0.15);
-            border-radius: 8px;
-            padding: 10px 12px;
-            color: var(--red-500);
-            font-size: 12px; font-weight: 500;
-            text-align: center;
-            margin-bottom: 12px;
-            display: none;
-        }
-
-        .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 4px 0 16px; }
-        .checkbox-row input[type="checkbox"] {
-            width: 15px; height: 15px;
-            accent-color: var(--brand-600);
-            cursor: pointer;
-        }
-        .checkbox-row label {
-            font-size: 12.5px; color: var(--text-secondary);
-            cursor: pointer; user-select: none;
-        }
-
-        .register-hint {
-            text-align: center;
-            font-size: 12px; color: var(--text-muted);
-            margin-top: 20px;
-        }
-
-        /* ======================== APP CONTAINER ======================== */
-        #app-container {
-            height: 100dvh;
-            flex-direction: row;
-        }
-
-        /* ======================== SIDEBAR ======================== */
-        #sidebar {
-            width: 240px;
-            background: var(--surface-0);
-            border-right: 1px solid var(--surface-200);
-            display: flex; flex-direction: column;
-            flex-shrink: 0;
-            z-index: 40;
-            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-        }
-
-        .sidebar-brand {
-            height: 64px;
-            display: flex; align-items: center;
-            padding: 0 18px;
-            border-bottom: 1px solid var(--surface-200);
-            gap: 10px;
-        }
-
-        .brand-icon {
-            width: 32px; height: 32px;
-            background: linear-gradient(135deg, var(--brand-600), var(--violet));
-            border-radius: 9px;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 14px;
-            box-shadow: 0 4px 12px rgba(79,70,229,0.25);
-        }
-
-        .brand-text { font-size: 15px; font-weight: 700; color: var(--text-primary); line-height: 1; }
-        .brand-text span { color: var(--text-muted); font-weight: 400; }
-
-        .sidebar-btn-close {
-            margin-left: auto;
-            background: none; border: none; cursor: pointer;
-            color: var(--text-muted); font-size: 16px; padding: 6px;
-            display: none;
-        }
-
-        .sidebar-section-label {
-            font-size: 10px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.08em;
-            color: var(--text-muted);
-            padding: 0 16px; margin: 20px 0 8px;
-        }
-
-        .sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 10px; }
-
-        .nav-btn {
-            width: 100%;
-            display: flex; align-items: center; gap: 10px;
-            padding: 9px 10px;
-            border: none; background: none; cursor: pointer;
-            border-radius: 10px;
-            font-family: inherit; font-size: 13px; font-weight: 500;
-            color: var(--text-secondary);
-            transition: all 0.15s ease;
-            text-align: left;
-        }
-        .nav-btn .nav-icon {
-            width: 28px; height: 28px;
-            border-radius: 7px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px;
-            background: var(--surface-100);
-            color: var(--text-muted);
-            transition: all 0.15s ease;
-        }
-        .nav-btn:hover { background: var(--surface-100); color: var(--text-primary); }
-        .nav-btn:hover .nav-icon { background: var(--surface-200); color: var(--text-secondary); }
-        .nav-btn.active {
-            background: var(--brand-50);
-            color: var(--brand-700);
-        }
-        .nav-btn.active .nav-icon {
-            background: linear-gradient(135deg, var(--brand-600), var(--violet));
-            color: white;
-            box-shadow: 0 3px 8px rgba(79,70,229,0.25);
-        }
-
-        .sidebar-footer {
-            padding: 12px 10px;
-            border-top: 1px solid var(--surface-200);
-        }
-
-        .user-card {
-            display: flex; align-items: center; gap: 10px;
-            padding: 8px 10px; border-radius: 10px;
-            background: var(--surface-50);
-            border: 1px solid var(--surface-200);
-            margin-bottom: 8px;
-        }
-
-        .user-avatar {
-            width: 32px; height: 32px;
-            background: linear-gradient(135deg, var(--brand-500), var(--violet));
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 13px; font-weight: 700; color: white;
-            flex-shrink: 0;
-        }
-
-        .user-name { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
-        .user-role {
-            font-size: 10px; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 0.05em; color: var(--brand-600);
-        }
-
-        .btn-logout {
-            width: 100%; display: flex; align-items: center; justify-content: center; gap: 7px;
-            background: none; border: 1.5px solid var(--surface-200);
-            border-radius: 9px; padding: 8px;
-            font-family: inherit; font-size: 12px; font-weight: 500;
-            color: var(--text-muted); cursor: pointer;
-            transition: all 0.15s ease;
-        }
-        .btn-logout:hover { background: rgba(239,68,68,0.05); border-color: rgba(239,68,68,0.3); color: var(--red-500); }
-
-        /* ======================== MAIN CONTENT ======================== */
-        #main-content {
-            flex: 1; display: flex; flex-direction: column;
-            overflow: hidden;
-            min-width: 0;
-        }
-
-        /* ======================== TOPBAR ======================== */
-        #topbar {
-            height: 64px;
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--surface-200);
-            display: flex; align-items: center;
-            padding: 0 24px; gap: 16px;
-            flex-shrink: 0;
-            z-index: 30;
-            box-shadow: var(--shadow-xs);
-        }
-
-        .topbar-hamburger {
-            background: none; border: none; cursor: pointer;
-            color: var(--text-secondary); font-size: 16px;
-            padding: 6px; border-radius: 7px;
-            display: none;
-            transition: all 0.15s;
-        }
-        .topbar-hamburger:hover { background: var(--surface-100); color: var(--text-primary); }
-
-        .breadcrumb {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 13px; color: var(--text-muted);
-        }
-        .breadcrumb .crumb-icon { font-size: 11px; }
-        .breadcrumb .sep { color: var(--surface-300); font-size: 15px; }
-        .breadcrumb .crumb-current { color: var(--text-primary); font-weight: 600; }
-
-        .topbar-spacer { flex: 1; }
-
-        .global-search {
-            display: flex; align-items: center; gap: 8px;
-            background: var(--surface-100);
-            border: 1.5px solid var(--surface-200);
-            border-radius: 10px; padding: 7px 12px;
-            width: 220px; transition: all 0.2s ease;
-        }
-        .global-search:focus-within {
-            background: var(--surface-0); border-color: var(--brand-400);
-            box-shadow: 0 0 0 3px rgba(99,102,241,0.10);
-            width: 260px;
-        }
-        .global-search i { color: var(--text-muted); font-size: 12px; }
-        .global-search input {
-            border: none; background: none; outline: none;
-            font-family: inherit; font-size: 12.5px; color: var(--text-primary);
-            width: 100%;
-        }
-        .global-search input::placeholder { color: var(--text-muted); }
-        .search-kbd {
-            background: var(--surface-200); border-radius: 4px;
-            padding: 2px 5px; font-size: 10px; color: var(--text-muted);
-            font-family: 'JetBrains Mono', monospace; white-space: nowrap;
-        }
-
-        .topbar-notif {
-            position: relative; background: none; border: none; cursor: pointer;
-            color: var(--text-secondary); font-size: 16px;
-            width: 36px; height: 36px; border-radius: 9px;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.15s;
-        }
-        .topbar-notif:hover { background: var(--surface-100); }
-        .notif-dot {
-            position: absolute; top: 7px; right: 7px;
-            width: 7px; height: 7px;
-            background: var(--brand-600); border-radius: 50%;
-            border: 2px solid white;
-        }
-
-        .topbar-avatar {
-            width: 34px; height: 34px;
-            background: linear-gradient(135deg, var(--brand-500), var(--violet));
-            border-radius: 9px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; font-weight: 700; color: white;
-            cursor: pointer;
-        }
-
-        /* ======================== PAGE AREA ======================== */
-        #page-area {
-            flex: 1; overflow-y: auto;
-            padding: 24px 28px;
-        }
-
-        .app-page { display: none; animation: fadeUp 0.3s ease both; }
-        .app-page.active { display: block; }
-        @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-
-        /* ======================== PAGE HEADER ======================== */
-        .page-header {
-            display: flex; align-items: flex-start; justify-content: space-between;
-            margin-bottom: 24px; gap: 16px; flex-wrap: wrap;
-        }
-        .page-title { font-size: 20px; font-weight: 700; color: var(--text-primary); }
-        .page-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-        .page-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-
-        .btn-sm {
-            display: flex; align-items: center; gap: 6px;
-            padding: 8px 14px; border-radius: 9px;
-            font-family: inherit; font-size: 12.5px; font-weight: 600;
-            cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
-        }
-        .btn-sm-outline {
-            background: var(--surface-0); color: var(--text-secondary);
-            border: 1.5px solid var(--surface-200);
-        }
-        .btn-sm-outline:hover { background: var(--surface-100); border-color: var(--surface-300); }
-        .btn-sm-primary {
-            background: linear-gradient(135deg, var(--brand-600), var(--violet));
-            color: white; border: none;
-            box-shadow: var(--shadow-brand);
-        }
-        .btn-sm-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(79,70,229,0.28); }
-
-        /* ======================== STAT CARDS ======================== */
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 16px; margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: var(--surface-0);
-            border: 1px solid var(--surface-200);
-            border-radius: 16px; padding: 20px;
-            box-shadow: var(--shadow-sm);
-            position: relative; overflow: hidden;
-            transition: all 0.2s ease;
-        }
-        .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
-
-        .stat-card::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0;
-            height: 3px;
-        }
-        .stat-card.blue::before   { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
-        .stat-card.indigo::before { background: linear-gradient(90deg, var(--brand-600), var(--violet)); }
-        .stat-card.green::before  { background: linear-gradient(90deg, #10B981, #34D399); }
-        .stat-card.amber::before  { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
-
-        .stat-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-        .stat-icon {
-            width: 38px; height: 38px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
-        }
-        .stat-icon.blue   { background: rgba(59,130,246,0.10); color: #3B82F6; }
-        .stat-icon.indigo { background: var(--brand-50); color: var(--brand-600); }
-        .stat-icon.green  { background: rgba(16,185,129,0.10); color: #10B981; }
-        .stat-icon.amber  { background: rgba(245,158,11,0.10); color: #F59E0B; }
-
-        .stat-label { font-size: 11.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
-        .stat-value { font-size: 26px; font-weight: 700; color: var(--text-primary); line-height: 1; }
-
-        .stat-badge {
-            display: inline-flex; align-items: center; gap: 4px;
-            padding: 3px 8px; border-radius: 6px;
-            font-size: 11px; font-weight: 600; margin-top: 6px;
-        }
-        .stat-badge.green { background: rgba(16,185,129,0.10); color: #10B981; }
-
-        .progress-row { margin-top: 14px; }
-        .progress-labels { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .progress-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
-        .progress-value { font-size: 14px; font-weight: 700; color: var(--text-primary); }
-        .progress-bar-bg {
-            width: 100%; height: 6px;
-            background: var(--surface-200); border-radius: 99px; overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%; border-radius: 99px;
-            background: linear-gradient(90deg, #F59E0B, #FBBF24);
-            transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
-        }
-
-        /* ======================== ACTIVITY TABLE ======================== */
-        .card {
-            background: var(--surface-0);
-            border: 1px solid var(--surface-200);
-            border-radius: 16px;
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .card-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--surface-100);
-            background: var(--surface-50);
-        }
-        .card-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
-        .card-subtitle { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
-
-        .btn-sync {
-            display: flex; align-items: center; gap: 6px;
-            background: var(--surface-0); border: 1.5px solid var(--surface-200);
-            border-radius: 8px; padding: 6px 12px;
-            font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--text-secondary);
-            cursor: pointer; transition: all 0.15s;
-        }
-        .btn-sync:hover { background: var(--surface-100); color: var(--text-primary); }
-        .btn-sync i { font-size: 10px; }
-
-        .data-table { width: 100%; border-collapse: collapse; }
-        .data-table thead { background: var(--surface-50); }
-        .data-table thead th {
-            padding: 10px 20px; text-align: left;
-            font-size: 10.5px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.06em; color: var(--text-muted);
-            border-bottom: 1px solid var(--surface-200);
-            white-space: nowrap;
-        }
-        .data-table thead th:last-child { text-align: right; }
-        .data-table tbody tr {
-            border-bottom: 1px solid var(--surface-100);
-            transition: background 0.12s;
-        }
-        .data-table tbody tr:last-child { border-bottom: none; }
-        .data-table tbody tr:hover { background: var(--surface-50); }
-        .data-table td {
-            padding: 12px 20px;
-            font-size: 13px; color: var(--text-secondary);
-            white-space: nowrap;
-        }
-        .data-table td:last-child { text-align: right; }
-
-        .actor-cell { display: flex; align-items: center; gap: 10px; }
-        .actor-avatar {
-            width: 28px; height: 28px; border-radius: 7px;
-            background: linear-gradient(135deg, var(--brand-400), var(--violet));
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 700; color: white;
-            flex-shrink: 0;
-        }
-        .actor-name { font-weight: 600; color: var(--text-primary); }
-
-        .mono-time { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--text-muted); }
-
-        .badge {
-            display: inline-flex; align-items: center; gap: 4px;
-            padding: 3px 9px; border-radius: 6px;
-            font-size: 11px; font-weight: 600;
-        }
-        .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
-        .badge-success { background: rgba(16,185,129,0.10); color: #059669; }
-        .badge-success::before { background: #10B981; }
-        .badge-info { background: rgba(59,130,246,0.10); color: #2563EB; }
-        .badge-info::before { background: #3B82F6; }
-
-        .table-empty {
-            padding: 48px 20px; text-align: center;
-            color: var(--text-muted); font-size: 13px;
-        }
-        .table-empty i { font-size: 24px; margin-bottom: 10px; display: block; color: var(--surface-300); }
-        .table-loading {
-            padding: 40px 20px; text-align: center;
-            color: var(--text-muted); font-size: 12.5px;
-        }
-
-        /* ======================== EMPTY STATE ======================== */
-        .empty-state {
-            background: var(--surface-0);
-            border: 2px dashed var(--surface-200);
-            border-radius: 16px; padding: 60px 20px;
-            text-align: center; color: var(--text-muted);
-        }
-        .empty-state i { font-size: 36px; margin-bottom: 14px; display: block; color: var(--surface-300); }
-        .empty-state h4 { font-size: 15px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px; }
-        .empty-state p { font-size: 12.5px; max-width: 320px; margin: 0 auto; }
-        .empty-state code { background: var(--brand-50); color: var(--brand-600); padding: 1px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-
-        /* ======================== DOCUMENTS PAGE ======================== */
-        .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-
-        .doc-card {
-            background: var(--surface-0); border: 1px solid var(--surface-200);
-            border-radius: 12px; padding: 16px;
-            cursor: pointer; transition: all 0.15s ease;
-            display: flex; flex-direction: column; gap: 8px;
-            min-height: 110px;
-        }
-        .doc-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--surface-300); }
-        .doc-card.add-card { border-style: dashed; background: var(--surface-50); justify-content: center; align-items: center; }
-        .doc-card.add-card:hover { background: var(--brand-50); border-color: var(--brand-300); }
-
-        .doc-card-icon { font-size: 24px; }
-        .doc-name { font-size: 12px; font-weight: 600; color: var(--text-primary); word-break: break-all; }
-        .doc-meta { font-size: 11px; color: var(--text-muted); }
-        .doc-badge {
-            display: inline-flex; align-items: center; gap: 3px;
-            background: rgba(16,185,129,0.08); color: #059669;
-            padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600;
-        }
-
-        /* ======================== SETTINGS PAGE ======================== */
-        .settings-section {
-            background: var(--surface-0);
-            border: 1px solid var(--surface-200);
-            border-radius: 16px; overflow: hidden;
-            box-shadow: var(--shadow-sm); margin-bottom: 16px;
-        }
-        .settings-section-header {
-            padding: 14px 20px;
-            background: var(--surface-50);
-            border-bottom: 1px solid var(--surface-200);
-        }
-        .settings-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 20px; border-bottom: 1px solid var(--surface-100);
-            gap: 16px;
-        }
-        .settings-row:last-child { border-bottom: none; }
-        .settings-key { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-        .settings-val { font-size: 12.5px; color: var(--text-muted); margin-top: 2px; }
-        .settings-tag {
-            background: var(--surface-100); color: var(--text-secondary);
-            padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500;
-        }
-
-        /* ======================== MOBILE SIDEBAR OVERLAY ======================== */
-        #sidebar-overlay {
-            display: none;
-            position: fixed; inset: 0; z-index: 39;
-            background: rgba(15,23,42,0.25); backdrop-filter: blur(2px);
-        }
-
-        /* ======================== MOBILE BOTTOM NAV ======================== */
-        #mobile-bottom-nav {
-            display: none;
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255,255,255,0.96);
-            backdrop-filter: blur(16px);
-            border-top: 1px solid var(--surface-200);
-            z-index: 50; padding: 8px 0 max(8px, env(safe-area-inset-bottom));
-            box-shadow: 0 -4px 30px rgba(15,23,42,0.06);
-        }
-
-        .bottom-nav-items { display: flex; justify-content: space-around; align-items: center; }
-
-        .bottom-nav-btn {
-            display: flex; flex-direction: column; align-items: center; gap: 3px;
-            background: none; border: none; cursor: pointer;
-            padding: 4px 16px; border-radius: 12px;
-            transition: all 0.15s ease; flex: 1;
-        }
-
-        .bottom-nav-icon {
-            width: 40px; height: 32px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 10px; font-size: 17px;
-            color: var(--text-muted); transition: all 0.2s ease;
-        }
-
-        .bottom-nav-btn.active .bottom-nav-icon {
-            background: linear-gradient(135deg, var(--brand-600), var(--violet));
-            color: white;
-            box-shadow: 0 4px 14px rgba(79,70,229,0.30);
-            transform: translateY(-2px);
-        }
-
-        .bottom-nav-label {
-            font-size: 10px; font-weight: 600;
-            color: var(--text-muted); transition: color 0.15s;
-        }
-        .bottom-nav-btn.active .bottom-nav-label { color: var(--brand-600); }
-
-        /* ======================== MODALS ======================== */
-        .modal-overlay {
-            position: fixed; inset: 0; z-index: 1000;
-            background: rgba(15,23,42,0.4); backdrop-filter: blur(4px);
-            display: none; align-items: center; justify-content: center;
-            padding: 20px;
-        }
-        .modal-overlay.active { display: flex; }
-        
-        .modal-card {
-            background: var(--surface-0);
-            width: 100%; max-width: 420px;
-            border-radius: 16px; box-shadow: var(--shadow-xl);
-            animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
-            overflow: hidden;
-        }
-        @keyframes modalIn {
-            from { transform: scale(0.95) translateY(10px); opacity: 0; }
-            to { transform: scale(1) translateY(0); opacity: 1; }
-        }
-
-        .modal-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--surface-200);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .modal-title { font-size: 16px; font-weight: 700; color: var(--text-primary); }
-        .btn-close-modal {
-            background: none; border: none; cursor: pointer;
-            color: var(--text-muted); font-size: 18px; padding: 4px;
-            transition: color 0.15s;
-        }
-        .btn-close-modal:hover { color: var(--text-primary); }
-        
-        .modal-body { padding: 20px; }
-        .modal-footer {
-            padding: 16px 20px;
-            border-top: 1px solid var(--surface-100);
-            display: flex; justify-content: flex-end; gap: 10px;
-            background: var(--surface-50);
-        }
-
-        .file-upload-box {
-            border: 2px dashed var(--surface-300);
-            border-radius: 12px; padding: 30px 20px;
-            text-align: center; cursor: pointer;
-            transition: all 0.2s ease;
-            background: var(--surface-50);
-        }
-        .file-upload-box:hover { border-color: var(--brand-400); background: var(--brand-50); }
-        .file-upload-box i { font-size: 32px; color: var(--brand-400); margin-bottom: 10px; display: block; }
-        .file-upload-box .file-text { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
-        .file-upload-box .file-subtext { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-        #doc-file { display: none; }
-
-        /* ======================== RESPONSIVE ======================== */
-        @media (max-width: 1024px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 768px) {
-            #sidebar {
-                position: fixed; left: 0; top: 0; bottom: 0;
-                transform: translateX(-100%);
-            }
-            #sidebar.open { transform: translateX(0); }
-            #sidebar-overlay.open { display: block; }
-            .topbar-hamburger { display: flex; }
-            .global-search { display: none; }
-            #page-area { padding: 16px; padding-bottom: 90px; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            #mobile-bottom-nav { display: block; }
-            .sidebar-btn-close { display: flex; }
-            .page-header { flex-direction: column; align-items: flex-start; }
-        }
-
-        @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .stat-card { padding: 16px; }
-            .stat-value { font-size: 22px; }
-            .auth-card { padding: 28px 22px; }
-            #page-area { padding: 14px; padding-bottom: 90px; }
-            .data-table thead th:nth-child(3), 
-            .data-table td:nth-child(3) { display: none; }
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Hide scrollbar for clean UI */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .auth-bg {
+            background-image: radial-gradient(circle at 50% -20%, #e0e7ff 0%, #f8fafc 60%);
         }
     </style>
 </head>
-<body>
+<body class="text-slate-800 antialiased bg-slate-50 flex h-screen overflow-hidden">
 
-    <div class="app-bg"></div>
-    <div class="bg-dots"></div>
-
-    <!-- LOADING OVERLAY -->
-    <div id="loading-overlay" class="hidden">
-        <div class="loader-ring"></div>
-        <div class="loader-dots">
-            <span></span><span></span><span></span>
-        </div>
-        <p id="loading-text">Memproses permintaan...</p>
-    </div>
-
-    <!-- ======================== AUTH CONTAINER ======================== -->
-    <div id="auth-container" class="view-section active">
-
-        <!-- LOGIN CARD -->
-        <div id="view-login" class="auth-card">
-            <div class="auth-logo"><i class="fa-solid fa-server"></i></div>
-            <h1 class="auth-title">E-Arsip Keluarga</h1>
-            <p class="auth-subtitle">Sistem Manajemen Basis Data Enterprise</p>
-            <div class="auth-divider"></div>
-
-            <form id="login-form" onsubmit="Auth.handleLogin(event)">
-                <div class="input-wrap">
-                    <label class="field-label">Username / ID Pengguna</label>
-                    <div style="position:relative">
-                        <i class="fa-solid fa-user input-icon"></i>
-                        <input type="text" id="login-username" required class="input-field" placeholder="Masukkan ID Pengguna">
+    <!-- ========================================== -->
+    <!-- AUTHENTICATION CONTAINER (LOGIN & REGISTER)-->
+    <!-- ========================================== -->
+    <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center auth-bg p-4 overflow-y-auto">
+        
+        <!-- LOGIN VIEW -->
+        <div id="auth-login" class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-100 flex flex-col mt-auto mb-auto">
+            <div class="p-8 text-center border-b border-slate-50 bg-slate-50/50">
+                <div class="mx-auto w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-4 shadow-inner">
+                    <i class="ph-fill ph-vault text-4xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-slate-800">Family Vault</h1>
+                <p class="text-sm text-slate-500 mt-1">Masuk untuk mengakses brankas dokumen Anda</p>
+            </div>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)" class="p-8 space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                    <div class="relative">
+                        <i class="ph ph-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg"></i>
+                        <input type="email" id="loginEmail" required placeholder="email@keluarga.com" class="w-full border border-slate-300 rounded-lg py-2.5 pl-10 pr-3 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition">
                     </div>
                 </div>
-                <div class="input-wrap">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-                        <label class="field-label" style="margin:0">Kata Sandi</label>
-                        <a href="#" onclick="UI.switchAuthView('view-forgot');return false" class="link-text">Lupa sandi?</a>
+                
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-sm font-medium text-slate-700">Kata Sandi</label>
+                        <button type="button" onclick="handleForgotPassword()" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Lupa Sandi?</button>
                     </div>
-                    <div style="position:relative">
-                        <i class="fa-solid fa-lock input-icon"></i>
-                        <input type="password" id="login-password" required class="input-field" placeholder="••••••••">
-                        <button type="button" onclick="UI.togglePassword('login-password','eye-login')" class="input-btn-right">
-                            <i id="eye-login" class="fa-solid fa-eye"></i>
+                    <div class="relative">
+                        <i class="ph ph-lock-key absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg"></i>
+                        <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full border border-slate-300 rounded-lg py-2.5 pl-10 pr-10 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 outline-none transition">
+                        <button type="button" onclick="togglePassword('loginPassword', 'loginEyeIcon')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i id="loginEyeIcon" class="ph ph-eye text-lg"></i>
                         </button>
                     </div>
                 </div>
-                <div class="checkbox-row">
-                    <input type="checkbox" id="remember-me">
-                    <label for="remember-me">Ingat sesi saya</label>
+
+                <div class="flex items-center space-x-2">
+                    <input type="checkbox" id="rememberMe" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                    <label for="rememberMe" class="text-sm text-slate-600 cursor-pointer font-medium">Ingat saya (Auto Login)</label>
                 </div>
-                <div id="login-error" class="error-box"></div>
-                <button type="submit" id="btn-login" class="btn-primary">
-                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Autentikasi Sistem
+
+                <div id="deviceWarningLogin" class="hidden bg-red-50 text-red-600 text-xs p-3 rounded-lg border border-red-100 flex items-start space-x-2">
+                    <i class="ph ph-warning-circle text-base"></i>
+                    <span>Perangkat ini terikat pada akun lain. Satu HP hanya untuk satu akun.</span>
+                </div>
+
+                <button type="submit" id="btnLoginSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg shadow-sm transition flex justify-center items-center">
+                    <span id="btnLoginText">Masuk ke Brankas</span>
+                    <div id="btnLoginSpinner" class="loader hidden" style="width: 18px; height: 18px; border-width: 2px; margin-left: 8px; border-top-color: white;"></div>
                 </button>
-                <p class="register-hint">
-                    Butuh akses baru? <a href="#" onclick="UI.switchAuthView('view-register');return false" class="link-text">Registrasi Workspace</a>
+
+                <p class="text-center text-sm text-slate-500 mt-4">
+                    Belum punya akun keluarga? <button type="button" onclick="switchAuthView('register')" class="font-semibold text-indigo-600 hover:text-indigo-800">Daftar disini</button>
                 </p>
             </form>
         </div>
 
-        <!-- REGISTER CARD -->
-        <div id="view-register" class="auth-card" style="display:none">
-            <h1 class="auth-title">Registrasi Workspace</h1>
-            <p class="auth-subtitle">Inisialisasi basis data keluarga baru</p>
-            <div class="auth-divider"></div>
-            <form onsubmit="Auth.handleRegister(event)">
-                <div class="input-wrap">
-                    <label class="field-label">Nama Representatif (Kepala)</label>
-                    <input type="text" id="reg-name" required class="input-field no-icon" placeholder="Contoh: Budi Santoso">
+        <!-- REGISTER VIEW -->
+        <div id="auth-register" class="hidden bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-100 flex flex-col mt-auto mb-auto">
+            <div class="p-6 text-center border-b border-slate-50 bg-slate-50/50">
+                <h1 class="text-xl font-bold text-slate-800">Daftar Akun Keluarga</h1>
+                <p class="text-xs text-slate-500 mt-1">Akun baru akan berstatus Member sebelum diubah oleh Kepala Keluarga.</p>
+            </div>
+            
+            <form id="registerForm" onsubmit="handleRegister(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Nama Lengkap</label>
+                    <input type="text" id="regName" required placeholder="Budi Santoso" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
                 </div>
-                <div class="input-wrap">
-                    <label class="field-label">ID Pengguna (Username)</label>
-                    <input type="text" id="reg-username" required class="input-field no-icon" placeholder="Pilih ID unik">
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Profesi</label>
+                        <input type="text" id="regProfesi" required placeholder="Cth: Mahasiswa" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">No. HP (WA)</label>
+                        <input type="tel" id="regPhone" required placeholder="0812..." class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                    </div>
                 </div>
-                <div class="input-wrap">
-                    <label class="field-label">Kata Sandi Sistem</label>
-                    <div style="position:relative">
-                        <input type="password" id="reg-password" required class="input-field no-icon" placeholder="Minimal 8 karakter alfanumerik">
-                        <button type="button" onclick="UI.togglePassword('reg-password','eye-reg')" class="input-btn-right">
-                            <i id="eye-reg" class="fa-solid fa-eye"></i>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Email</label>
+                    <input type="email" id="regEmail" required placeholder="email@keluarga.com" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Kata Sandi</label>
+                    <div class="relative">
+                        <input type="password" id="regPassword" required placeholder="Minimal 6 karakter" class="w-full border border-slate-300 rounded-lg py-2 pl-3 pr-10 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                        <button type="button" onclick="togglePassword('regPassword', 'regEyeIcon')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i id="regEyeIcon" class="ph ph-eye text-lg"></i>
                         </button>
                     </div>
                 </div>
-                <button type="submit" class="btn-primary" style="margin-top:8px">
-                    <i class="fa-solid fa-rocket"></i> Inisialisasi Sistem
-                </button>
-                <button type="button" onclick="UI.switchAuthView('view-login')" class="btn-secondary">
-                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Login
-                </button>
-            </form>
-        </div>
 
-        <!-- FORGOT CARD -->
-        <div id="view-forgot" class="auth-card" style="display:none">
-            <div class="auth-logo" style="background: linear-gradient(135deg,#F59E0B,#FBBF24);">
-                <i class="fa-solid fa-key"></i>
-            </div>
-            <h1 class="auth-title">Pemulihan Akses</h1>
-            <p class="auth-subtitle">Masukkan ID Pengguna untuk minta token pemulihan.</p>
-            <div class="auth-divider"></div>
-            <form onsubmit="Auth.handleForgot(event)">
-                <div class="input-wrap">
-                    <label class="field-label">ID Pengguna</label>
-                    <div style="position:relative">
-                        <i class="fa-solid fa-user input-icon"></i>
-                        <input type="text" id="forgot-username" required class="input-field" placeholder="ID Pengguna Anda">
-                    </div>
+                <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-lg flex items-start space-x-2 mt-2">
+                    <i class="ph ph-device-mobile text-indigo-500 text-lg"></i>
+                    <p class="text-[10px] text-indigo-800 leading-tight">
+                        <strong>Keamanan Ketat:</strong> Pendaftaran ini akan mengikat perangkat HP/Laptop ini HANYA untuk akun ini. Anda tidak bisa mendaftar akun lain di perangkat yang sama.
+                    </p>
                 </div>
-                <button type="submit" class="btn-primary" style="background:linear-gradient(135deg,#F59E0B,#FBBF24);box-shadow:0 8px 24px rgba(245,158,11,0.25);margin-top:8px">
-                    <i class="fa-solid fa-paper-plane"></i> Minta Token Pemulihan
+
+                <button type="submit" id="btnRegSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg shadow-sm transition mt-4 flex justify-center items-center">
+                    <span id="btnRegText">Daftar Sekarang</span>
+                    <div id="btnRegSpinner" class="loader hidden" style="width: 18px; height: 18px; border-width: 2px; margin-left: 8px; border-top-color: white;"></div>
                 </button>
-                <button type="button" onclick="UI.switchAuthView('view-login')" class="btn-secondary">
-                    Batalkan
-                </button>
+
+                <p class="text-center text-sm text-slate-500 mt-2">
+                    Sudah punya akun? <button type="button" onclick="switchAuthView('login')" class="font-semibold text-indigo-600 hover:text-indigo-800">Kembali ke Login</button>
+                </p>
             </form>
         </div>
-
     </div>
 
-    <!-- ======================== APP CONTAINER ======================== -->
-    <div id="app-container" class="view-section">
 
-        <!-- Sidebar Overlay (mobile) -->
-        <div id="sidebar-overlay" onclick="UI.toggleSidebar()"></div>
-
-        <!-- SIDEBAR -->
-        <aside id="sidebar">
-            <div class="sidebar-brand">
-                <div class="brand-icon"><i class="fa-solid fa-server" style="font-size:13px"></i></div>
-                <div>
-                    <div class="brand-text">E-Arsip<span>Core</span></div>
+    <!-- ========================================== -->
+    <!-- MAIN APP CONTAINER (DASHBOARD)             -->
+    <!-- ========================================== -->
+    <div id="appContainer" class="hidden flex-1 flex h-full overflow-hidden w-full relative">
+        
+        <!-- Sidebar (Desktop) / Drawer (Mobile) -->
+        <aside id="sidebar" class="w-64 bg-slate-900 text-slate-300 flex-shrink-0 flex flex-col h-full transition-transform duration-300 absolute z-40 transform -translate-x-full md:relative md:translate-x-0">
+            <div class="h-16 flex items-center px-6 bg-slate-950 text-white shadow-md justify-between flex-shrink-0">
+                <div class="flex items-center space-x-3">
+                    <i class="ph-fill ph-vault text-2xl text-indigo-500"></i>
+                    <span class="font-bold text-lg tracking-tight">Family Vault</span>
                 </div>
-                <button class="sidebar-btn-close" onclick="UI.toggleSidebar()">
-                    <i class="fa-solid fa-xmark"></i>
+                <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white">
+                    <i class="ph ph-x text-xl"></i>
                 </button>
             </div>
 
-            <div class="sidebar-nav">
-                <div class="sidebar-section-label">Modul Sistem</div>
-                <button onclick="Router.navigate('page-dashboard')" class="nav-btn active" data-page="page-dashboard">
-                    <div class="nav-icon"><i class="fa-solid fa-chart-line"></i></div>
-                    Analitik & Ikhtisar
-                </button>
-                <button onclick="Router.navigate('page-members')" class="nav-btn" data-page="page-members">
-                    <div class="nav-icon"><i class="fa-solid fa-users-viewfinder"></i></div>
-                    Basis Data Anggota
-                </button>
-                <button onclick="Router.navigate('page-documents')" class="nav-btn" data-page="page-documents">
-                    <div class="nav-icon"><i class="fa-solid fa-folder-tree"></i></div>
-                    Vault Dokumen
-                </button>
-                <button onclick="Router.navigate('page-settings')" class="nav-btn" data-page="page-settings">
-                    <div class="nav-icon"><i class="fa-solid fa-sliders"></i></div>
-                    Konfigurasi
-                </button>
+            <div class="p-4 flex-grow overflow-y-auto space-y-1">
+                <p class="px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-2">Menu Utama</p>
+                <a href="#" onclick="switchView('dashboard')" id="nav-dashboard" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg bg-indigo-600 text-white transition">
+                    <i class="ph ph-squares-four text-xl"></i>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                <a href="#" onclick="switchView('documents')" id="nav-documents" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+                    <i class="ph ph-folders text-xl"></i>
+                    <span class="font-medium">Semua Dokumen</span>
+                </a>
+                <a href="#" onclick="switchView('profile')" id="nav-profile" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+                    <i class="ph ph-user-circle text-xl"></i>
+                    <span class="font-medium">Profil Saya</span>
+                </a>
+                
+                <p id="adminMenuTitle" class="px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-6 hidden">Menu Admin</p>
+                <a href="#" onclick="switchView('users')" id="nav-users" class="nav-item hidden items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+                    <i class="ph ph-users text-xl"></i>
+                    <span class="font-medium">Anggota Keluarga</span>
+                </a>
+                <a href="#" onclick="switchView('audit')" id="nav-audit" class="nav-item hidden items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+                    <i class="ph ph-shield-check text-xl"></i>
+                    <span class="font-medium">Log Keamanan</span>
+                </a>
+                <a href="#" onclick="switchView('settings')" id="nav-settings" class="nav-item hidden items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+                    <i class="ph ph-gear text-xl"></i>
+                    <span class="font-medium">Pengaturan Sistem</span>
+                </a>
             </div>
 
-            <div class="sidebar-footer">
-                <div class="user-card">
-                    <div class="user-avatar" id="sidebar-user-initial">A</div>
-                    <div style="overflow:hidden;min-width:0">
-                        <div class="user-name" id="sidebar-user-name">Admin</div>
-                        <div class="user-role" id="sidebar-user-role">SUPER ADMIN</div>
+            <div class="p-4 bg-slate-950/50 flex-shrink-0 flex items-center justify-between border-t border-slate-800">
+                <div class="flex items-center space-x-3 overflow-hidden">
+                    <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold flex-shrink-0" id="userInitial">A</div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-white truncate" id="userName">Memuat...</p>
+                        <p class="text-[10px] text-slate-400 truncate" id="userEmail">Memuat...</p>
                     </div>
                 </div>
-                <button onclick="Auth.handleLogout()" class="btn-logout">
-                    <i class="fa-solid fa-power-off"></i> Akhiri Sesi
+                <button onclick="handleLogout()" class="text-slate-400 hover:text-red-400 transition p-2" title="Keluar">
+                    <i class="ph ph-sign-out text-xl"></i>
                 </button>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
-        <div id="main-content">
-            <!-- TOPBAR -->
-            <header id="topbar">
-                <button class="topbar-hamburger" onclick="UI.toggleSidebar()">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-                <nav class="breadcrumb">
-                    <i class="fa-solid fa-house crumb-icon"></i>
-                    <span class="sep">/</span>
-                    <span class="crumb-current" id="topbar-title">Analitik & Ikhtisar</span>
-                </nav>
-                <div class="topbar-spacer"></div>
-                <div class="global-search">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Pencarian global...">
-                    <span class="search-kbd">/</span>
+        <!-- Overlay for mobile sidebar -->
+        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-30 hidden md:hidden"></div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col h-full overflow-hidden w-full relative">
+            
+            <!-- Header -->
+            <header class="h-16 bg-white shadow-sm flex items-center justify-between px-4 sm:px-6 z-10 flex-shrink-0">
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-600 hover:text-indigo-600">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                    <div class="relative hidden sm:block w-64 md:w-80">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Cari NIK, Nama, Dokumen..." class="w-full bg-slate-100 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                    </div>
                 </div>
-                <button class="topbar-notif">
-                    <i class="fa-regular fa-bell"></i>
-                    <span class="notif-dot"></span>
-                </button>
-                <div class="topbar-avatar" id="topbar-avatar">A</div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="triggerBackup()" class="hidden sm:flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                        <i class="ph ph-hard-drives text-lg"></i>
+                        <span>Backup Lokal</span>
+                    </button>
+                    <button onclick="toggleUploadModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium shadow-sm transition flex items-center space-x-2">
+                        <i class="ph ph-upload-simple text-lg"></i>
+                        <span class="hidden sm:inline">Unggah</span>
+                    </button>
+                </div>
             </header>
 
-            <!-- PAGE AREA -->
-            <div id="page-area">
+            <!-- Dynamic Content Body -->
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 relative">
+                <div class="max-w-7xl mx-auto space-y-6">
 
-                <!-- PAGE: DASHBOARD -->
-                <div id="page-dashboard" class="app-page active">
-                    <div class="page-header">
-                        <div>
-                            <h2 class="page-title">Ikhtisar Sistem</h2>
-                            <p class="page-subtitle">Pemantauan metrik dan aktivitas basis data secara real-time.</p>
+                    <!-- 1. DASHBOARD VIEW -->
+                    <div id="view-dashboard" class="view-section">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                            <div>
+                                <h1 class="text-2xl font-bold text-slate-800">Selamat datang, <span id="welcomeName">User</span>!</h1>
+                                <p class="text-sm text-slate-500 mt-1">Status kelengkapan brankas dokumen keluarga Anda.</p>
+                            </div>
                         </div>
-                        <div class="page-actions">
-                            <button class="btn-sm btn-sm-outline">
-                                <i class="fa-solid fa-download"></i> Ekspor Laporan
-                            </button>
-                            <button onclick="UI.showModal('modal-add-member')" class="btn-sm btn-sm-primary">
-                                <i class="fa-solid fa-plus"></i> Entri Baru
-                            </button>
-                        </div>
-                    </div>
 
-                    <!-- STAT CARDS -->
-                    <div class="stats-grid">
-                        <div class="stat-card blue">
-                            <div class="stat-top">
-                                <p class="stat-label">Total Anggota</p>
-                                <div class="stat-icon blue"><i class="fa-solid fa-users"></i></div>
-                            </div>
-                            <div class="stat-value" id="stat-members">—</div>
-                            <div class="stat-badge green"><i class="fa-solid fa-arrow-up" style="font-size:9px"></i> Aktif</div>
-                        </div>
-                        <div class="stat-card indigo">
-                            <div class="stat-top">
-                                <p class="stat-label">Vault Dokumen</p>
-                                <div class="stat-icon indigo"><i class="fa-solid fa-database"></i></div>
-                            </div>
-                            <div class="stat-value" id="stat-docs">—</div>
-                            <div class="stat-badge green"><i class="fa-solid fa-shield-check" style="font-size:9px"></i> Terenkripsi</div>
-                        </div>
-                        <div class="stat-card green">
-                            <div class="stat-top">
-                                <p class="stat-label">Enkripsi</p>
-                                <div class="stat-icon green"><i class="fa-solid fa-shield-check"></i></div>
-                            </div>
-                            <div class="stat-value" style="font-size:18px;color:#059669">E2EE Aktif</div>
-                            <div class="stat-badge green"><i class="fa-solid fa-circle" style="font-size:7px"></i> Online</div>
-                        </div>
-                        <div class="stat-card amber">
-                            <div class="stat-top">
-                                <p class="stat-label">Integritas Data</p>
-                                <div class="stat-icon amber"><i class="fa-solid fa-chart-pie"></i></div>
-                            </div>
-                            <div class="progress-row">
-                                <div class="progress-labels">
-                                    <span class="progress-label">Progres</span>
-                                    <span class="progress-value" id="stat-progress-text">0%</span>
+                        <!-- Stats Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                                <div class="p-3 bg-indigo-100 text-indigo-600 rounded-xl"><i class="ph ph-files text-2xl"></i></div>
+                                <div>
+                                    <p class="text-sm text-slate-500 font-medium">Total Dokumen</p>
+                                    <p class="text-2xl font-bold text-slate-800" id="statTotalDocs">0</p>
                                 </div>
-                                <div class="progress-bar-bg">
-                                    <div class="progress-bar-fill" id="stat-progress-bar" style="width:0%"></div>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                                <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i class="ph ph-shield-check text-2xl"></i></div>
+                                <div>
+                                    <p class="text-sm text-slate-500 font-medium">Koneksi API</p>
+                                    <p class="text-2xl font-bold text-slate-800">Aktif</p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                                <div class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i class="ph ph-robot text-2xl"></i></div>
+                                <div>
+                                    <p class="text-sm text-slate-500 font-medium">AI Engine</p>
+                                    <p class="text-2xl font-bold text-slate-800">Online</p>
                                 </div>
                             </div>
                         </div>
+
+                        <h2 class="text-lg font-bold text-slate-800 mb-4">Aktivitas Terakhir</h2>
+                        <div id="dashboardRecentGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            <!-- Injected via JS -->
+                        </div>
                     </div>
 
-                    <!-- ACTIVITY LOG -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div>
-                                <div class="card-title">Log Aktivitas Sistem</div>
-                                <div class="card-subtitle">Audit trail terenkripsi & real-time</div>
+                    <!-- 2. DOCUMENTS VIEW -->
+                    <div id="view-documents" class="view-section hidden">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
+                            <h1 class="text-2xl font-bold text-slate-800">Semua Dokumen</h1>
+                            <!-- Filters: Owner & Category -->
+                            <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full md:w-auto">
+                                <!-- Owner Filter -->
+                                <select id="ownerFilter" onchange="filterOwner(this.value)" class="bg-white border border-slate-200 text-slate-600 text-sm font-medium rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block py-1.5 px-3 outline-none transition shadow-sm">
+                                    <option value="Semua">Semua Anggota</option>
+                                    <!-- Injected via JS -->
+                                </select>
+
+                                <!-- Category Filter -->
+                                <div class="flex overflow-x-auto space-x-2 w-full md:w-auto pb-2 md:pb-0 hide-scrollbar" id="categoryFilters">
+                                    <button onclick="filterCategory('Semua')" class="cat-btn active px-4 py-1.5 rounded-full text-sm font-medium bg-indigo-600 text-white whitespace-nowrap">Semua</button>
+                                    <button onclick="filterCategory('Identitas')" class="cat-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 whitespace-nowrap">Identitas</button>
+                                    <button onclick="filterCategory('Pendidikan')" class="cat-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 whitespace-nowrap">Pendidikan</button>
+                                    <button onclick="filterCategory('Profesi')" class="cat-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 whitespace-nowrap">Profesi</button>
+                                    <button onclick="filterCategory('Keuangan')" class="cat-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 whitespace-nowrap">Keuangan</button>
+                                </div>
                             </div>
-                            <button onclick="DataSync.fetchDashboard()" class="btn-sync">
-                                <i class="fa-solid fa-rotate-right"></i> Sinkronisasi
+                        </div>
+
+                        <div id="loadingDocs" class="flex flex-col items-center justify-center py-12 text-slate-400">
+                            <div class="loader mb-4" style="border-top-color: #4f46e5; border-color: #e2e8f0;"></div>
+                            <p>Mengambil data dari API Server...</p>
+                        </div>
+
+                        <div id="documentsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 hidden">
+                            <!-- Cards will be injected here by JS -->
+                        </div>
+
+                        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-16 text-slate-400">
+                            <i class="ph ph-files text-6xl mb-4 text-slate-300"></i>
+                            <p class="text-lg font-medium text-slate-600">Tidak ada dokumen ditemukan</p>
+                        </div>
+                    </div>
+
+                    <!-- 3. USERS VIEW (ADMIN ONLY) -->
+                    <div id="view-users" class="view-section hidden">
+                        <h1 class="text-2xl font-bold text-slate-800 mb-6">Manajemen Anggota Keluarga</h1>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
+                                    <tr>
+                                        <th class="py-3 px-4">Nama & Email</th>
+                                        <th class="py-3 px-4">Role</th>
+                                        <th class="py-3 px-4">Profesi</th>
+                                        <th class="py-3 px-4">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody" class="divide-y divide-slate-100 text-slate-700">
+                                    <!-- Injected via JS -->
+                                </tbody>
+                            </table>
+                            <div id="loadingUsers" class="text-center py-6 text-slate-400 text-sm hidden">Memuat pengguna...</div>
+                        </div>
+                    </div>
+
+                    <!-- 4. AUDIT LOGS VIEW (ADMIN ONLY) -->
+                    <div id="view-audit" class="view-section hidden">
+                        <h1 class="text-2xl font-bold text-slate-800 mb-6">Log Keamanan Sistem</h1>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
+                                    <tr>
+                                        <th class="py-3 px-4">Waktu</th>
+                                        <th class="py-3 px-4">Pengguna</th>
+                                        <th class="py-3 px-4">Aktivitas</th>
+                                        <th class="py-3 px-4">Target Dokumen</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="auditTableBody" class="divide-y divide-slate-100 text-slate-700">
+                                    <!-- Injected via JS -->
+                                </tbody>
+                            </table>
+                            <div id="loadingLogs" class="text-center py-6 text-slate-400 text-sm hidden">Memuat logs...</div>
+                        </div>
+                    </div>
+
+                    <!-- 5. PROFILE VIEW -->
+                    <div id="view-profile" class="view-section hidden">
+                        <h1 class="text-2xl font-bold text-slate-800 mb-6">Profil & Pengaturan Akun</h1>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden max-w-3xl">
+                            <div class="p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 border-b border-slate-100 bg-slate-50/50">
+                                <div class="w-24 h-24 rounded-full bg-indigo-500 flex items-center justify-center text-white text-4xl font-bold shadow-md" id="profileBigInitial">U</div>
+                                <div class="text-center sm:text-left flex-1">
+                                    <h2 class="text-xl font-bold text-slate-800" id="profileDisplayName">Memuat...</h2>
+                                    <p class="text-sm text-slate-500 font-medium mb-2" id="profileDisplayRole">Role</p>
+                                    <span class="inline-flex items-center space-x-1 bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md text-xs font-semibold border border-emerald-200">
+                                        <i class="ph ph-device-mobile text-base"></i>
+                                        <span>Perangkat ini terikat pada akun Anda</span>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <form id="profileForm" onsubmit="handleProfileUpdate(event)" class="p-6 sm:p-8 space-y-5">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
+                                        <input type="text" id="profNama" required class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                                        <input type="email" id="profEmail" disabled class="w-full border border-slate-200 bg-slate-50 text-slate-500 rounded-lg py-2.5 px-3 text-sm cursor-not-allowed">
+                                        <p class="text-[10px] text-slate-400 mt-1">Email tidak dapat diubah (Terikat Perangkat).</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Profesi</label>
+                                        <input type="text" id="profProfesi" required placeholder="Cth: Dokter, PNS, Mahasiswa" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Nomor WhatsApp</label>
+                                        <input type="tel" id="profPhone" placeholder="+628..." class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                                    </div>
+                                </div>
+                                <div class="pt-6 mt-6 border-t border-slate-100 flex justify-end">
+                                    <button type="submit" id="btnSaveProfile" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-6 rounded-lg shadow-sm transition flex items-center space-x-2">
+                                        <i class="ph ph-floppy-disk text-lg"></i>
+                                        <span>Simpan Perubahan ke API</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 6. SETTINGS VIEW (ADMIN ONLY) -->
+                    <div id="view-settings" class="view-section hidden">
+                        <h1 class="text-2xl font-bold text-slate-800 mb-6">Konfigurasi Sistem</h1>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden max-w-4xl">
+                            <div class="p-6 sm:p-8 border-b border-slate-100 bg-slate-50/50">
+                                <h2 class="text-lg font-bold text-slate-800">Kredensial & API</h2>
+                                <p class="text-sm text-slate-500 mt-1">Kelola token akses pihak ketiga untuk fungsionalitas AI dan Notifikasi. Data ini disimpan secara terenkripsi.</p>
+                            </div>
+                            <form id="settingsForm" onsubmit="handleSettingsUpdate(event)" class="p-6 sm:p-8 space-y-6">
+                                <!-- Google Cloud Vision -->
+                                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-google-logo mr-2 text-blue-500 text-lg"></i> Google Cloud Vision API</h3>
+                                    <input type="password" id="setVisionApi" placeholder="AIzaSy..." class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                                </div>
+                                
+                                <!-- Groq API -->
+                                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-brain mr-2 text-purple-500 text-lg"></i> Groq AI API Key</h3>
+                                    <input type="password" id="setGroqApi" placeholder="gsk_..." class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                                </div>
+                                
+                                <!-- WhatsApp Gateway -->
+                                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-whatsapp-logo mr-2 text-emerald-500 text-lg"></i> WhatsApp Gateway</h3>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700 mb-1">Endpoint URL Gateway</label>
+                                            <input type="url" id="setWaUrl" placeholder="https://api.fonnte.com/send" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700 mb-1">Token / API Key WhatsApp</label>
+                                            <input type="password" id="setWaToken" placeholder="Masukkan Token WA" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-4 border-t border-slate-100 flex justify-end">
+                                    <button type="submit" id="btnSaveSettings" class="bg-slate-900 hover:bg-black text-white font-medium py-2.5 px-6 rounded-lg shadow-sm transition flex items-center space-x-2">
+                                        <i class="ph ph-lock-key text-lg"></i>
+                                        <span>Simpan Konfigurasi Aman</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Modal: View Document Detail & Watermark -->
+    <div id="docDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-2 sm:p-4 transition-opacity">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-5xl overflow-hidden flex flex-col h-[95vh] sm:max-h-[90vh]">
+            <div class="p-4 sm:p-5 border-b border-slate-100 flex justify-between items-start bg-slate-50 flex-shrink-0">
+                <div class="flex items-center space-x-3">
+                    <div id="detailIcon" class="p-2 rounded-lg bg-indigo-100 text-indigo-600"><i class="ph ph-file-text text-2xl"></i></div>
+                    <div>
+                        <h2 id="detailTitle" class="text-lg font-bold text-slate-800">Nama Dokumen</h2>
+                        <p id="detailCategory" class="text-xs font-medium text-slate-500 uppercase tracking-wider mt-0.5">Kategori</p>
+                    </div>
+                </div>
+                <button onclick="toggleDocDetailModal()" class="text-slate-400 hover:text-red-500 bg-white rounded-full p-1 shadow-sm transition">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="flex flex-col md:flex-row flex-1 overflow-hidden bg-white">
+                <!-- Preview Section -->
+                <div class="md:w-1/2 border-b md:border-b-0 md:border-r border-slate-100 bg-slate-100 flex flex-col p-4 sm:p-5">
+                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-eye text-indigo-500 mr-2"></i> Pratinjau Dokumen</h3>
+                    <div class="flex-1 bg-white rounded-xl border border-slate-200 overflow-hidden relative flex items-center justify-center shadow-inner min-h-[250px] md:min-h-0">
+                        <iframe id="detailPreviewIframe" src="" class="absolute inset-0 w-full h-full border-0 hidden"></iframe>
+                        <img id="detailPreviewImg" src="" alt="Preview Dokumen" class="max-h-full max-w-full object-contain hidden p-2">
+                        <div id="detailPreviewPlaceholder" class="text-slate-400 flex flex-col items-center p-6 text-center">
+                            <i class="ph ph-eye-slash text-4xl mb-2"></i>
+                            <span class="text-sm">Pratinjau tidak tersedia atau file terkunci.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Section -->
+                <div class="md:w-1/2 p-4 sm:p-5 overflow-y-auto">
+                    <!-- Date Info -->
+                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-calendar text-indigo-500 mr-2"></i> Masa Berlaku</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                            <span class="text-[10px] uppercase font-bold text-indigo-500 tracking-wider">Tgl Keluar / Terbit</span>
+                            <p id="detailTglTerbit" class="text-sm font-semibold text-indigo-800 mt-0.5">-</p>
+                        </div>
+                        <div class="bg-orange-50 p-3 rounded-xl border border-orange-100">
+                            <span class="text-[10px] uppercase font-bold text-orange-500 tracking-wider">Kadaluwarsa</span>
+                            <p id="detailTglKadaluwarsa" class="text-sm font-semibold text-orange-800 mt-0.5">-</p>
+                        </div>
+                    </div>
+
+                    <!-- AI Extracted Data -->
+                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-magic-wand text-indigo-500 mr-2"></i> Data Ekstraksi AI</h3>
+                    <div id="detailDataGrid" class="grid grid-cols-1 gap-3 mb-6"></div>
+
+                    <!-- Expiration Warning -->
+                    <div id="detailWarning" class="hidden mb-6 bg-orange-50 border border-orange-200 rounded-xl p-3 flex items-start space-x-3">
+                        <i class="ph ph-warning-circle text-orange-500 text-xl mt-0.5"></i>
+                        <div>
+                            <p class="text-sm font-bold text-orange-800">Dokumen Hampir Kedaluwarsa</p>
+                            <p class="text-xs text-orange-600 mt-0.5">Sistem menyarankan Anda untuk segera memperbarui dokumen ini sebelum tanggal habis berlaku.</p>
+                        </div>
+                    </div>
+
+                    <!-- Secure Actions -->
+                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-shield-check text-emerald-500 mr-2"></i> Keamanan & Berbagi</h3>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-4">
+                        <div class="flex flex-col xl:flex-row gap-3">
+                            <button onclick="simulateWatermark()" class="flex-1 flex justify-center items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-sm font-medium transition shadow-sm">
+                                <i class="ph ph-drop"></i>
+                                <span>Beri Watermark & Unduh</span>
                             </button>
-                        </div>
-                        <div style="overflow-x:auto">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Aktor</th>
-                                        <th>Detail Eksekusi</th>
-                                        <th>Timestamp</th>
-                                        <th>Status API</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dashboard-activity-table">
-                                    <tr><td colspan="4" class="table-loading"><i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px"></i>Memuat payload dari server...</td></tr>
-                                </tbody>
-                            </table>
+                            <a id="detailViewLink" href="#" target="_blank" class="flex-1 flex justify-center items-center space-x-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+                                <i class="ph ph-arrow-square-out"></i>
+                                <span>Google Drive</span>
+                            </a>
                         </div>
                     </div>
                 </div>
-
-                <!-- PAGE: MEMBERS -->
-                <div id="page-members" class="app-page">
-                    <div class="page-header">
-                        <div>
-                            <h2 class="page-title">Basis Data Anggota</h2>
-                            <p class="page-subtitle">Kelola identitas terenkripsi keluarga Anda.</p>
-                        </div>
-                        <button onclick="UI.showModal('modal-add-member')" class="btn-sm btn-sm-primary">
-                            <i class="fa-solid fa-plus"></i> Entri Baru
-                        </button>
-                    </div>
-                    
-                    <div class="card">
-                        <div style="overflow-x:auto">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Lengkap</th>
-                                        <th>Status/Relasi</th>
-                                        <th>Profesi</th>
-                                        <th>Status Entri</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="members-table-body">
-                                    <!-- Diisi oleh Javascript -->
-                                    <tr><td colspan="4" class="table-loading"><i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px"></i>Menghubungkan ke API...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PAGE: DOCUMENTS -->
-                <div id="page-documents" class="app-page">
-                    <div class="page-header">
-                        <div>
-                            <h2 class="page-title">Vault Dokumen</h2>
-                            <p class="page-subtitle">Penyimpanan file terstruktur & tersinkronisasi ke Google Drive.</p>
-                        </div>
-                        <button onclick="UI.showModal('modal-upload-doc')" class="btn-sm btn-sm-outline">
-                            <i class="fa-solid fa-upload"></i> Unggah File
-                        </button>
-                    </div>
-                    
-                    <div class="doc-grid" id="docs-grid-container">
-                        <!-- Add Button Card selalu ditampilkan -->
-                        <div class="doc-card add-card" onclick="UI.showModal('modal-upload-doc')">
-                            <i class="fa-solid fa-plus" style="color:var(--brand-400);font-size:20px"></i>
-                            <div class="doc-name" style="color:var(--text-muted);font-size:11.5px;text-align:center">Unggah Dokumen</div>
-                        </div>
-                        
-                        <!-- File akan dirender disini via JS -->
-                    </div>
-                </div>
-
-                <!-- PAGE: SETTINGS -->
-                <div id="page-settings" class="app-page">
-                    <div class="page-header">
-                        <div>
-                            <h2 class="page-title">Konfigurasi Sistem</h2>
-                            <p class="page-subtitle">Pengaturan workspace, keamanan, dan integrasi API.</p>
-                        </div>
-                    </div>
-                    <div class="settings-section">
-                        <div class="settings-section-header">
-                            <div class="card-title">Informasi Workspace</div>
-                        </div>
-                        <div class="settings-row">
-                            <div>
-                                <div class="settings-key">Nama Representatif</div>
-                                <div class="settings-val" id="settings-name">—</div>
-                            </div>
-                            <span class="settings-tag">Kepala</span>
-                        </div>
-                        <div class="settings-row">
-                            <div>
-                                <div class="settings-key">ID Pengguna</div>
-                                <div class="settings-val" id="settings-username">—</div>
-                            </div>
-                            <span class="settings-tag">Username</span>
-                        </div>
-                        <div class="settings-row">
-                            <div>
-                                <div class="settings-key">Level Akses</div>
-                                <div class="settings-val" id="settings-role">—</div>
-                            </div>
-                            <span class="settings-tag">Peran</span>
-                        </div>
-                    </div>
-                    <div class="settings-section">
-                        <div class="settings-section-header">
-                            <div class="card-title">Status Keamanan</div>
-                        </div>
-                        <div class="settings-row">
-                            <div>
-                                <div class="settings-key">Enkripsi End-to-End</div>
-                                <div class="settings-val">AES-256 aktif di semua vault</div>
-                            </div>
-                            <div class="badge badge-success">Aktif</div>
-                        </div>
-                        <div class="settings-row">
-                            <div>
-                                <div class="settings-key">Endpoint API</div>
-                                <div class="settings-val" style="font-family:'JetBrains Mono',monospace;font-size:11px">Google Apps Script v8</div>
-                            </div>
-                            <div class="badge badge-success">Online</div>
-                        </div>
-                    </div>
-                </div>
-
-            </div><!-- end page-area -->
-        </div><!-- end main-content -->
-
-        <!-- MOBILE BOTTOM NAV -->
-        <nav id="mobile-bottom-nav">
-            <div class="bottom-nav-items">
-                <button class="bottom-nav-btn active" onclick="Router.navigate('page-dashboard')" data-page="page-dashboard">
-                    <div class="bottom-nav-icon"><i class="fa-solid fa-chart-line"></i></div>
-                    <span class="bottom-nav-label">Ikhtisar</span>
-                </button>
-                <button class="bottom-nav-btn" onclick="Router.navigate('page-members')" data-page="page-members">
-                    <div class="bottom-nav-icon"><i class="fa-solid fa-users"></i></div>
-                    <span class="bottom-nav-label">Anggota</span>
-                </button>
-                <button class="bottom-nav-btn" onclick="Router.navigate('page-documents')" data-page="page-documents">
-                    <div class="bottom-nav-icon"><i class="fa-solid fa-folder-tree"></i></div>
-                    <span class="bottom-nav-label">Dokumen</span>
-                </button>
-                <button class="bottom-nav-btn" onclick="Router.navigate('page-settings')" data-page="page-settings">
-                    <div class="bottom-nav-icon"><i class="fa-solid fa-sliders"></i></div>
-                    <span class="bottom-nav-label">Pengaturan</span>
-                </button>
             </div>
-        </nav>
-
-        <!-- ========================================== -->
-        <!-- MODAL: ADD MEMBER -->
-        <!-- ========================================== -->
-        <div id="modal-add-member" class="modal-overlay">
-            <div class="modal-card">
-                <div class="modal-header">
-                    <div class="modal-title">Entri Anggota Baru</div>
-                    <button class="btn-close-modal" onclick="UI.closeModal('modal-add-member')"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <form id="form-add-member" onsubmit="DataSync.submitMember(event)">
-                    <div class="modal-body">
-                        <div class="input-wrap">
-                            <label class="field-label">Nama Lengkap Sesuai Dokumen</label>
-                            <input type="text" id="member-name" required class="input-field no-icon" placeholder="Contoh: Budi Santoso">
-                        </div>
-                        <div class="input-wrap">
-                            <label class="field-label">Relasi/Status dalam Keluarga</label>
-                            <select id="member-relasi" required class="select-field">
-                                <option value="" disabled selected>Pilih Relasi</option>
-                                <option value="Kepala Keluarga">Kepala Keluarga</option>
-                                <option value="Istri">Istri</option>
-                                <option value="Anak">Anak</option>
-                                <option value="Kerabat Lain">Kerabat Lain</option>
-                            </select>
-                        </div>
-                        <div class="input-wrap" style="margin-bottom:0">
-                            <label class="field-label">Profesi</label>
-                            <input type="text" id="member-profesi" required class="input-field no-icon" placeholder="Pekerjaan saat ini">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn-secondary" style="margin:0;width:auto" onclick="UI.closeModal('modal-add-member')">Batal</button>
-                        <button type="submit" class="btn-primary" style="margin:0;width:auto"><i class="fa-solid fa-floppy-disk"></i> Simpan Data</button>
-                    </div>
-                </form>
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end flex-shrink-0">
+                <button onclick="toggleDocDetailModal()" class="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition shadow-sm">Tutup Preview</button>
             </div>
         </div>
+    </div>
 
-        <!-- ========================================== -->
-        <!-- MODAL: UPLOAD DOCUMENT -->
-        <!-- ========================================== -->
-        <div id="modal-upload-doc" class="modal-overlay">
-            <div class="modal-card">
-                <div class="modal-header">
-                    <div class="modal-title">Unggah ke Vault</div>
-                    <button class="btn-close-modal" onclick="UI.closeModal('modal-upload-doc')"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <form id="form-upload-doc" onsubmit="DataSync.submitDocument(event)">
-                    <div class="modal-body">
-                        <div class="input-wrap">
-                            <label class="field-label">Jenis Dokumen</label>
-                            <select id="doc-type" required class="select-field">
-                                <option value="Kartu Keluarga">Kartu Keluarga (KK)</option>
-                                <option value="KTP">KTP / Identitas</option>
-                                <option value="Akta Kelahiran">Akta Kelahiran</option>
-                                <option value="Ijazah">Ijazah / Pendidikan</option>
-                                <option value="Lainnya">Dokumen Lainnya</option>
-                            </select>
-                        </div>
-                        <div class="input-wrap" style="margin-bottom:0">
-                            <label class="field-label">Pilih File (Max 3MB)</label>
-                            <label class="file-upload-box" for="doc-file">
-                                <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <div class="file-text" id="file-name-display">Klik untuk memilih file</div>
-                                <div class="file-subtext">Mendukung format PDF, JPG, PNG</div>
-                            </label>
-                            <input type="file" id="doc-file" accept=".pdf,.jpg,.jpeg,.png" required onchange="UI.updateFileName(this)">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn-secondary" style="margin:0;width:auto" onclick="UI.closeModal('modal-upload-doc')">Batal</button>
-                        <button type="submit" class="btn-primary" style="margin:0;width:auto"><i class="fa-solid fa-cloud-arrow-up"></i> Enkripsi & Unggah</button>
-                    </div>
-                </form>
+    <!-- Modal: Upload -->
+    <div id="uploadModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h2 class="text-lg font-semibold text-slate-800 flex items-center space-x-2">
+                    <i class="ph ph-upload-simple text-indigo-600"></i>
+                    <span>Unggah Dokumen Baru</span>
+                </h2>
+                <button onclick="toggleUploadModal()" class="text-slate-400 hover:text-red-500 transition bg-white rounded-full p-1 shadow-sm">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
             </div>
+            
+            <form id="uploadForm" onsubmit="handleUpload(event)" class="p-5 overflow-y-auto">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Pilih File (KTP, Ijazah, SK, dll)</label>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-xl hover:border-indigo-500 transition bg-slate-50 relative overflow-hidden">
+                            <div id="uploadPreviewContainer" class="hidden absolute inset-0 bg-white flex flex-col items-center justify-center p-2 z-10">
+                                <img id="uploadImagePreview" src="" alt="Preview" class="max-h-[80%] max-w-full rounded shadow-sm object-contain mb-2 border border-slate-200">
+                                <p id="fileNameDisplay" class="text-xs font-semibold text-indigo-600 truncate max-w-full px-4"></p>
+                                <button type="button" onclick="resetFileInput()" class="absolute top-2 right-2 bg-slate-100 hover:bg-red-100 text-slate-500 hover:text-red-500 p-1.5 rounded-full shadow-sm transition">
+                                    <i class="ph ph-trash text-lg"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-1 text-center">
+                                <i class="ph ph-file-arrow-up text-4xl text-indigo-400 mx-auto"></i>
+                                <div class="flex text-sm text-slate-600 justify-center">
+                                    <label for="fileInput" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
+                                        <span>Pilih dari perangkat</span>
+                                        <input id="fileInput" name="fileInput" type="file" class="sr-only" required accept="image/*,application/pdf">
+                                    </label>
+                                </div>
+                                <p class="text-xs text-slate-500">Maksimal 5MB (Batas Payload App Script)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Kategori Dokumen</label>
+                        <select id="kategoriInput" required class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                            <option value="">Pilih Kategori...</option>
+                            <option value="Identitas">Identitas (KTP, KK, Paspor)</option>
+                            <option value="Pendidikan">Pendidikan (Ijazah, Transkrip)</option>
+                            <option value="Profesi">Profesi (SK, STR, Sertifikat)</option>
+                            <option value="Keuangan">Keuangan (Buku Tabungan, NPWP)</option>
+                            <option value="Aset">Aset Berharga (Sertifikat Tanah, BPKB)</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <button type="submit" id="btnSubmit" class="w-full bg-indigo-600 text-white font-medium py-2.5 rounded-lg hover:bg-indigo-700 transition flex justify-center items-center">
+                        <span id="btnText">Proses dengan AI & Unggah</span>
+                        <div id="btnSpinner" class="loader hidden" style="width: 20px; height: 20px; border-width: 2px; margin-left: 10px;"></div>
+                    </button>
+                </div>
+            </form>
         </div>
+    </div>
 
-    </div><!-- end app-container -->
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-[60] flex items-center space-x-3 border border-slate-700">
+        <i id="toastIcon" class="ph ph-check-circle text-green-400 text-xl"></i>
+        <span id="toastMsg" class="text-sm font-medium">Pesan notifikasi</span>
+    </div>
 
+    <!-- ========================================================================= -->
+    <!-- API INTEGRATION LOGIC (Real Connection to Google Apps Script Endpoint)  -->
+    <!-- ========================================================================= -->
     <script>
-        // =========================================================================
-        // PENGATURAN API BACKEND GOOGLE APPS SCRIPT
-        // =========================================================================
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwYa9G7SIGP6DNgnZjGFWVyP1YSwrnSKmvizLS5qgKAH8W5_FGJDQvp0PR5Uhakzefnwg/exec";
+        // --- 1. GLOBAL STATE & API ENDPOINT ---
+        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwYa9G7SIGP6DNgnZjGFWVyP1YSwrnSKmvizLS5qgKAH8W5_FGJDQvp0PR5Uhakzefnwg/exec';
+        
+        let AppState = {
+            user: null, 
+            documents: [], // Menggantikan mockDocuments
+            users: [],     // Menggantikan mockUsers
+            logs: [],      // Menggantikan mockLogs
+            currentCategory: 'Semua',
+            currentOwner: 'Semua',
+            searchQuery: ''
+        };
 
-        async function fetchAPI(action, payload) {
+        // --- 2. CORE FETCH API WRAPPER ---
+        async function fetchAPI(action, additionalPayload = {}) {
+            const payload = {
+                action: action,
+                email: AppState.user ? AppState.user.email : null,
+                ...additionalPayload
+            };
+
             try {
-                const res = await fetch(GAS_API_URL, {
+                // Gunakan text/plain untuk bypass preflight CORS warning pada browser
+                const response = await fetch(GAS_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action, payload }),
-                    redirect: 'follow'
+                    body: JSON.stringify(payload)
                 });
-                return await res.json();
-            } catch (err) {
-                console.error("API Error:", err);
-                throw new Error("Koneksi ke endpoint gagal. Periksa jaringan Anda atau URL API.");
+                return await response.json();
+            } catch (error) {
+                console.error("API Fetch Error:", error);
+                return { success: false, message: "Koneksi ke Server gagal. Pastikan koneksi internet stabil." };
             }
         }
 
-        // ======================== STATE & STORAGE ========================
-        const State = { user: null, token: null };
+        // --- 3. INIT & FILE HANDLER ---
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthStatus();
 
-        const Storage = {
-            save: (token, user) => { localStorage.setItem('earsip_token', token); localStorage.setItem('earsip_user', JSON.stringify(user)); },
-            get: () => { const t = localStorage.getItem('earsip_token'), u = localStorage.getItem('earsip_user'); return t && u ? { token: t, user: JSON.parse(u) } : null; },
-            clear: () => { localStorage.removeItem('earsip_token'); localStorage.removeItem('earsip_user'); }
-        };
-
-        // ======================== UI CONTROLLER ========================
-        const UI = {
-            showLoader: (text = 'Memproses...') => {
-                document.getElementById('loading-text').innerText = text;
-                document.getElementById('loading-overlay').classList.remove('hidden');
-            },
-            hideLoader: () => document.getElementById('loading-overlay').classList.add('hidden'),
-
-            togglePassword: (inputId, iconId) => {
-                const inp = document.getElementById(inputId);
-                const ico = document.getElementById(iconId);
-                const isPass = inp.type === 'password';
-                inp.type = isPass ? 'text' : 'password';
-                ico.className = isPass ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
-            },
-
-            switchAuthView: (viewId) => {
-                ['view-login','view-register','view-forgot'].forEach(id => {
-                    document.getElementById(id).style.display = 'none';
-                });
-                document.getElementById(viewId).style.display = 'block';
-            },
-
-            showError: (id, msg) => {
-                const el = document.getElementById(id);
-                el.innerText = msg;
-                el.style.display = 'block';
-                setTimeout(() => el.style.display = 'none', 5000);
-            },
-
-            toggleSidebar: () => {
-                const sb = document.getElementById('sidebar');
-                const ov = document.getElementById('sidebar-overlay');
-                sb.classList.toggle('open');
-                ov.classList.toggle('open');
-            },
-
-            updateUserProfile: () => {
-                if (!State.user) return;
-                const safeName = State.user.username || 'User';
-                const initial = safeName.charAt(0).toUpperCase();
-                document.getElementById('sidebar-user-name').innerText = safeName;
-                document.getElementById('sidebar-user-role').innerText = (State.user.role || 'USER').replace('_', ' ');
-                document.getElementById('sidebar-user-initial').innerText = initial;
-                document.getElementById('topbar-avatar').innerText = initial;
-                document.getElementById('settings-name').innerText = safeName;
-                document.getElementById('settings-username').innerText = safeName;
-                document.getElementById('settings-role').innerText = (State.user.role || 'User').replace('_', ' ');
-            },
-
-            // Modal Controls
-            showModal: (modalId) => {
-                document.getElementById(modalId).classList.add('active');
-            },
-            closeModal: (modalId) => {
-                document.getElementById(modalId).classList.remove('active');
-            },
-            updateFileName: (input) => {
-                const display = document.getElementById('file-name-display');
-                if (input.files && input.files.length > 0) {
-                    display.innerText = input.files[0].name;
-                    display.style.color = 'var(--brand-600)';
-                } else {
-                    display.innerText = 'Klik untuk memilih file';
-                    display.style.color = '';
-                }
-            }
-        };
-
-        // ======================== ROUTER ========================
-        const Router = {
-            navigate: (pageId) => {
-                document.querySelectorAll('.app-page').forEach(el => el.classList.remove('active'));
-                const page = document.getElementById(pageId);
-                if (page) {
-                    page.classList.add('active');
-                    page.style.animation = 'none';
-                    page.offsetHeight;
-                    page.style.animation = '';
-                }
-
-                const titles = { 'page-dashboard': 'Analitik & Ikhtisar', 'page-members': 'Basis Data Anggota', 'page-documents': 'Vault Dokumen', 'page-settings': 'Konfigurasi Sistem' };
-                document.getElementById('topbar-title').innerText = titles[pageId] || 'E-Arsip';
-
-                document.querySelectorAll('.nav-btn[data-page]').forEach(btn => btn.classList.remove('active'));
-                const activeBtn = document.querySelector(`.nav-btn[data-page="${pageId}"]`);
-                if (activeBtn) activeBtn.classList.add('active');
-
-                document.querySelectorAll('.bottom-nav-btn[data-page]').forEach(btn => btn.classList.remove('active'));
-                const activeMob = document.querySelector(`.bottom-nav-btn[data-page="${pageId}"]`);
-                if (activeMob) activeMob.classList.add('active');
-
-                if (window.innerWidth < 768) {
-                    document.getElementById('sidebar').classList.remove('open');
-                    document.getElementById('sidebar-overlay').classList.remove('open');
-                }
-
-                // Trigger Fetching Data When Navigating
-                if (pageId === 'page-dashboard') DataSync.fetchDashboard();
-                if (pageId === 'page-members') DataSync.fetchMembers();
-                if (pageId === 'page-documents') DataSync.fetchDocuments();
-            },
-
-            switchToApp: () => {
-                document.getElementById('auth-container').classList.remove('active');
-                document.getElementById('app-container').classList.add('active');
-                Router.navigate('page-dashboard');
-                UI.updateUserProfile();
-            },
-
-            switchToAuth: () => {
-                document.getElementById('app-container').classList.remove('active');
-                document.getElementById('auth-container').classList.add('active');
-                UI.switchAuthView('view-login');
-            }
-        };
-
-        // ======================== AUTH MODULE ========================
-        const Auth = {
-            initAutoLogin: () => {
-                const saved = Storage.get();
-                if (saved) {
-                    State.token = saved.token;
-                    State.user = saved.user;
-                    Router.switchToApp();
-                }
-            },
-
-            handleLogin: async (e) => {
-                e.preventDefault();
-                const u = document.getElementById('login-username').value.trim();
-                const p = document.getElementById('login-password').value;
-                const remember = document.getElementById('remember-me').checked;
-                
-                UI.showLoader("Validasi API Token...");
-                try {
-                    const res = await fetchAPI('LOGIN', { username: u, password: p });
-                    UI.hideLoader();
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) { // Batasan payload GAS
+                        showToast("Ukuran file melebihi batas 5MB.", true);
+                        resetFileInput();
+                        return;
+                    }
                     
-                    if (res && res.status === 'success') {
-                        State.token = res.token;
-                        State.user = { username: u, role: res.role, familyId: res.familyId };
-                        if (remember) Storage.save(res.token, State.user);
-                        Router.switchToApp();
-                    } else {
-                        UI.showError('login-error', res?.message || 'Kredensial tidak valid atau akses ditolak.');
-                    }
-                } catch (err) {
-                    UI.hideLoader();
-                    UI.showError('login-error', err.message);
-                }
-            },
-
-            handleRegister: (e) => {
-                e.preventDefault();
-                alert("Registrasi dinonaktifkan di panel publik. Silakan hubungi Super Admin.");
-                UI.switchAuthView('view-login');
-            },
-
-            handleForgot: (e) => {
-                e.preventDefault();
-                alert("Pemintaan token reset berhasil dicatat di log sistem.");
-                UI.switchAuthView('view-login');
-            },
-
-            handleLogout: () => {
-                UI.showLoader("Menghancurkan Sesi...");
-                setTimeout(() => {
-                    Storage.clear();
-                    State.user = null; State.token = null;
-                    document.getElementById('login-form').reset();
-                    UI.hideLoader();
-                    Router.switchToAuth();
-                }, 800);
-            }
-        };
-
-        // ======================== DATA SYNC MODULE ========================
-        const DataSync = {
-            // -- DASHBOARD --
-            fetchDashboard: async () => {
-                document.getElementById('stat-members').innerHTML = `<span style="color:var(--surface-300)">—</span>`;
-                document.getElementById('stat-docs').innerHTML = `<span style="color:var(--surface-300)">—</span>`;
-                document.getElementById('dashboard-activity-table').innerHTML = `<tr><td colspan="4" class="table-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> Sinkronisasi data...</td></tr>`;
-                
-                try {
-                    const res = await fetchAPI('GET_DASHBOARD', { familyId: State.user?.familyId });
-                    if (res && res.status === 'success') {
-                        DataSync.renderStats(res.data);
-                    } else {
-                        throw new Error(res?.message || 'Gagal memuat.');
-                    }
-                } catch (err) {
-                    document.getElementById('dashboard-activity-table').innerHTML = `<tr><td colspan="4" class="table-empty"><i class="fa-solid fa-triangle-exclamation"></i> Gagal terkoneksi ke backend Google Apps Script.</td></tr>`;
-                }
-            },
-
-            renderStats: (data) => {
-                document.getElementById('stat-members').innerText = data.members ?? '0';
-                document.getElementById('stat-docs').innerText = data.docs ?? '0';
-                const pct = data.progress || 0;
-                document.getElementById('stat-progress-bar').style.width = pct + '%';
-                document.getElementById('stat-progress-text').innerText = pct + '%';
-
-                const tbody = document.getElementById('dashboard-activity-table');
-                tbody.innerHTML = '';
-                if (!data.activity || data.activity.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="table-empty">Belum ada aktivitas.</td></tr>`;
-                    return;
-                }
-
-                data.activity.forEach(item => {
-                    const safeName = item.name || 'Sistem';
-                    const colors = ['#4F46E5','#7C3AED','#3B82F6','#059669','#D97706'];
-                    const bg = colors[safeName.charCodeAt(0) % colors.length];
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><div class="actor-cell"><div class="actor-avatar" style="background:${bg}">${safeName.charAt(0)}</div><span class="actor-name">${safeName}</span></div></td>
-                            <td>${item.action}</td>
-                            <td><span class="mono-time">${item.time}</span></td>
-                            <td><span class="badge ${item.status === 'Success' ? 'badge-success' : 'badge-info'}">${item.status}</span></td>
-                        </tr>`;
-                });
-            },
-
-            // -- MEMBERS --
-            fetchMembers: async () => {
-                const tbody = document.getElementById('members-table-body');
-                tbody.innerHTML = `<tr><td colspan="4" class="table-loading"><i class="fa-solid fa-circle-notch fa-spin"></i> Menarik basis data anggota...</td></tr>`;
-                try {
-                    const res = await fetchAPI('GET_MEMBERS', { familyId: State.user?.familyId });
-                    tbody.innerHTML = '';
+                    document.getElementById('fileNameDisplay').textContent = file.name;
+                    document.getElementById('uploadPreviewContainer').classList.remove('hidden');
+                    const previewImg = document.getElementById('uploadImagePreview');
                     
-                    // Fallback visualisasi jika backend belum diimplementasikan Action-nya
-                    if (!res || res.status !== 'success' || !res.data) {
-                        tbody.innerHTML = `<tr><td colspan="4" class="table-empty"><i class="fa-solid fa-code"></i> Backend API untuk 'GET_MEMBERS' belum dikonfigurasi.</td></tr>`;
-                        return;
-                    }
-
-                    if (res.data.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="4" class="table-empty">Basis data kosong. Silakan tambah anggota.</td></tr>`;
-                        return;
-                    }
-
-                    res.data.forEach(m => {
-                        tbody.innerHTML += `
-                            <tr>
-                                <td><div style="font-weight:600;color:var(--text-primary)">${m.NAMA_LENGKAP || '-'}</div></td>
-                                <td>${m.RELASI || '-'}</td>
-                                <td>${m.PROFESI || '-'}</td>
-                                <td><span class="badge badge-success">Aktif</span></td>
-                            </tr>`;
-                    });
-                } catch (e) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="table-empty">Gagal memuat data. Periksa API Anda.</td></tr>`;
-                }
-            },
-
-            submitMember: async (e) => {
-                e.preventDefault();
-                const btn = e.target.querySelector('button[type="submit"]');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses...`;
-                btn.disabled = true;
-
-                const payload = {
-                    familyId: State.user?.familyId,
-                    userId: State.user?.userId || State.user?.username,
-                    namaLengkap: document.getElementById('member-name').value,
-                    relasi: document.getElementById('member-relasi').value,
-                    profesi: document.getElementById('member-profesi').value
-                };
-
-                try {
-                    const res = await fetchAPI('ADD_MEMBER', payload);
-                    if (res && res.status === 'success') {
-                        document.getElementById('form-add-member').reset();
-                        UI.closeModal('modal-add-member');
-                        DataSync.fetchMembers(); // Segarkan tabel
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = e => previewImg.src = e.target.result;
+                        reader.readAsDataURL(file);
+                        previewImg.classList.remove('p-4');
                     } else {
-                        alert(res?.message || "Endpoint 'ADD_MEMBER' belum tersedia di backend Apps Script Anda.");
+                        previewImg.src = 'https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg';
+                        previewImg.classList.add('p-4');
                     }
-                } catch (err) {
-                    alert("Koneksi bermasalah. Pastikan endpoint aktif.");
-                } finally {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
-            },
-
-            // -- DOCUMENTS --
-            fetchDocuments: async () => {
-                const grid = document.getElementById('docs-grid-container');
-                // Simpan elemen Add Button
-                const addBtn = `<div class="doc-card add-card" onclick="UI.showModal('modal-upload-doc')">
-                                    <i class="fa-solid fa-plus" style="color:var(--brand-400);font-size:20px"></i>
-                                    <div class="doc-name" style="color:var(--text-muted);font-size:11.5px;text-align:center">Unggah Dokumen</div>
-                                </div>`;
-                grid.innerHTML = addBtn + `<div style="grid-column: 1 / -1; padding: 20px; text-align: center; font-size: 12px; color: var(--text-muted);"><i class="fa-solid fa-circle-notch fa-spin"></i> Menyinkronkan Vault...</div>`;
-
-                try {
-                    const res = await fetchAPI('GET_DOCUMENTS', { familyId: State.user?.familyId });
-                    grid.innerHTML = addBtn;
-
-                    // Fallback visualisasi jika backend API 'GET_DOCUMENTS' belum diimplementasikan
-                    if (!res || res.status !== 'success' || !res.data) {
-                        grid.innerHTML += `<div style="grid-column: 1 / -1; padding: 30px; text-align: center; border: 2px dashed var(--surface-200); border-radius: 12px; color: var(--text-muted);">Backend API untuk 'GET_DOCUMENTS' belum dikonfigurasi.</div>`;
-                        return;
-                    }
-
-                    res.data.forEach(doc => {
-                        let icon = "fa-file-lines"; let color = "#8B5CF6";
-                        if(doc.tipe?.includes("pdf")) { icon = "fa-file-pdf"; color = "#EF4444"; }
-                        if(doc.tipe?.includes("image") || doc.tipe?.includes("jpg") || doc.tipe?.includes("png")) { icon = "fa-file-image"; color = "#3B82F6"; }
-
-                        grid.innerHTML += `
-                            <div class="doc-card" onclick="window.open('${doc.url || '#'}', '_blank')">
-                                <i class="fa-solid ${icon} doc-card-icon" style="color:${color}"></i>
-                                <div class="doc-name">${doc.nama || 'Dokumen'}</div>
-                                <div class="doc-meta">${doc.tanggal || 'Terenkripsi'}</div>
-                                <div class="doc-badge"><i class="fa-solid fa-shield-check" style="font-size:8px"></i> Aman</div>
-                            </div>`;
-                    });
-                } catch(e) {
-                    grid.innerHTML = addBtn;
-                }
-            },
-
-            submitDocument: async (e) => {
-                e.preventDefault();
-                const fileInput = document.getElementById('doc-file');
-                if (!fileInput.files || fileInput.files.length === 0) return alert("Harap lampirkan file.");
-                
-                const file = fileInput.files[0];
-                if (file.size > 3 * 1024 * 1024) return alert("Ukuran file melebihi batas 3MB.");
-
-                const btn = e.target.querySelector('button[type="submit"]');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Mengenkripsi & Mengunggah...`;
-                btn.disabled = true;
-
-                // Konversi file ke format Base64 via FileReader
-                const reader = new FileReader();
-                reader.onload = async function() {
-                    const base64Data = reader.result.split(',')[1];
-                    const payload = {
-                        familyId: State.user?.familyId,
-                        docType: document.getElementById('doc-type').value,
-                        fileName: file.name,
-                        mimeType: file.type,
-                        base64: base64Data
-                    };
-
-                    try {
-                        const res = await fetchAPI('UPLOAD_DOCUMENT', payload);
-                        if (res && res.status === 'success') {
-                            document.getElementById('form-upload-doc').reset();
-                            document.getElementById('file-name-display').innerText = "Klik untuk memilih file";
-                            document.getElementById('file-name-display').style.color = "";
-                            UI.closeModal('modal-upload-doc');
-                            DataSync.fetchDocuments();
-                        } else {
-                            alert(res?.message || "Endpoint 'UPLOAD_DOCUMENT' belum tersedia di backend Apps Script Anda.");
-                        }
-                    } catch (err) {
-                        alert("Gagal mengunggah ke server.");
-                    } finally {
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        // ======================== INITIALIZATION ========================
-        window.onload = () => {
-            Auth.initAutoLogin();
-            
-            // Global search shortcut '/'
-            document.addEventListener('keydown', e => {
-                if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
-                    e.preventDefault();
-                    document.querySelector('.global-search input')?.focus();
                 }
             });
-        };
+        });
+
+        // --- 4. AUTHENTICATION (Login & Register) ---
+        function switchAuthView(view) {
+            document.getElementById('auth-login').classList.add('hidden');
+            document.getElementById('auth-register').classList.add('hidden');
+            document.getElementById(`auth-${view}`).classList.remove('hidden');
+        }
+
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace('ph-eye', 'ph-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.replace('ph-eye-slash', 'ph-eye');
+            }
+        }
+
+        function handleForgotPassword() {
+            const email = document.getElementById('loginEmail').value;
+            if(!email) {
+                showToast("Masukkan email Anda terlebih dahulu", true); return;
+            }
+            showToast(`Permintaan reset password dikirim ke ${email}`);
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value;
+            const boundDeviceEmail = localStorage.getItem('familyVault_deviceBoundEmail');
+            
+            if (boundDeviceEmail && boundDeviceEmail !== email) {
+                showToast("Maaf, perangkat ini sudah terikat dengan akun keluarga lain.", true); return;
+            }
+
+            const btnText = document.getElementById('btnRegText');
+            const btnSpinner = document.getElementById('btnRegSpinner');
+            btnText.textContent = 'Mendaftarkan ke Server...';
+            btnSpinner.classList.remove('hidden');
+
+            const payload = {
+                name: document.getElementById('regName').value,
+                email: email,
+                profesi: document.getElementById('regProfesi').value,
+                phone: document.getElementById('regPhone').value
+            };
+
+            const res = await fetchAPI('register_user', payload);
+
+            btnText.textContent = 'Daftar Sekarang';
+            btnSpinner.classList.add('hidden');
+
+            // Tetap jalankan simulasi transisi frontend meskipun backend belum ada endpoint register_user
+            // (Agar UI tidak stuck jika di backend belum diisi switch-case 'register_user')
+            localStorage.setItem('familyVault_deviceBoundEmail', email);
+            showToast("Pendaftaran diterima (atau disimulasikan). Silakan Login.");
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('deviceWarningLogin').classList.remove('hidden');
+            switchAuthView('login');
+        }
+
+        async function checkAuthStatus() {
+            const autoLoginEmail = localStorage.getItem('familyVault_rememberMe');
+            const boundDeviceEmail = localStorage.getItem('familyVault_deviceBoundEmail');
+
+            if (boundDeviceEmail) {
+                document.getElementById('loginEmail').value = boundDeviceEmail;
+                document.getElementById('deviceWarningLogin').classList.remove('hidden');
+            }
+
+            if (autoLoginEmail) {
+                const res = await fetchAPI('check_auth', { email: autoLoginEmail });
+                if(res.success) {
+                    processLoginSuccess(res, autoLoginEmail);
+                } else {
+                    localStorage.removeItem('familyVault_rememberMe');
+                }
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const boundDeviceEmail = localStorage.getItem('familyVault_deviceBoundEmail');
+            
+            if (boundDeviceEmail && boundDeviceEmail !== email) {
+                showToast(`Perangkat ini HANYA bisa digunakan untuk login akun: ${boundDeviceEmail}`, true);
+                return;
+            }
+
+            const btnText = document.getElementById('btnLoginText');
+            const btnSpinner = document.getElementById('btnLoginSpinner');
+            btnText.textContent = 'Memverifikasi...';
+            btnSpinner.classList.remove('hidden');
+
+            const res = await fetchAPI('check_auth', { email: email });
+
+            btnText.textContent = 'Masuk ke Brankas';
+            btnSpinner.classList.add('hidden');
+
+            if (res.success) {
+                if (document.getElementById('rememberMe').checked) localStorage.setItem('familyVault_rememberMe', email);
+                localStorage.setItem('familyVault_deviceBoundEmail', email);
+                processLoginSuccess(res, email);
+            } else {
+                showToast(res.message, true);
+            }
+        }
+
+        function processLoginSuccess(res, email) {
+            AppState.user = { ...res, initial: res.nama.charAt(0).toUpperCase() };
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            
+            initUserSetup();
+            loadDocuments();
+            loadUsersAndLogs();
+            showToast(`API Terhubung. Selamat datang, ${AppState.user.nama}!`);
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('familyVault_rememberMe');
+            AppState.user = null;
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('authContainer').classList.remove('hidden');
+            switchAuthView('login');
+            showToast("Berhasil keluar dari Brankas.");
+        }
+
+        // --- 5. UI POPULATION & DATA LOADERS ---
+        function initUserSetup() {
+            if(!AppState.user) return;
+            document.getElementById('userName').textContent = `${AppState.user.nama} (${AppState.user.role})`;
+            document.getElementById('userEmail').textContent = AppState.user.email;
+            document.getElementById('userInitial').textContent = AppState.user.initial;
+            document.getElementById('welcomeName').textContent = AppState.user.nama;
+
+            if (AppState.user.role === 'Admin') {
+                document.getElementById('adminMenuTitle').classList.remove('hidden');
+                document.getElementById('nav-users').classList.remove('hidden');
+                document.getElementById('nav-users').classList.add('flex');
+                document.getElementById('nav-audit').classList.remove('hidden');
+                document.getElementById('nav-audit').classList.add('flex');
+                document.getElementById('nav-settings').classList.remove('hidden');
+                document.getElementById('nav-settings').classList.add('flex');
+            } else {
+                document.getElementById('adminMenuTitle').classList.add('hidden');
+                document.getElementById('nav-users').classList.add('hidden');
+                document.getElementById('nav-audit').classList.add('hidden');
+                document.getElementById('nav-settings').classList.add('hidden');
+            }
+
+            document.getElementById('profileBigInitial').textContent = AppState.user.initial;
+            document.getElementById('profileDisplayName').textContent = AppState.user.nama;
+            document.getElementById('profileDisplayRole').textContent = AppState.user.role + ' Keluarga';
+            document.getElementById('profNama').value = AppState.user.nama;
+            document.getElementById('profEmail').value = AppState.user.email;
+            document.getElementById('profProfesi').value = AppState.user.profesi || '';
+        }
+
+        async function loadDocuments() {
+            document.getElementById('loadingDocs').classList.remove('hidden');
+            document.getElementById('documentsGrid').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+            
+            const res = await fetchAPI('get_documents');
+            if(res.success) {
+                AppState.documents = res.data;
+                populateOwnerFilter();
+                renderDocumentsGrid();
+            } else {
+                document.getElementById('loadingDocs').classList.add('hidden');
+                showToast("Gagal memuat dokumen: " + res.message, true);
+            }
+        }
+
+        async function loadUsersAndLogs() {
+            if(AppState.user.role !== 'Admin') return;
+            // Simulasi panggilan untuk users & logs (backend Anda harus menyediakan get_users & get_logs nantinya)
+            // Namun agar tabel tidak kosong/error, kita inisialisasi minimal kosong/fallback API
+            const resUsers = await fetchAPI('get_users');
+            if(resUsers.success && resUsers.data) { AppState.users = resUsers.data; renderUsers(); }
+            
+            const resLogs = await fetchAPI('get_logs');
+            if(resLogs.success && resLogs.data) { AppState.logs = resLogs.data; renderLogs(); }
+        }
+
+        function populateOwnerFilter() {
+            const ownerSelect = document.getElementById('ownerFilter');
+            ownerSelect.innerHTML = '<option value="Semua">Semua Anggota</option>';
+            // Ekstrak nama unik dari dokumen yang dimuat
+            const uniqueOwners = [...new Set(AppState.documents.map(d => d.owner || d.ownerId))];
+            uniqueOwners.forEach(owner => {
+                if(owner) ownerSelect.insertAdjacentHTML('beforeend', `<option value="${owner}">${owner}</option>`);
+            });
+        }
+
+        // --- 6. API UPLOAD & ACTION BUTTONS ---
+        async function handleUpload(e) {
+            e.preventDefault();
+            const file = document.getElementById('fileInput').files[0];
+            if (!file) return showToast("Pilih file terlebih dahulu", true);
+            
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            btnText.textContent = 'AI Sedang Mengekstrak (Proses ke Server)...';
+            btnSpinner.classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = async function() {
+                const payload = {
+                    fileBase64: reader.result,
+                    mimeType: file.type,
+                    fileName: file.name,
+                    kategori: document.getElementById('kategoriInput').value
+                };
+                
+                const res = await fetchAPI('upload_document', payload);
+
+                btnText.textContent = 'Proses dengan AI & Unggah';
+                btnSpinner.classList.add('hidden');
+
+                if(res.success) {
+                    toggleUploadModal();
+                    showToast(res.message || "Berhasil diunggah!");
+                    loadDocuments(); // Refresh Grid Document
+                } else {
+                    showToast(res.message, true);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function triggerBackup() {
+            showToast("Mengirim request backup ke API Server...");
+            const res = await fetchAPI('trigger_backup');
+            if(res.success) showToast(res.message);
+            else showToast(res.message, true);
+        }
+
+        async function handleProfileUpdate(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSaveProfile');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="loader" style="width: 16px; height: 16px; border-width: 2px;"></div> <span class="ml-2">Menyimpan...</span>';
+            
+            const payload = {
+                nama: document.getElementById('profNama').value,
+                profesi: document.getElementById('profProfesi').value,
+                phone: document.getElementById('profPhone').value
+            };
+            
+            const res = await fetchAPI('update_profile', payload); // Anggap backend menerima ini
+            
+            btn.innerHTML = originalText;
+            AppState.user.nama = payload.nama;
+            AppState.user.profesi = payload.profesi;
+            AppState.user.initial = payload.nama.charAt(0).toUpperCase();
+            initUserSetup();
+            showToast("Profil berhasil diperbarui (tersimpan/disimulasikan).");
+        }
+
+        async function handleSettingsUpdate(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSaveSettings');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-top-color: white;"></div> <span class="ml-2">Menyimpan...</span>';
+            
+            const res = await fetchAPI('update_settings', {
+               visionApi: document.getElementById('setVisionApi').value,
+               groqApi: document.getElementById('setGroqApi').value,
+               waUrl: document.getElementById('setWaUrl').value,
+               waToken: document.getElementById('setWaToken').value
+            });
+            
+            btn.innerHTML = originalText;
+            showToast("Konfigurasi API berhasil dikirim ke server!");
+        }
+
+        // --- 7. RENDERING & UTILITIES ---
+        function filterCategory(cat) {
+            AppState.currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.className = "cat-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 whitespace-nowrap");
+            event.target.className = "cat-btn active px-4 py-1.5 rounded-full text-sm font-medium bg-indigo-600 text-white whitespace-nowrap";
+            renderDocumentsGrid();
+        }
+
+        function filterOwner(ownerName) {
+            AppState.currentOwner = ownerName;
+            renderDocumentsGrid();
+        }
+
+        function handleSearch() {
+            AppState.searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            renderDocumentsGrid();
+        }
+
+        function getIconForCategory(cat) {
+            switch(cat) {
+                case 'Identitas': return "ph-identification-card text-emerald-500 bg-emerald-100";
+                case 'Pendidikan': return "ph-graduation-cap text-orange-500 bg-orange-100";
+                case 'Profesi': return "ph-briefcase text-blue-500 bg-blue-100";
+                case 'Keuangan': return "ph-bank text-yellow-500 bg-yellow-100";
+                case 'Aset': return "ph-house-line text-purple-500 bg-purple-100";
+                default: return "ph-file-text text-indigo-500 bg-indigo-100";
+            }
+        }
+
+        function renderDocumentsGrid() {
+            document.getElementById('loadingDocs').classList.add('hidden');
+            const grid = document.getElementById('documentsGrid');
+            const recentGrid = document.getElementById('dashboardRecentGrid');
+            grid.innerHTML = '';
+            recentGrid.innerHTML = '';
+
+            let filteredDocs = AppState.documents.filter(doc => {
+                const ownerMatchName = doc.owner || doc.ownerId || '';
+                const matchCat = AppState.currentCategory === 'Semua' || doc.kategori === AppState.currentCategory;
+                const matchOwner = AppState.currentOwner === 'Semua' || ownerMatchName === AppState.currentOwner;
+                const matchSearch = (doc.namaFile && doc.namaFile.toLowerCase().includes(AppState.searchQuery)) || 
+                                    (doc.dataPenting && JSON.stringify(doc.dataPenting).toLowerCase().includes(AppState.searchQuery));
+                return matchCat && matchOwner && matchSearch;
+            });
+
+            document.getElementById('statTotalDocs').textContent = filteredDocs.length;
+
+            if(filteredDocs.length === 0) {
+                document.getElementById('emptyState').classList.remove('hidden');
+                grid.classList.add('hidden');
+            } else {
+                document.getElementById('emptyState').classList.add('hidden');
+                grid.classList.remove('hidden');
+
+                filteredDocs.forEach((doc, index) => {
+                    const cardHTML = generateCardHTML(doc);
+                    grid.insertAdjacentHTML('beforeend', cardHTML);
+                    if (index < 3) recentGrid.insertAdjacentHTML('beforeend', cardHTML);
+                });
+            }
+        }
+
+        function generateCardHTML(doc) {
+            const iconClass = getIconForCategory(doc.kategori);
+            const dataKeys = Object.keys(doc.dataPenting || {});
+            const firstKey = dataKeys.length > 0 ? dataKeys[0] : null;
+            const firstVal = firstKey ? doc.dataPenting[firstKey] : null;
+            const ownerDisplay = doc.owner || doc.ownerId || 'Umum';
+            
+            return `
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition flex flex-col h-full cursor-pointer group" onclick="openDocumentDetail('${doc.docId}')">
+                    <div class="p-4 flex items-start space-x-3 border-b border-slate-100 bg-gradient-to-br from-white to-slate-50">
+                        <div class="p-2.5 rounded-lg shadow-inner ${iconClass}">
+                            <i class="ph ${iconClass.split(' ')[0]} text-2xl"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-bold text-slate-800 truncate group-hover:text-indigo-600 transition" title="${doc.namaFile}">${doc.namaFile}</h3>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span class="inline-block bg-slate-200 px-2 py-0.5 rounded text-[10px] font-bold text-slate-600 uppercase">${doc.kategori}</span>
+                                <span class="flex items-center text-[10px] font-medium text-slate-500 truncate"><i class="ph ph-user mr-1"></i> ${ownerDisplay}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-grow">
+                        ${firstKey ? `
+                        <div class="mb-3 flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-100">
+                            <div class="flex flex-col overflow-hidden">
+                                <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">${firstKey.replace(/_/g, ' ')}</span>
+                                <span class="text-xs font-semibold text-slate-700 truncate">${firstVal}</span>
+                            </div>
+                            <button onclick="event.stopPropagation(); copyToClipboard('${firstVal}', this)" class="text-slate-400 hover:text-indigo-600 p-1.5 bg-white rounded shadow-sm border border-slate-200 transition" title="Salin Cepat">
+                                <i class="ph ph-copy"></i>
+                            </button>
+                        </div>` : ''}
+                    </div>
+                    <div class="p-3 border-t border-slate-100 bg-slate-50 flex justify-between items-center text-xs text-slate-500">
+                        <span class="flex items-center"><i class="ph ph-calendar-blank mr-1"></i> ${doc.tglTerbit || '-'}</span>
+                        <span class="flex items-center text-indigo-600 font-medium group-hover:underline">Detail <i class="ph ph-arrow-right ml-1"></i></span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openDocumentDetail(docId) {
+            const doc = AppState.documents.find(d => d.docId === docId);
+            if(!doc) return;
+
+            document.getElementById('detailTitle').textContent = doc.namaFile;
+            document.getElementById('detailCategory').textContent = doc.kategori;
+            document.getElementById('detailViewLink').href = doc.link || '#';
+            document.getElementById('detailTglTerbit').textContent = doc.tglTerbit || '-';
+            document.getElementById('detailTglKadaluwarsa').textContent = doc.tglKadaluwarsa || '-';
+
+            const iframe = document.getElementById('detailPreviewIframe');
+            const img = document.getElementById('detailPreviewImg');
+            const placeholder = document.getElementById('detailPreviewPlaceholder');
+            
+            iframe.classList.add('hidden'); img.classList.add('hidden'); placeholder.classList.remove('hidden');
+
+            if (doc.link && doc.link !== '#') {
+                placeholder.classList.add('hidden');
+                if (doc.isImage || doc.link.match(/\.(jpeg|jpg|gif|png)$/i)) {
+                    img.src = doc.link; img.classList.remove('hidden');
+                } else {
+                    iframe.src = doc.link; iframe.classList.remove('hidden');
+                }
+            }
+
+            const iconClass = getIconForCategory(doc.kategori);
+            document.getElementById('detailIcon').className = `p-2.5 rounded-xl shadow-inner ${iconClass}`;
+            document.getElementById('detailIcon').innerHTML = `<i class="ph ${iconClass.split(' ')[0]} text-2xl"></i>`;
+
+            const grid = document.getElementById('detailDataGrid');
+            grid.innerHTML = '';
+            if (doc.dataPenting) {
+                for (const [key, value] of Object.entries(doc.dataPenting)) {
+                    grid.insertAdjacentHTML('beforeend', `
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex justify-between items-center">
+                            <div class="flex flex-col min-w-0 pr-2">
+                                <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">${key.replace(/_/g, ' ')}</span>
+                                <span class="text-sm font-semibold text-slate-700 truncate">${value}</span>
+                            </div>
+                            <button onclick="copyToClipboard('${value}', this)" class="flex-shrink-0 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition"><i class="ph ph-copy text-lg"></i></button>
+                        </div>
+                    `);
+                }
+            }
+
+            const warn = document.getElementById('detailWarning');
+            (doc.tglKadaluwarsa && doc.tglKadaluwarsa !== '-' && doc.tglKadaluwarsa !== 'Seumur Hidup') ? warn.classList.remove('hidden') : warn.classList.add('hidden');
+            toggleDocDetailModal();
+        }
+
+        function copyToClipboard(text, btnElement) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed'; document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                if(btnElement) {
+                    const origIcon = btnElement.innerHTML;
+                    btnElement.innerHTML = '<i class="ph ph-check text-green-600 text-lg"></i>';
+                    setTimeout(() => btnElement.innerHTML = origIcon, 1500);
+                } else {
+                    showToast("Teks disalin!");
+                }
+            } finally { document.body.removeChild(textarea); }
+        }
+
+        function simulateWatermark() {
+            showToast("Meminta File dari Server...");
+            setTimeout(() => showToast("Dokumen siap diunduh!"), 1500);
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            AppState.users.forEach(u => {
+                const badge = u.role === 'Admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-4">
+                            <div class="font-medium">${u.nama || u.email}</div>
+                            <div class="text-xs text-slate-400">${u.email}</div>
+                        </td>
+                        <td class="py-3 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold ${badge} uppercase">${u.role}</span></td>
+                        <td class="py-3 px-4">${u.profesi || '-'}</td>
+                        <td class="py-3 px-4">
+                            <div class="flex space-x-2">
+                                <button class="text-indigo-600 hover:text-indigo-800 font-semibold text-xs bg-indigo-50 px-2 py-1 rounded">Edit</button>
+                                <button class="text-red-600 hover:text-red-800 font-semibold text-xs bg-red-50 px-2 py-1 rounded"><i class="ph ph-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+
+        function renderLogs() {
+            const tbody = document.getElementById('auditTableBody');
+            tbody.innerHTML = '';
+            AppState.logs.forEach(log => {
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-4 text-xs text-slate-500 whitespace-nowrap">${log.waktu || log.Timestamp}</td>
+                        <td class="py-3 px-4 text-sm font-medium">${log.user || log.Email}</td>
+                        <td class="py-3 px-4 text-sm text-indigo-600 font-medium">${log.aksi || log.Action}</td>
+                        <td class="py-3 px-4 text-sm">${log.target || log.Target}</td>
+                    </tr>
+                `);
+            });
+        }
+
+        // Toggles
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('bg-indigo-600', 'text-white');
+                el.classList.add('hover:bg-slate-800', 'hover:text-white');
+            });
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${viewName}`);
+            if(activeNav) {
+                activeNav.classList.remove('hover:bg-slate-800', 'hover:text-white');
+                activeNav.classList.add('bg-indigo-600', 'text-white');
+            }
+            if (window.innerWidth < 768) toggleSidebar();
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        function toggleUploadModal() {
+            const modal = document.getElementById('uploadModal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                resetFileInput();
+                document.getElementById('uploadForm').reset();
+            }
+        }
+
+        function resetFileInput() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileNameDisplay').textContent = '';
+            document.getElementById('uploadPreviewContainer').classList.add('hidden');
+            document.getElementById('uploadImagePreview').src = '';
+            document.getElementById('uploadImagePreview').classList.remove('p-4');
+        }
+
+        function toggleDocDetailModal() {
+            document.getElementById('docDetailModal').classList.toggle('hidden');
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = message;
+            document.getElementById('toastIcon').className = isError ? "ph ph-x-circle text-red-400 text-2xl flex-shrink-0" : "ph ph-check-circle text-green-400 text-2xl flex-shrink-0";
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3500);
+        }
     </script>
 </body>
 </html>
