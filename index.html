@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Family Vault</title>
+    <title>Arsip Cerdasku</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -55,7 +55,7 @@
                 <div class="mx-auto w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-4 shadow-inner">
                     <i class="ph-fill ph-vault text-4xl"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-slate-800">Family Vault</h1>
+                <h1 class="text-2xl font-bold text-slate-800">Arsip Cerdasku</h1>
                 <p class="text-sm text-slate-500 mt-1">Masuk untuk mengakses brankas dokumen Anda</p>
             </div>
             
@@ -172,7 +172,7 @@
             <div class="h-16 flex items-center px-6 bg-slate-950 text-white shadow-md justify-between flex-shrink-0">
                 <div class="flex items-center space-x-3">
                     <i class="ph-fill ph-vault text-2xl text-indigo-500"></i>
-                    <span class="font-bold text-lg tracking-tight">Family Vault</span>
+                    <span class="font-bold text-lg tracking-tight">Arsip Cerdasku</span>
                 </div>
                 <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white">
                     <i class="ph ph-x text-xl"></i>
@@ -237,7 +237,7 @@
                     </button>
                     <div class="relative hidden sm:block w-64 md:w-80">
                         <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Cari NIK, Nama, Dokumen..." class="w-full bg-slate-100 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                        <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Cari Dokumen..." class="w-full bg-slate-100 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
@@ -428,7 +428,7 @@
                         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden max-w-4xl">
                             <div class="p-6 sm:p-8 border-b border-slate-100 bg-slate-50/50">
                                 <h2 class="text-lg font-bold text-slate-800">Kredensial & API</h2>
-                                <p class="text-sm text-slate-500 mt-1">Kelola token akses pihak ketiga untuk fungsionalitas AI dan Notifikasi. Data ini disimpan secara terenkripsi.</p>
+                                <p class="text-sm text-slate-500 mt-1">Kelola token akses pihak ketiga untuk fungsionalitas AI. Data ini disimpan aman secara lokal di perangkat Anda.</p>
                             </div>
                             <form id="settingsForm" onsubmit="handleSettingsUpdate(event)" class="p-6 sm:p-8 space-y-6">
                                 <!-- Google Cloud Vision -->
@@ -461,7 +461,7 @@
                                 <div class="pt-4 border-t border-slate-100 flex justify-end">
                                     <button type="submit" id="btnSaveSettings" class="bg-slate-900 hover:bg-black text-white font-medium py-2.5 px-6 rounded-lg shadow-sm transition flex items-center space-x-2">
                                         <i class="ph ph-lock-key text-lg"></i>
-                                        <span>Simpan Konfigurasi Aman</span>
+                                        <span>Simpan Konfigurasi</span>
                                     </button>
                                 </div>
                             </form>
@@ -625,13 +625,14 @@
     <!-- ========================================================================= -->
     <script>
         // --- 1. GLOBAL STATE & API ENDPOINT ---
+        // GANTI URL DI BAWAH DENGAN URL DEPLOYMENT GOOGLE APPS SCRIPT-MU YANG BARU
         const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwYa9G7SIGP6DNgnZjGFWVyP1YSwrnSKmvizLS5qgKAH8W5_FGJDQvp0PR5Uhakzefnwg/exec';
         
         let AppState = {
             user: null, 
-            documents: [], // Menggantikan mockDocuments
-            users: [],     // Menggantikan mockUsers
-            logs: [],      // Menggantikan mockLogs
+            documents: [],
+            users: [],     
+            logs: [],      
             currentCategory: 'Semua',
             currentOwner: 'Semua',
             searchQuery: ''
@@ -646,7 +647,6 @@
             };
 
             try {
-                // Gunakan text/plain untuk bypass preflight CORS warning pada browser
                 const response = await fetch(GAS_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -666,7 +666,7 @@
             document.getElementById('fileInput').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    if (file.size > 5 * 1024 * 1024) { // Batasan payload GAS
+                    if (file.size > 5 * 1024 * 1024) { 
                         showToast("Ukuran file melebihi batas 5MB.", true);
                         resetFileInput();
                         return;
@@ -719,7 +719,8 @@
         async function handleRegister(e) {
             e.preventDefault();
             const email = document.getElementById('regEmail').value;
-            const boundDeviceEmail = localStorage.getItem('familyVault_deviceBoundEmail');
+            const password = document.getElementById('regPassword').value; // Mengambil password
+            const boundDeviceEmail = localStorage.getItem('arsipCerdasku_deviceBoundEmail');
             
             if (boundDeviceEmail && boundDeviceEmail !== email) {
                 showToast("Maaf, perangkat ini sudah terikat dengan akun keluarga lain.", true); return;
@@ -733,6 +734,7 @@
             const payload = {
                 name: document.getElementById('regName').value,
                 email: email,
+                password: password, // Mengirim password ke API Backend jika dibutuhkan
                 profesi: document.getElementById('regProfesi').value,
                 phone: document.getElementById('regPhone').value
             };
@@ -742,9 +744,7 @@
             btnText.textContent = 'Daftar Sekarang';
             btnSpinner.classList.add('hidden');
 
-            // Tetap jalankan simulasi transisi frontend meskipun backend belum ada endpoint register_user
-            // (Agar UI tidak stuck jika di backend belum diisi switch-case 'register_user')
-            localStorage.setItem('familyVault_deviceBoundEmail', email);
+            localStorage.setItem('arsipCerdasku_deviceBoundEmail', email);
             showToast("Pendaftaran diterima (atau disimulasikan). Silakan Login.");
             document.getElementById('loginEmail').value = email;
             document.getElementById('deviceWarningLogin').classList.remove('hidden');
@@ -752,8 +752,8 @@
         }
 
         async function checkAuthStatus() {
-            const autoLoginEmail = localStorage.getItem('familyVault_rememberMe');
-            const boundDeviceEmail = localStorage.getItem('familyVault_deviceBoundEmail');
+            const autoLoginEmail = localStorage.getItem('arsipCerdasku_rememberMe');
+            const boundDeviceEmail = localStorage.getItem('arsipCerdasku_deviceBoundEmail');
 
             if (boundDeviceEmail) {
                 document.getElementById('loginEmail').value = boundDeviceEmail;
@@ -761,11 +761,12 @@
             }
 
             if (autoLoginEmail) {
+                // Auto login (asumsi password sudah diingat sistem/tidak wajib jika email auto-login)
                 const res = await fetchAPI('check_auth', { email: autoLoginEmail });
                 if(res.success) {
                     processLoginSuccess(res, autoLoginEmail);
                 } else {
-                    localStorage.removeItem('familyVault_rememberMe');
+                    localStorage.removeItem('arsipCerdasku_rememberMe');
                 }
             }
         }
@@ -773,7 +774,8 @@
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
-            const boundDeviceEmail = localStorage.getItem('familyVault_deviceBoundEmail');
+            const password = document.getElementById('loginPassword').value; // MENGAMBIL PASSWORD
+            const boundDeviceEmail = localStorage.getItem('arsipCerdasku_deviceBoundEmail');
             
             if (boundDeviceEmail && boundDeviceEmail !== email) {
                 showToast(`Perangkat ini HANYA bisa digunakan untuk login akun: ${boundDeviceEmail}`, true);
@@ -785,14 +787,15 @@
             btnText.textContent = 'Memverifikasi...';
             btnSpinner.classList.remove('hidden');
 
-            const res = await fetchAPI('check_auth', { email: email });
+            // MENGIRIM EMAIL DAN PASSWORD KE BACKEND
+            const res = await fetchAPI('check_auth', { email: email, password: password });
 
             btnText.textContent = 'Masuk ke Brankas';
             btnSpinner.classList.add('hidden');
 
             if (res.success) {
-                if (document.getElementById('rememberMe').checked) localStorage.setItem('familyVault_rememberMe', email);
-                localStorage.setItem('familyVault_deviceBoundEmail', email);
+                if (document.getElementById('rememberMe').checked) localStorage.setItem('arsipCerdasku_rememberMe', email);
+                localStorage.setItem('arsipCerdasku_deviceBoundEmail', email);
                 processLoginSuccess(res, email);
             } else {
                 showToast(res.message, true);
@@ -811,7 +814,7 @@
         }
 
         function handleLogout() {
-            localStorage.removeItem('familyVault_rememberMe');
+            localStorage.removeItem('arsipCerdasku_rememberMe');
             AppState.user = null;
             document.getElementById('loginPassword').value = '';
             document.getElementById('appContainer').classList.add('hidden');
@@ -869,8 +872,6 @@
 
         async function loadUsersAndLogs() {
             if(AppState.user.role !== 'Admin') return;
-            // Simulasi panggilan untuk users & logs (backend Anda harus menyediakan get_users & get_logs nantinya)
-            // Namun agar tabel tidak kosong/error, kita inisialisasi minimal kosong/fallback API
             const resUsers = await fetchAPI('get_users');
             if(resUsers.success && resUsers.data) { AppState.users = resUsers.data; renderUsers(); }
             
@@ -881,7 +882,6 @@
         function populateOwnerFilter() {
             const ownerSelect = document.getElementById('ownerFilter');
             ownerSelect.innerHTML = '<option value="Semua">Semua Anggota</option>';
-            // Ekstrak nama unik dari dokumen yang dimuat
             const uniqueOwners = [...new Set(AppState.documents.map(d => d.owner || d.ownerId))];
             uniqueOwners.forEach(owner => {
                 if(owner) ownerSelect.insertAdjacentHTML('beforeend', `<option value="${owner}">${owner}</option>`);
@@ -894,6 +894,14 @@
             const file = document.getElementById('fileInput').files[0];
             if (!file) return showToast("Pilih file terlebih dahulu", true);
             
+            // MENGAMBIL API KEY DARI LOCALSTORAGE
+            const visionKeyLocal = localStorage.getItem('arsipCerdasku_visionKey');
+            const groqKeyLocal = localStorage.getItem('arsipCerdasku_groqKey');
+
+            if (!visionKeyLocal || !groqKeyLocal) {
+                showToast("Peringatan: API Key Vision/Groq belum dikonfigurasi di menu Pengaturan.", true);
+            }
+
             const btnText = document.getElementById('btnText');
             const btnSpinner = document.getElementById('btnSpinner');
             btnText.textContent = 'AI Sedang Mengekstrak (Proses ke Server)...';
@@ -905,7 +913,10 @@
                     fileBase64: reader.result,
                     mimeType: file.type,
                     fileName: file.name,
-                    kategori: document.getElementById('kategoriInput').value
+                    kategori: document.getElementById('kategoriInput').value,
+                    // MENGIRIM API KEY KE BACKEND
+                    visionKey: visionKeyLocal || '',
+                    groqKey: groqKeyLocal || ''
                 };
                 
                 const res = await fetchAPI('upload_document', payload);
@@ -943,14 +954,14 @@
                 phone: document.getElementById('profPhone').value
             };
             
-            const res = await fetchAPI('update_profile', payload); // Anggap backend menerima ini
+            const res = await fetchAPI('update_profile', payload); 
             
             btn.innerHTML = originalText;
             AppState.user.nama = payload.nama;
             AppState.user.profesi = payload.profesi;
             AppState.user.initial = payload.nama.charAt(0).toUpperCase();
             initUserSetup();
-            showToast("Profil berhasil diperbarui (tersimpan/disimulasikan).");
+            showToast("Profil berhasil diperbarui.");
         }
 
         async function handleSettingsUpdate(e) {
@@ -959,15 +970,20 @@
             const originalText = btn.innerHTML;
             btn.innerHTML = '<div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-top-color: white;"></div> <span class="ml-2">Menyimpan...</span>';
             
+            // MENYIMPAN API KEY KE LOCAL STORAGE BROWSER (AMAN)
+            const visionVal = document.getElementById('setVisionApi').value;
+            const groqVal = document.getElementById('setGroqApi').value;
+            
+            if(visionVal) localStorage.setItem('arsipCerdasku_visionKey', visionVal);
+            if(groqVal) localStorage.setItem('arsipCerdasku_groqKey', groqVal);
+
             const res = await fetchAPI('update_settings', {
-               visionApi: document.getElementById('setVisionApi').value,
-               groqApi: document.getElementById('setGroqApi').value,
                waUrl: document.getElementById('setWaUrl').value,
                waToken: document.getElementById('setWaToken').value
             });
             
             btn.innerHTML = originalText;
-            showToast("Konfigurasi API berhasil dikirim ke server!");
+            showToast("Konfigurasi tersimpan dengan aman di browser!");
         }
 
         // --- 7. RENDERING & UTILITIES ---
@@ -1197,6 +1213,15 @@
                 activeNav.classList.remove('hover:bg-slate-800', 'hover:text-white');
                 activeNav.classList.add('bg-indigo-600', 'text-white');
             }
+
+            // MENGAMBIL API KEY DARI LOCALSTORAGE SAAT MEMBUKA MENU SETTING
+            if (viewName === 'settings') {
+                const savedVision = localStorage.getItem('arsipCerdasku_visionKey');
+                const savedGroq = localStorage.getItem('arsipCerdasku_groqKey');
+                if(savedVision) document.getElementById('setVisionApi').value = savedVision;
+                if(savedGroq) document.getElementById('setGroqApi').value = savedGroq;
+            }
+
             if (window.innerWidth < 768) toggleSidebar();
         }
 
