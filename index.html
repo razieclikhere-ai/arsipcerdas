@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arsip Cerdasku</title>
+    <title>Arsip Cerdasku - Free AI</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -241,6 +241,10 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
+                    <button onclick="triggerSyncDrive()" class="hidden sm:flex items-center space-x-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-1.5 rounded-lg text-sm font-medium transition shadow-sm">
+                        <i class="ph ph-arrows-clockwise text-lg"></i>
+                        <span>Sync Drive</span>
+                    </button>
                     <button onclick="triggerBackup()" class="hidden sm:flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">
                         <i class="ph ph-hard-drives text-lg"></i>
                         <span>Backup Lokal</span>
@@ -285,7 +289,7 @@
                                 <div class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i class="ph ph-robot text-2xl"></i></div>
                                 <div>
                                     <p class="text-sm text-slate-500 font-medium">AI Engine</p>
-                                    <p class="text-2xl font-bold text-slate-800">Online</p>
+                                    <p class="text-2xl font-bold text-slate-800">Online (Free)</p>
                                 </div>
                             </div>
                         </div>
@@ -336,7 +340,13 @@
 
                     <!-- 3. USERS VIEW (ADMIN ONLY) -->
                     <div id="view-users" class="view-section hidden">
-                        <h1 class="text-2xl font-bold text-slate-800 mb-6">Manajemen Anggota Keluarga</h1>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                            <h1 class="text-2xl font-bold text-slate-800">Manajemen Anggota Keluarga</h1>
+                            <button onclick="toggleAddUserModal()" class="mt-3 sm:mt-0 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition flex items-center space-x-2">
+                                <i class="ph ph-user-plus text-lg"></i>
+                                <span>Tambah Anggota</span>
+                            </button>
+                        </div>
                         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                             <table class="w-full text-left text-sm">
                                 <thead class="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
@@ -431,15 +441,10 @@
                                 <p class="text-sm text-slate-500 mt-1">Kelola token akses pihak ketiga untuk fungsionalitas AI. Data ini disimpan aman secara lokal di perangkat Anda.</p>
                             </div>
                             <form id="settingsForm" onsubmit="handleSettingsUpdate(event)" class="p-6 sm:p-8 space-y-6">
-                                <!-- Google Cloud Vision -->
-                                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-google-logo mr-2 text-blue-500 text-lg"></i> Google Cloud Vision API</h3>
-                                    <input type="password" id="setVisionApi" placeholder="AIzaSy..." class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
-                                </div>
                                 
                                 <!-- Groq API -->
                                 <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-brain mr-2 text-purple-500 text-lg"></i> Groq AI API Key</h3>
+                                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-brain mr-2 text-purple-500 text-lg"></i> Groq AI API Key (Gratis)</h3>
                                     <input type="password" id="setGroqApi" placeholder="gsk_..." class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
                                 </div>
                                 
@@ -478,16 +483,35 @@
     <div id="docDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-2 sm:p-4 transition-opacity">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-5xl overflow-hidden flex flex-col h-[95vh] sm:max-h-[90vh]">
             <div class="p-4 sm:p-5 border-b border-slate-100 flex justify-between items-start bg-slate-50 flex-shrink-0">
-                <div class="flex items-center space-x-3">
-                    <div id="detailIcon" class="p-2 rounded-lg bg-indigo-100 text-indigo-600"><i class="ph ph-file-text text-2xl"></i></div>
-                    <div>
-                        <h2 id="detailTitle" class="text-lg font-bold text-slate-800">Nama Dokumen</h2>
-                        <p id="detailCategory" class="text-xs font-medium text-slate-500 uppercase tracking-wider mt-0.5">Kategori</p>
+                <div class="flex items-center space-x-3 w-full pr-4">
+                    <div id="detailIcon" class="p-2 rounded-lg bg-indigo-100 text-indigo-600 flex-shrink-0"><i class="ph ph-file-text text-2xl"></i></div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center space-x-2">
+                            <h2 id="detailTitle" class="text-lg font-bold text-slate-800 truncate">Nama Dokumen</h2>
+                            <input type="text" id="editDetailTitle" class="hidden w-full border border-slate-300 rounded px-2 py-1 text-sm font-bold focus:ring-2 focus:ring-indigo-600 outline-none">
+                            <button id="btnCopyTitle" onclick="copyToClipboard(document.getElementById('detailTitle').textContent, this)" class="text-slate-400 hover:text-indigo-600 transition" title="Salin Judul"><i class="ph ph-copy"></i></button>
+                        </div>
+                        <div class="flex items-center space-x-2 mt-0.5">
+                            <p id="detailCategory" class="text-xs font-medium text-slate-500 uppercase tracking-wider">Kategori</p>
+                            <select id="editDetailCategory" class="hidden border border-slate-300 rounded px-2 py-1 text-xs focus:ring-2 focus:ring-indigo-600 outline-none">
+                                <option value="Identitas">Identitas</option>
+                                <option value="Pendidikan">Pendidikan</option>
+                                <option value="Profesi">Profesi</option>
+                                <option value="Keuangan">Keuangan</option>
+                                <option value="Aset">Aset</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <button onclick="toggleDocDetailModal()" class="text-slate-400 hover:text-red-500 bg-white rounded-full p-1 shadow-sm transition">
-                    <i class="ph ph-x text-xl"></i>
-                </button>
+                <div class="flex items-center space-x-2 flex-shrink-0">
+                    <button id="btnEditDoc" onclick="toggleEditDocMode(true)" class="text-indigo-600 hover:bg-indigo-50 border border-indigo-100 bg-white rounded-lg px-3 py-1.5 text-sm font-medium shadow-sm transition flex items-center hidden">
+                        <i class="ph ph-pencil-simple mr-1"></i> Edit
+                    </button>
+                    <button onclick="toggleDocDetailModal()" class="text-slate-400 hover:text-red-500 bg-white rounded-full p-1.5 shadow-sm transition border border-slate-100">
+                        <i class="ph ph-x text-xl"></i>
+                    </button>
+                </div>
             </div>
             
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden bg-white">
@@ -509,13 +533,21 @@
                     <!-- Date Info -->
                     <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-calendar text-indigo-500 mr-2"></i> Masa Berlaku</h3>
                     <div class="grid grid-cols-2 gap-3 mb-6">
-                        <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                        <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 relative group">
                             <span class="text-[10px] uppercase font-bold text-indigo-500 tracking-wider">Tgl Keluar / Terbit</span>
-                            <p id="detailTglTerbit" class="text-sm font-semibold text-indigo-800 mt-0.5">-</p>
+                            <div class="flex justify-between items-center mt-0.5">
+                                <p id="detailTglTerbit" class="text-sm font-semibold text-indigo-800">-</p>
+                                <input type="text" id="editDetailTglTerbit" class="hidden w-full border border-indigo-200 rounded px-2 py-1 text-xs focus:ring-2 focus:ring-indigo-600 outline-none bg-white">
+                                <button id="btnCopyTglTerbit" onclick="copyToClipboard(document.getElementById('detailTglTerbit').textContent, this)" class="text-indigo-400 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition absolute right-2 top-2" title="Salin Tanggal"><i class="ph ph-copy"></i></button>
+                            </div>
                         </div>
-                        <div class="bg-orange-50 p-3 rounded-xl border border-orange-100">
+                        <div class="bg-orange-50 p-3 rounded-xl border border-orange-100 relative group">
                             <span class="text-[10px] uppercase font-bold text-orange-500 tracking-wider">Kadaluwarsa</span>
-                            <p id="detailTglKadaluwarsa" class="text-sm font-semibold text-orange-800 mt-0.5">-</p>
+                            <div class="flex justify-between items-center mt-0.5">
+                                <p id="detailTglKadaluwarsa" class="text-sm font-semibold text-orange-800">-</p>
+                                <input type="text" id="editDetailTglKadaluwarsa" class="hidden w-full border border-orange-200 rounded px-2 py-1 text-xs focus:ring-2 focus:ring-indigo-600 outline-none bg-white">
+                                <button id="btnCopyTglKadaluwarsa" onclick="copyToClipboard(document.getElementById('detailTglKadaluwarsa').textContent, this)" class="text-orange-400 hover:text-orange-600 opacity-0 group-hover:opacity-100 transition absolute right-2 top-2" title="Salin Tanggal"><i class="ph ph-copy"></i></button>
+                            </div>
                         </div>
                     </div>
 
@@ -545,11 +577,43 @@
                                 <span>Google Drive</span>
                             </a>
                         </div>
+
+                        <!-- PANEL BAGIKAN (KHUSUS ADMIN/ISTRI) -->
+                        <div id="adminShareSection" class="mt-4 pt-4 border-t border-slate-200 hidden">
+                            <h4 class="text-xs font-bold text-slate-700 mb-2">Beri Akses Sementara ke Anak:</h4>
+                            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                                <select id="shareTargetUser" class="flex-1 border border-slate-300 rounded-lg text-sm p-2 outline-none focus:ring-2 focus:ring-indigo-600">
+                                    <option value="">Pilih Anak...</option>
+                                </select>
+                                <select id="shareExpiry" class="w-full sm:w-32 border border-slate-300 rounded-lg text-sm p-2 outline-none focus:ring-2 focus:ring-indigo-600">
+                                    <option value="1">1 Jam</option>
+                                    <option value="24">24 Jam</option>
+                                    <option value="168">7 Hari</option>
+                                    <option value="999999">Selamanya</option>
+                                </select>
+                                <button id="btnShareDoc" onclick="handleShareDoc()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-emerald-700 shadow-sm transition whitespace-nowrap">Bagikan</button>
+                            </div>
+                        </div>
+
+                        <!-- PANEL HAPUS (KHUSUS PEMILIK/ADMIN) -->
+                        <div id="adminDeleteSection" class="mt-2 pt-4 border-t border-slate-200 hidden">
+                            <button onclick="handleDeleteDoc()" class="w-full bg-red-50 text-red-600 border border-red-200 px-3 py-2.5 rounded-lg text-sm font-bold hover:bg-red-100 flex justify-center items-center transition">
+                                <i class="ph ph-trash mr-2 text-lg"></i> Hapus Dokumen Permanen
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end flex-shrink-0">
-                <button onclick="toggleDocDetailModal()" class="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition shadow-sm">Tutup Preview</button>
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-between flex-shrink-0 items-center">
+                <div id="editDocActions" class="hidden space-x-2">
+                    <button onclick="saveDocumentChanges()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition shadow-sm flex items-center">
+                        <i class="ph ph-floppy-disk mr-2 text-lg"></i> Simpan
+                    </button>
+                    <button onclick="toggleEditDocMode(false)" class="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition shadow-sm">
+                        Batal
+                    </button>
+                </div>
+                <button id="btnCloseDocDetail" onclick="toggleDocDetailModal()" class="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition shadow-sm ml-auto">Tutup Preview</button>
             </div>
         </div>
     </div>
@@ -603,11 +667,78 @@
                             <option value="Lainnya">Lainnya</option>
                         </select>
                     </div>
+                    <!-- KODE BARU: Pilih Pemilik Dokumen (Khusus Admin/Istri) -->
+                    <div id="uploadOwnerContainer" class="hidden">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Pemilik Dokumen (Upload untuk siapa?)</label>
+                        <select id="uploadOwnerInput" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                            <option value="">-- Milik Saya Sendiri --</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="mt-6">
                     <button type="submit" id="btnSubmit" class="w-full bg-indigo-600 text-white font-medium py-2.5 rounded-lg hover:bg-indigo-700 transition flex justify-center items-center">
                         <span id="btnText">Proses dengan AI & Unggah</span>
                         <div id="btnSpinner" class="loader hidden" style="width: 20px; height: 20px; border-width: 2px; margin-left: 10px;"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Tambah Anggota -->
+    <div id="addUserModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h2 class="text-lg font-semibold text-slate-800 flex items-center space-x-2">
+                    <i class="ph ph-user-plus text-indigo-600"></i>
+                    <span>Tambah Anggota Baru</span>
+                </h2>
+                <button onclick="toggleAddUserModal()" class="text-slate-400 hover:text-red-500 transition bg-white rounded-full p-1 shadow-sm">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="addUserForm" onsubmit="handleAddUser(event)" class="p-5 overflow-y-auto space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
+                    <input type="text" id="addUserName" required placeholder="Cth: Ibu Siti" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Peran di Keluarga</label>
+                        <select id="addUserRole" required class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                            <option value="Istri">Istri</option>
+                            <option value="Anak">Anak</option>
+                            <option value="Kerabat">Kerabat</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Profesi</label>
+                        <input type="text" id="addUserProfesi" required placeholder="Cth: Ibu Rumah Tangga" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                    <input type="email" id="addUserEmail" required placeholder="email@keluarga.com" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Kata Sandi</label>
+                        <input type="password" id="addUserPassword" required placeholder="Minimal 6 karakter" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">No. HP (WA)</label>
+                        <input type="tel" id="addUserPhone" required placeholder="0812..." class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button type="submit" id="btnAddUserSubmit" class="w-full bg-indigo-600 text-white font-medium py-2.5 rounded-lg hover:bg-indigo-700 transition flex justify-center items-center">
+                        <span id="btnAddUserText">Tambah Anggota</span>
+                        <div id="btnAddUserSpinner" class="loader hidden" style="width: 20px; height: 20px; border-width: 2px; margin-left: 10px;"></div>
                     </button>
                 </div>
             </form>
@@ -635,7 +766,9 @@
             logs: [],      
             currentCategory: 'Semua',
             currentOwner: 'Semua',
-            searchQuery: ''
+            searchQuery: '',
+            currentDetailDocId: null, // Tambahan untuk melacak ID dokumen yang sedang dibuka
+            isEditingDoc: false
         };
 
         // --- 2. CORE FETCH API WRAPPER ---
@@ -663,30 +796,33 @@
         document.addEventListener('DOMContentLoaded', () => {
             checkAuthStatus();
 
-            document.getElementById('fileInput').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    if (file.size > 5 * 1024 * 1024) { 
-                        showToast("Ukuran file melebihi batas 5MB.", true);
-                        resetFileInput();
-                        return;
+            const fileInputElement = document.getElementById('fileInput');
+            if (fileInputElement) {
+                fileInputElement.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        if (file.size > 5 * 1024 * 1024) { 
+                            showToast("Ukuran file melebihi batas 5MB.", true);
+                            resetFileInput();
+                            return;
+                        }
+                        
+                        document.getElementById('fileNameDisplay').textContent = file.name;
+                        document.getElementById('uploadPreviewContainer').classList.remove('hidden');
+                        const previewImg = document.getElementById('uploadImagePreview');
+                        
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = ev => previewImg.src = ev.target.result;
+                            reader.readAsDataURL(file);
+                            previewImg.classList.remove('p-4');
+                        } else {
+                            previewImg.src = 'https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg';
+                            previewImg.classList.add('p-4');
+                        }
                     }
-                    
-                    document.getElementById('fileNameDisplay').textContent = file.name;
-                    document.getElementById('uploadPreviewContainer').classList.remove('hidden');
-                    const previewImg = document.getElementById('uploadImagePreview');
-                    
-                    if (file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = e => previewImg.src = e.target.result;
-                        reader.readAsDataURL(file);
-                        previewImg.classList.remove('p-4');
-                    } else {
-                        previewImg.src = 'https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg';
-                        previewImg.classList.add('p-4');
-                    }
-                }
-            });
+                });
+            }
         });
 
         // --- 4. AUTHENTICATION (Login & Register) ---
@@ -719,7 +855,7 @@
         async function handleRegister(e) {
             e.preventDefault();
             const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value; // Mengambil password
+            const password = document.getElementById('regPassword').value; 
             const boundDeviceEmail = localStorage.getItem('arsipCerdasku_deviceBoundEmail');
             
             if (boundDeviceEmail && boundDeviceEmail !== email) {
@@ -734,7 +870,7 @@
             const payload = {
                 name: document.getElementById('regName').value,
                 email: email,
-                password: password, // Mengirim password ke API Backend jika dibutuhkan
+                password: password,
                 profesi: document.getElementById('regProfesi').value,
                 phone: document.getElementById('regPhone').value
             };
@@ -761,7 +897,6 @@
             }
 
             if (autoLoginEmail) {
-                // Auto login (asumsi password sudah diingat sistem/tidak wajib jika email auto-login)
                 const res = await fetchAPI('check_auth', { email: autoLoginEmail });
                 if(res.success) {
                     processLoginSuccess(res, autoLoginEmail);
@@ -774,7 +909,7 @@
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value; // MENGAMBIL PASSWORD
+            const password = document.getElementById('loginPassword').value; 
             const boundDeviceEmail = localStorage.getItem('arsipCerdasku_deviceBoundEmail');
             
             if (boundDeviceEmail && boundDeviceEmail !== email) {
@@ -787,7 +922,6 @@
             btnText.textContent = 'Memverifikasi...';
             btnSpinner.classList.remove('hidden');
 
-            // MENGIRIM EMAIL DAN PASSWORD KE BACKEND
             const res = await fetchAPI('check_auth', { email: email, password: password });
 
             btnText.textContent = 'Masuk ke Brankas';
@@ -831,17 +965,24 @@
             document.getElementById('userInitial').textContent = AppState.user.initial;
             document.getElementById('welcomeName').textContent = AppState.user.nama;
 
-            if (AppState.user.role === 'Admin') {
+            const isAdmin = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga';
+            const isIstri = AppState.user.role === 'Istri';
+
+            if (isAdmin || isIstri) {
                 document.getElementById('adminMenuTitle').classList.remove('hidden');
                 document.getElementById('nav-users').classList.remove('hidden');
                 document.getElementById('nav-users').classList.add('flex');
+            } else {
+                document.getElementById('adminMenuTitle').classList.add('hidden');
+                document.getElementById('nav-users').classList.add('hidden');
+            }
+
+            if (isAdmin) {
                 document.getElementById('nav-audit').classList.remove('hidden');
                 document.getElementById('nav-audit').classList.add('flex');
                 document.getElementById('nav-settings').classList.remove('hidden');
                 document.getElementById('nav-settings').classList.add('flex');
             } else {
-                document.getElementById('adminMenuTitle').classList.add('hidden');
-                document.getElementById('nav-users').classList.add('hidden');
                 document.getElementById('nav-audit').classList.add('hidden');
                 document.getElementById('nav-settings').classList.add('hidden');
             }
@@ -871,12 +1012,18 @@
         }
 
         async function loadUsersAndLogs() {
-            if(AppState.user.role !== 'Admin') return;
-            const resUsers = await fetchAPI('get_users');
-            if(resUsers.success && resUsers.data) { AppState.users = resUsers.data; renderUsers(); }
+            const isAdmin = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga';
+            const isIstri = AppState.user.role === 'Istri';
+
+            if(isAdmin || isIstri) {
+                const resUsers = await fetchAPI('get_users');
+                if(resUsers.success && resUsers.data) { AppState.users = resUsers.data; renderUsers(); }
+            }
             
-            const resLogs = await fetchAPI('get_logs');
-            if(resLogs.success && resLogs.data) { AppState.logs = resLogs.data; renderLogs(); }
+            if(isAdmin) {
+                const resLogs = await fetchAPI('get_logs');
+                if(resLogs.success && resLogs.data) { AppState.logs = resLogs.data; renderLogs(); }
+            }
         }
 
         function populateOwnerFilter() {
@@ -894,12 +1041,11 @@
             const file = document.getElementById('fileInput').files[0];
             if (!file) return showToast("Pilih file terlebih dahulu", true);
             
-            // MENGAMBIL API KEY DARI LOCALSTORAGE
-            const visionKeyLocal = localStorage.getItem('arsipCerdasku_visionKey');
+            // HANYA MENGAMBIL API KEY GROQ DARI LOCALSTORAGE
             const groqKeyLocal = localStorage.getItem('arsipCerdasku_groqKey');
 
-            if (!visionKeyLocal || !groqKeyLocal) {
-                showToast("Peringatan: API Key Vision/Groq belum dikonfigurasi di menu Pengaturan.", true);
+            if (!groqKeyLocal) {
+                showToast("Peringatan: API Key Groq AI (Gratis) belum dikonfigurasi di menu Pengaturan.", true);
             }
 
             const btnText = document.getElementById('btnText');
@@ -914,9 +1060,10 @@
                     mimeType: file.type,
                     fileName: file.name,
                     kategori: document.getElementById('kategoriInput').value,
-                    // MENGIRIM API KEY KE BACKEND
-                    visionKey: visionKeyLocal || '',
-                    groqKey: groqKeyLocal || ''
+                    // HANYA MENGIRIM KUNCI GROQ KE BACKEND
+                    groqKey: groqKeyLocal || '',
+                    // KODE BARU: Mengirim data pemilik target (Jika ada)
+                    targetOwner: document.getElementById('uploadOwnerInput') ? document.getElementById('uploadOwnerInput').value : ''
                 };
                 
                 const res = await fetchAPI('upload_document', payload);
@@ -940,6 +1087,22 @@
             const res = await fetchAPI('trigger_backup');
             if(res.success) showToast(res.message);
             else showToast(res.message, true);
+        }
+
+        async function triggerSyncDrive() {
+            const groqKeyLocal = localStorage.getItem('arsipCerdasku_groqKey');
+            if (!groqKeyLocal) {
+                return showToast("Peringatan: API Key Groq AI (Gratis) belum dikonfigurasi di menu Pengaturan.", true);
+            }
+            showToast("Mencari file baru di G-Drive & Menjalankan AI...", false);
+            
+            const res = await fetchAPI('sync_drive', { groqKey: groqKeyLocal });
+            if (res.success) {
+                showToast(res.message);
+                loadDocuments(); // Refresh tampilan untuk memunculkan dokumen baru
+            } else {
+                showToast(res.message, true);
+            }
         }
 
         async function handleProfileUpdate(e) {
@@ -970,11 +1133,9 @@
             const originalText = btn.innerHTML;
             btn.innerHTML = '<div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-top-color: white;"></div> <span class="ml-2">Menyimpan...</span>';
             
-            // MENYIMPAN API KEY KE LOCAL STORAGE BROWSER (AMAN)
-            const visionVal = document.getElementById('setVisionApi').value;
+            // HANYA MENYIMPAN KUNCI GROQ
             const groqVal = document.getElementById('setGroqApi').value;
             
-            if(visionVal) localStorage.setItem('arsipCerdasku_visionKey', visionVal);
             if(groqVal) localStorage.setItem('arsipCerdasku_groqKey', groqVal);
 
             const res = await fetchAPI('update_settings', {
@@ -1055,9 +1216,13 @@
             const firstVal = firstKey ? doc.dataPenting[firstKey] : null;
             const ownerDisplay = doc.owner || doc.ownerId || 'Umum';
             
+            // Tambahkan label jika ini adalah dokumen hasil berbagi (Share)
+            const shareBadge = doc.isShared ? `<span class="absolute top-2 right-2 bg-emerald-100 text-emerald-700 border border-emerald-200 text-[9px] font-bold px-2 py-0.5 rounded-full z-10 flex items-center shadow-sm"><i class="ph ph-share-network mr-1"></i>Akses Pinjaman</span>` : '';
+            
             return `
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition flex flex-col h-full cursor-pointer group" onclick="openDocumentDetail('${doc.docId}')">
-                    <div class="p-4 flex items-start space-x-3 border-b border-slate-100 bg-gradient-to-br from-white to-slate-50">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition flex flex-col h-full cursor-pointer group relative" onclick="openDocumentDetail('${doc.docId}')">
+                    ${shareBadge}
+                    <div class="p-4 flex items-start space-x-3 border-b border-slate-100 bg-gradient-to-br from-white to-slate-50 pt-6">
                         <div class="p-2.5 rounded-lg shadow-inner ${iconClass}">
                             <i class="ph ${iconClass.split(' ')[0]} text-2xl"></i>
                         </div>
@@ -1093,6 +1258,8 @@
             const doc = AppState.documents.find(d => d.docId === docId);
             if(!doc) return;
 
+            AppState.currentDetailDocId = docId;
+
             document.getElementById('detailTitle').textContent = doc.namaFile;
             document.getElementById('detailCategory').textContent = doc.kategori;
             document.getElementById('detailViewLink').href = doc.link || '#';
@@ -1103,40 +1270,257 @@
             const img = document.getElementById('detailPreviewImg');
             const placeholder = document.getElementById('detailPreviewPlaceholder');
             
+            // Kembalikan ke mode Tampil (Bukan Mode Edit) saat dokumen baru dibuka
+            toggleEditDocMode(false, true);
+
+            document.getElementById('detailTitle').textContent = doc.namaFile;
+            document.getElementById('editDetailTitle').value = doc.namaFile;
+            document.getElementById('detailCategory').textContent = doc.kategori;
+            document.getElementById('editDetailCategory').value = doc.kategori;
+            document.getElementById('detailViewLink').href = doc.link || '#';
+            document.getElementById('detailTglTerbit').textContent = doc.tglTerbit || '-';
+            document.getElementById('editDetailTglTerbit').value = doc.tglTerbit || '';
+            document.getElementById('detailTglKadaluwarsa').textContent = doc.tglKadaluwarsa || '-';
+            document.getElementById('editDetailTglKadaluwarsa').value = doc.tglKadaluwarsa || '';
+
             iframe.classList.add('hidden'); img.classList.add('hidden'); placeholder.classList.remove('hidden');
 
             if (doc.link && doc.link !== '#') {
                 placeholder.classList.add('hidden');
-                if (doc.isImage || doc.link.match(/\.(jpeg|jpg|gif|png)$/i)) {
-                    img.src = doc.link; img.classList.remove('hidden');
+                
+                let embedUrl = doc.link;
+                // Ubah link dari /view menjadi /preview agar diizinkan tayang oleh Google Drive
+                if(embedUrl.includes('/view')) {
+                    embedUrl = embedUrl.replace('/view', '/preview');
+                }
+
+                // Gunakan iframe untuk semua file dari Google Drive (PDF & Gambar) karena lebih aman & stabil
+                if (embedUrl.includes('drive.google.com')) {
+                    iframe.src = embedUrl; 
+                    iframe.classList.remove('hidden');
+                } else if (doc.isImage || embedUrl.match(/\.(jpeg|jpg|gif|png)$/i)) {
+                    img.src = embedUrl; img.classList.remove('hidden');
                 } else {
-                    iframe.src = doc.link; iframe.classList.remove('hidden');
+                    iframe.src = embedUrl; 
+                    iframe.classList.remove('hidden');
                 }
             }
 
             const iconClass = getIconForCategory(doc.kategori);
-            document.getElementById('detailIcon').className = `p-2.5 rounded-xl shadow-inner ${iconClass}`;
+            document.getElementById('detailIcon').className = `p-2 rounded-lg shadow-inner flex-shrink-0 ${iconClass}`;
             document.getElementById('detailIcon').innerHTML = `<i class="ph ${iconClass.split(' ')[0]} text-2xl"></i>`;
 
-            const grid = document.getElementById('detailDataGrid');
-            grid.innerHTML = '';
-            if (doc.dataPenting) {
-                for (const [key, value] of Object.entries(doc.dataPenting)) {
-                    grid.insertAdjacentHTML('beforeend', `
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex justify-between items-center">
-                            <div class="flex flex-col min-w-0 pr-2">
-                                <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">${key.replace(/_/g, ' ')}</span>
-                                <span class="text-sm font-semibold text-slate-700 truncate">${value}</span>
-                            </div>
-                            <button onclick="copyToClipboard('${value}', this)" class="flex-shrink-0 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition"><i class="ph ph-copy text-lg"></i></button>
-                        </div>
-                    `);
-                }
-            }
+            renderDataPentingGrid(doc.dataPenting, false);
 
             const warn = document.getElementById('detailWarning');
             (doc.tglKadaluwarsa && doc.tglKadaluwarsa !== '-' && doc.tglKadaluwarsa !== 'Seumur Hidup') ? warn.classList.remove('hidden') : warn.classList.add('hidden');
+            
+            // LOGIKA AKSES HAPUS & BAGIKAN
+            const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
+            const isOwner = doc.ownerId === AppState.user.userId || doc.ownerId === AppState.user.email;
+
+            // Logika Tombol Hapus & Tombol Edit
+            if (isAdminOrIstri || isOwner) {
+                document.getElementById('adminDeleteSection').classList.remove('hidden');
+                document.getElementById('btnEditDoc').classList.remove('hidden');
+            } else {
+                document.getElementById('adminDeleteSection').classList.add('hidden');
+                document.getElementById('btnEditDoc').classList.add('hidden');
+            }
+
+            // Logika Tombol Bagikan (Hanya Admin/Istri)
+            if (isAdminOrIstri) {
+                document.getElementById('adminShareSection').classList.remove('hidden');
+                
+                // Isi daftar Anak/Anggota
+                const selectUser = document.getElementById('shareTargetUser');
+                selectUser.innerHTML = '<option value="">Pilih Anak/Anggota...</option>';
+                AppState.users.forEach(u => {
+                    if (u.role === 'Anak' || u.role === 'Anggota' || u.role === 'User') {
+                        selectUser.insertAdjacentHTML('beforeend', `<option value="${u.email}">${u.nama} (${u.role})</option>`);
+                    }
+                });
+            } else {
+                document.getElementById('adminShareSection').classList.add('hidden');
+            }
+
+            document.getElementById('docDetailModal').classList.remove('hidden');
+        }
+
+        function renderDataPentingGrid(dataPenting, isEditMode) {
+            const grid = document.getElementById('detailDataGrid');
+            grid.innerHTML = '';
+            
+            if (!dataPenting || Object.keys(dataPenting).length === 0) {
+                if(isEditMode) {
+                   grid.insertAdjacentHTML('beforeend', `<button type="button" onclick="addDataPentingRow('', '', true)" class="w-full py-2 border-2 border-dashed border-indigo-200 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50 transition">+ Tambah Data</button>`);
+                } else {
+                   grid.innerHTML = '<p class="text-sm text-slate-400 italic">Tidak ada data ekstraksi.</p>';
+                }
+                return;
+            }
+
+            for (const [key, value] of Object.entries(dataPenting)) {
+                addDataPentingRow(key, value, isEditMode);
+            }
+
+            if(isEditMode) {
+                grid.insertAdjacentHTML('beforeend', `<button type="button" onclick="addDataPentingRow('', '', true)" class="w-full py-2 border-2 border-dashed border-indigo-200 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50 transition mt-2">+ Tambah Data</button>`);
+            }
+        }
+
+        function addDataPentingRow(key, value, isEditMode = AppState.isEditingDoc) {
+            const grid = document.getElementById('detailDataGrid');
+            if (isEditMode) {
+                const addBtn = grid.querySelector('button');
+                if(addBtn) addBtn.remove();
+
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="data-penting-row flex items-center space-x-2 mb-2">
+                        <input type="text" placeholder="Kunci (cth: NIK)" value="${key}" class="dp-key w-1/3 border border-slate-300 rounded px-2 py-1.5 text-xs font-bold text-slate-600 focus:ring-2 focus:ring-indigo-600 outline-none">
+                        <input type="text" placeholder="Nilai" value="${value}" class="dp-val flex-1 border border-slate-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-indigo-600 outline-none">
+                        <button onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-600 p-1.5 bg-red-50 rounded transition" title="Hapus Baris"><i class="ph ph-trash text-lg"></i></button>
+                    </div>
+                `);
+
+                grid.insertAdjacentHTML('beforeend', `<button type="button" onclick="addDataPentingRow('', '', true)" class="w-full py-2 border-2 border-dashed border-indigo-200 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50 transition mt-2">+ Tambah Data</button>`);
+            } else {
+                grid.insertAdjacentHTML('beforeend', `
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex justify-between items-center group relative">
+                        <div class="flex flex-col min-w-0 pr-2 flex-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider truncate">${key.replace(/_/g, ' ')}</span>
+                                <button onclick="copyToClipboard('${key}', this)" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-indigo-600 transition" title="Salin Kunci"><i class="ph ph-copy"></i></button>
+                            </div>
+                            <span class="text-sm font-semibold text-slate-700 break-words">${value}</span>
+                        </div>
+                        <button onclick="copyToClipboard('${value}', this)" class="flex-shrink-0 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition self-end" title="Salin Nilai"><i class="ph ph-copy text-lg"></i></button>
+                    </div>
+                `);
+            }
+        }
+
+        function toggleEditDocMode(enable, isInit = false) {
+            AppState.isEditingDoc = enable;
+            const doc = AppState.documents.find(d => d.docId === AppState.currentDetailDocId);
+            
+            const els = {
+                view: ['detailTitle', 'btnCopyTitle', 'detailCategory', 'detailTglTerbit', 'btnCopyTglTerbit', 'detailTglKadaluwarsa', 'btnCopyTglKadaluwarsa', 'btnCloseDocDetail', 'btnEditDoc', 'adminShareSection', 'adminDeleteSection'],
+                edit: ['editDetailTitle', 'editDetailCategory', 'editDetailTglTerbit', 'editDetailTglKadaluwarsa', 'editDocActions']
+            };
+
+            if (enable) {
+                els.view.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); });
+                els.edit.forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('hidden'); });
+                renderDataPentingGrid(doc ? doc.dataPenting : {}, true);
+            } else {
+                els.view.forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('hidden'); });
+                els.edit.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); });
+                
+                if (doc && !isInit) {
+                    const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
+                    const isOwner = doc.ownerId === AppState.user.userId || doc.ownerId === AppState.user.email;
+                    if (!(isAdminOrIstri || isOwner)) {
+                        document.getElementById('adminDeleteSection').classList.add('hidden');
+                        document.getElementById('btnEditDoc').classList.add('hidden');
+                    }
+                    if (!isAdminOrIstri) {
+                        document.getElementById('adminShareSection').classList.add('hidden');
+                    }
+                }
+                
+                if(doc && !isInit) renderDataPentingGrid(doc.dataPenting, false);
+            }
+        }
+
+        async function saveDocumentChanges() {
+            const btn = document.querySelector('#editDocActions button');
+            const origHtml = btn.innerHTML;
+            btn.innerHTML = '<div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-top-color: white;"></div> <span class="ml-2">Menyimpan...</span>';
+            
+            const newDataPenting = {};
+            document.querySelectorAll('.data-penting-row').forEach(row => {
+                const key = row.querySelector('.dp-key').value.trim();
+                const val = row.querySelector('.dp-val').value.trim();
+                if(key) newDataPenting[key] = val;
+            });
+
+            const payload = {
+                docId: AppState.currentDetailDocId,
+                namaFile: document.getElementById('editDetailTitle').value,
+                kategori: document.getElementById('editDetailCategory').value,
+                tglTerbit: document.getElementById('editDetailTglTerbit').value,
+                tglKadaluwarsa: document.getElementById('editDetailTglKadaluwarsa').value,
+                dataPenting: newDataPenting
+            };
+
+            const res = await fetchAPI('update_document', payload);
+            btn.innerHTML = origHtml;
+
+            if (res.success) {
+                showToast("Perubahan berhasil disimpan!");
+                
+                const docIndex = AppState.documents.findIndex(d => d.docId === AppState.currentDetailDocId);
+                if(docIndex > -1) {
+                    AppState.documents[docIndex].namaFile = payload.namaFile;
+                    AppState.documents[docIndex].kategori = payload.kategori;
+                    AppState.documents[docIndex].tglTerbit = payload.tglTerbit;
+                    AppState.documents[docIndex].tglKadaluwarsa = payload.tglKadaluwarsa;
+                    AppState.documents[docIndex].dataPenting = payload.dataPenting;
+                }
+                
+                renderDocumentsGrid(); // Refresh tampilan luar
+                
+                document.getElementById('detailTitle').textContent = payload.namaFile;
+                document.getElementById('detailCategory').textContent = payload.kategori;
+                document.getElementById('detailTglTerbit').textContent = payload.tglTerbit || '-';
+                document.getElementById('detailTglKadaluwarsa').textContent = payload.tglKadaluwarsa || '-';
+                
+                toggleEditDocMode(false); // Kembalikan ke mode Tampil
+            } else {
+                showToast(res.message, true);
+            }
+        }
+
+        async function handleDeleteDoc() {
+            if(!confirm("Peringatan: Dokumen akan dihapus permanen. Lanjutkan?")) return;
+            
             toggleDocDetailModal();
+            showToast("Menghapus dokumen...");
+            
+            const res = await fetchAPI('delete_document', { docId: AppState.currentDetailDocId });
+            if (res.success) {
+                showToast("Dokumen berhasil dihapus!");
+                loadDocuments();
+            } else {
+                showToast(res.message, true);
+            }
+        }
+
+        async function handleShareDoc() {
+            const targetEmail = document.getElementById('shareTargetUser').value;
+            const expiryHours = document.getElementById('shareExpiry').value;
+            
+            if(!targetEmail) return showToast("Silakan pilih anak/anggota yang ingin diberi akses!", true);
+
+            const btn = document.getElementById('btnShareDoc');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "...";
+            
+            const res = await fetchAPI('share_document', { 
+                docId: AppState.currentDetailDocId, 
+                targetEmail: targetEmail, 
+                expiryHours: expiryHours 
+            });
+            
+            btn.innerHTML = originalText;
+
+            if (res.success) {
+                showToast(res.message);
+                document.getElementById('shareTargetUser').value = '';
+            } else {
+                showToast(res.message, true);
+            }
         }
 
         function copyToClipboard(text, btnElement) {
@@ -1214,11 +1598,9 @@
                 activeNav.classList.add('bg-indigo-600', 'text-white');
             }
 
-            // MENGAMBIL API KEY DARI LOCALSTORAGE SAAT MEMBUKA MENU SETTING
+            // HANYA MENGAMBIL API KEY GROQ DARI LOCALSTORAGE
             if (viewName === 'settings') {
-                const savedVision = localStorage.getItem('arsipCerdasku_visionKey');
                 const savedGroq = localStorage.getItem('arsipCerdasku_groqKey');
-                if(savedVision) document.getElementById('setVisionApi').value = savedVision;
                 if(savedGroq) document.getElementById('setGroqApi').value = savedGroq;
             }
 
@@ -1238,6 +1620,62 @@
             if (!modal.classList.contains('hidden')) {
                 resetFileInput();
                 document.getElementById('uploadForm').reset();
+                
+                // LOGIKA BARU: Tampilkan pilihan pemilik untuk Admin/Istri
+                const ownerContainer = document.getElementById('uploadOwnerContainer');
+                const isAdminOrIstri = AppState.user && (AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri');
+                
+                if (isAdminOrIstri && ownerContainer) {
+                    ownerContainer.classList.remove('hidden');
+                    const selectOwner = document.getElementById('uploadOwnerInput');
+                    selectOwner.innerHTML = '<option value="">-- Milik Saya Sendiri --</option>';
+                    AppState.users.forEach(u => {
+                        if(u.email !== AppState.user.email) {
+                            selectOwner.insertAdjacentHTML('beforeend', `<option value="${u.email}">${u.nama} (${u.role})</option>`);
+                        }
+                    });
+                } else if (ownerContainer) {
+                    ownerContainer.classList.add('hidden');
+                }
+            }
+        }
+
+        function toggleAddUserModal() {
+            const modal = document.getElementById('addUserModal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                document.getElementById('addUserForm').reset();
+            }
+        }
+
+        async function handleAddUser(e) {
+            e.preventDefault();
+            const btnText = document.getElementById('btnAddUserText');
+            const btnSpinner = document.getElementById('btnAddUserSpinner');
+            btnText.textContent = 'Menyimpan...';
+            btnSpinner.classList.remove('hidden');
+
+            const payload = {
+                name: document.getElementById('addUserName').value,
+                email: document.getElementById('addUserEmail').value,
+                password: document.getElementById('addUserPassword').value,
+                role: document.getElementById('addUserRole').value,
+                profesi: document.getElementById('addUserProfesi').value,
+                phone: document.getElementById('addUserPhone').value
+            };
+
+            // Mengirim request ke Backend (Pastikan Code.gs memiliki action 'add_user')
+            const res = await fetchAPI('register_user', payload);
+
+            btnText.textContent = 'Tambah Anggota';
+            btnSpinner.classList.add('hidden');
+
+            if(res.success) {
+                toggleAddUserModal();
+                showToast("Anggota baru berhasil ditambahkan!");
+                loadUsersAndLogs(); // Refresh tabel user
+            } else {
+                showToast(res.message || "Gagal menambah anggota, coba lagi.", true);
             }
         }
 
