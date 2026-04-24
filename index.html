@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arsip Cerdasku - Free AI</title>
+    <title>Arsip Cerdasku - Free AI & Auto-Sync</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -241,13 +241,13 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <button onclick="triggerSyncDrive()" class="hidden sm:flex items-center space-x-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-1.5 rounded-lg text-sm font-medium transition shadow-sm">
+                    <button id="btnSyncDrive" onclick="triggerSyncDrive()" style="display: none;" class="items-center space-x-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-1.5 rounded-lg text-sm font-medium transition shadow-sm">
                         <i class="ph ph-arrows-clockwise text-lg"></i>
-                        <span>Sync Drive</span>
+                        <span class="hidden sm:inline">Sync Drive</span>
                     </button>
-                    <button onclick="triggerBackup()" class="hidden sm:flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                    <button id="btnBackup" onclick="triggerBackup()" style="display: none;" class="items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">
                         <i class="ph ph-hard-drives text-lg"></i>
-                        <span>Backup Lokal</span>
+                        <span class="hidden sm:inline">Backup Lokal</span>
                     </button>
                     <button onclick="toggleUploadModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium shadow-sm transition flex items-center space-x-2">
                         <i class="ph ph-upload-simple text-lg"></i>
@@ -505,6 +505,9 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-2 flex-shrink-0">
+                    <button id="btnReanalyzeDoc" onclick="handleReanalyzeDoc()" class="text-emerald-600 hover:bg-emerald-50 border border-emerald-100 bg-white rounded-lg px-3 py-1.5 text-sm font-medium shadow-sm transition flex items-center hidden">
+                        <i class="ph ph-magic-wand mr-1"></i> Analisa Ulang
+                    </button>
                     <button id="btnEditDoc" onclick="toggleEditDocMode(true)" class="text-indigo-600 hover:bg-indigo-50 border border-indigo-100 bg-white rounded-lg px-3 py-1.5 text-sm font-medium shadow-sm transition flex items-center hidden">
                         <i class="ph ph-pencil-simple mr-1"></i> Edit
                     </button>
@@ -580,10 +583,10 @@
 
                         <!-- PANEL BAGIKAN (KHUSUS ADMIN/ISTRI) -->
                         <div id="adminShareSection" class="mt-4 pt-4 border-t border-slate-200 hidden">
-                            <h4 class="text-xs font-bold text-slate-700 mb-2">Beri Akses Sementara ke Anak:</h4>
+                            <h4 class="text-xs font-bold text-slate-700 mb-2">Beri Akses Sementara ke Anak/Anggota:</h4>
                             <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                                 <select id="shareTargetUser" class="flex-1 border border-slate-300 rounded-lg text-sm p-2 outline-none focus:ring-2 focus:ring-indigo-600">
-                                    <option value="">Pilih Anak...</option>
+                                    <option value="">Pilih Anggota...</option>
                                 </select>
                                 <select id="shareExpiry" class="w-full sm:w-32 border border-slate-300 rounded-lg text-sm p-2 outline-none focus:ring-2 focus:ring-indigo-600">
                                     <option value="1">1 Jam</option>
@@ -667,7 +670,7 @@
                             <option value="Lainnya">Lainnya</option>
                         </select>
                     </div>
-                    <!-- KODE BARU: Pilih Pemilik Dokumen (Khusus Admin/Istri) -->
+                    <!-- Pilihan Pemilik Dokumen (Khusus Admin/Istri) -->
                     <div id="uploadOwnerContainer" class="hidden">
                         <label class="block text-sm font-medium text-slate-700 mb-1">Pemilik Dokumen (Upload untuk siapa?)</label>
                         <select id="uploadOwnerInput" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
@@ -767,7 +770,7 @@
             currentCategory: 'Semua',
             currentOwner: 'Semua',
             searchQuery: '',
-            currentDetailDocId: null, // Tambahan untuk melacak ID dokumen yang sedang dibuka
+            currentDetailDocId: null, 
             isEditingDoc: false
         };
 
@@ -965,18 +968,29 @@
             document.getElementById('userInitial').textContent = AppState.user.initial;
             document.getElementById('welcomeName').textContent = AppState.user.nama;
 
+            const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
             const isAdmin = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga';
-            const isIstri = AppState.user.role === 'Istri';
 
-            if (isAdmin || isIstri) {
+            const btnSync = document.getElementById('btnSyncDrive');
+            const btnBackup = document.getElementById('btnBackup');
+            
+            // Akses Spesial Admin & Istri
+            if (isAdminOrIstri) {
+                if(btnSync) btnSync.style.display = 'flex';
+                if(btnBackup) btnBackup.style.display = 'flex';
+                
                 document.getElementById('adminMenuTitle').classList.remove('hidden');
                 document.getElementById('nav-users').classList.remove('hidden');
                 document.getElementById('nav-users').classList.add('flex');
             } else {
+                if(btnSync) btnSync.style.display = 'none';
+                if(btnBackup) btnBackup.style.display = 'none';
+                
                 document.getElementById('adminMenuTitle').classList.add('hidden');
                 document.getElementById('nav-users').classList.add('hidden');
             }
 
+            // Akses Ekstra Khusus Admin (Kepala Keluarga)
             if (isAdmin) {
                 document.getElementById('nav-audit').classList.remove('hidden');
                 document.getElementById('nav-audit').classList.add('flex');
@@ -1012,10 +1026,10 @@
         }
 
         async function loadUsersAndLogs() {
+            const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
             const isAdmin = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga';
-            const isIstri = AppState.user.role === 'Istri';
 
-            if(isAdmin || isIstri) {
+            if(isAdminOrIstri) {
                 const resUsers = await fetchAPI('get_users');
                 if(resUsers.success && resUsers.data) { AppState.users = resUsers.data; renderUsers(); }
             }
@@ -1041,7 +1055,6 @@
             const file = document.getElementById('fileInput').files[0];
             if (!file) return showToast("Pilih file terlebih dahulu", true);
             
-            // HANYA MENGAMBIL API KEY GROQ DARI LOCALSTORAGE
             const groqKeyLocal = localStorage.getItem('arsipCerdasku_groqKey');
 
             if (!groqKeyLocal) {
@@ -1060,9 +1073,7 @@
                     mimeType: file.type,
                     fileName: file.name,
                     kategori: document.getElementById('kategoriInput').value,
-                    // HANYA MENGIRIM KUNCI GROQ KE BACKEND
                     groqKey: groqKeyLocal || '',
-                    // KODE BARU: Mengirim data pemilik target (Jika ada)
                     targetOwner: document.getElementById('uploadOwnerInput') ? document.getElementById('uploadOwnerInput').value : ''
                 };
                 
@@ -1092,14 +1103,26 @@
         async function triggerSyncDrive() {
             const groqKeyLocal = localStorage.getItem('arsipCerdasku_groqKey');
             if (!groqKeyLocal) {
-                return showToast("Peringatan: API Key Groq AI (Gratis) belum dikonfigurasi di menu Pengaturan.", true);
+                return showToast("Peringatan: API Key Groq AI belum dikonfigurasi di menu Pengaturan.", true);
             }
+            
+            const btn = document.getElementById('btnSyncDrive');
+            if (btn.disabled) return; 
+            
+            btn.disabled = true;
+            const origHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> <span class="hidden sm:inline">Menyinkronkan...</span>';
+            
             showToast("Mencari file baru di G-Drive & Menjalankan AI...", false);
             
             const res = await fetchAPI('sync_drive', { groqKey: groqKeyLocal });
+            
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+
             if (res.success) {
                 showToast(res.message);
-                loadDocuments(); // Refresh tampilan untuk memunculkan dokumen baru
+                loadDocuments(); 
             } else {
                 showToast(res.message, true);
             }
@@ -1133,9 +1156,7 @@
             const originalText = btn.innerHTML;
             btn.innerHTML = '<div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-top-color: white;"></div> <span class="ml-2">Menyimpan...</span>';
             
-            // HANYA MENYIMPAN KUNCI GROQ
             const groqVal = document.getElementById('setGroqApi').value;
-            
             if(groqVal) localStorage.setItem('arsipCerdasku_groqKey', groqVal);
 
             const res = await fetchAPI('update_settings', {
@@ -1216,7 +1237,6 @@
             const firstVal = firstKey ? doc.dataPenting[firstKey] : null;
             const ownerDisplay = doc.owner || doc.ownerId || 'Umum';
             
-            // Tambahkan label jika ini adalah dokumen hasil berbagi (Share)
             const shareBadge = doc.isShared ? `<span class="absolute top-2 right-2 bg-emerald-100 text-emerald-700 border border-emerald-200 text-[9px] font-bold px-2 py-0.5 rounded-full z-10 flex items-center shadow-sm"><i class="ph ph-share-network mr-1"></i>Akses Pinjaman</span>` : '';
             
             return `
@@ -1260,17 +1280,7 @@
 
             AppState.currentDetailDocId = docId;
 
-            document.getElementById('detailTitle').textContent = doc.namaFile;
-            document.getElementById('detailCategory').textContent = doc.kategori;
-            document.getElementById('detailViewLink').href = doc.link || '#';
-            document.getElementById('detailTglTerbit').textContent = doc.tglTerbit || '-';
-            document.getElementById('detailTglKadaluwarsa').textContent = doc.tglKadaluwarsa || '-';
-
-            const iframe = document.getElementById('detailPreviewIframe');
-            const img = document.getElementById('detailPreviewImg');
-            const placeholder = document.getElementById('detailPreviewPlaceholder');
-            
-            // Kembalikan ke mode Tampil (Bukan Mode Edit) saat dokumen baru dibuka
+            // Mode Edit Dinonaktifkan Saat Pertama Dibuka
             toggleEditDocMode(false, true);
 
             document.getElementById('detailTitle').textContent = doc.namaFile;
@@ -1283,6 +1293,10 @@
             document.getElementById('detailTglKadaluwarsa').textContent = doc.tglKadaluwarsa || '-';
             document.getElementById('editDetailTglKadaluwarsa').value = doc.tglKadaluwarsa || '';
 
+            const iframe = document.getElementById('detailPreviewIframe');
+            const img = document.getElementById('detailPreviewImg');
+            const placeholder = document.getElementById('detailPreviewPlaceholder');
+
             iframe.classList.add('hidden'); img.classList.add('hidden'); placeholder.classList.remove('hidden');
 
             if (doc.link && doc.link !== '#') {
@@ -1294,7 +1308,6 @@
                     embedUrl = embedUrl.replace('/view', '/preview');
                 }
 
-                // Gunakan iframe untuk semua file dari Google Drive (PDF & Gambar) karena lebih aman & stabil
                 if (embedUrl.includes('drive.google.com')) {
                     iframe.src = embedUrl; 
                     iframe.classList.remove('hidden');
@@ -1315,28 +1328,27 @@
             const warn = document.getElementById('detailWarning');
             (doc.tglKadaluwarsa && doc.tglKadaluwarsa !== '-' && doc.tglKadaluwarsa !== 'Seumur Hidup') ? warn.classList.remove('hidden') : warn.classList.add('hidden');
             
-            // LOGIKA AKSES HAPUS & BAGIKAN
             const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
             const isOwner = doc.ownerId === AppState.user.userId || doc.ownerId === AppState.user.email;
 
-            // Logika Tombol Hapus & Tombol Edit
+            // Tombol Edit, Hapus, & Analisa Ulang (Khusus Pemilik Atau Admin)
             if (isAdminOrIstri || isOwner) {
                 document.getElementById('adminDeleteSection').classList.remove('hidden');
                 document.getElementById('btnEditDoc').classList.remove('hidden');
+                document.getElementById('btnReanalyzeDoc').classList.remove('hidden');
             } else {
                 document.getElementById('adminDeleteSection').classList.add('hidden');
                 document.getElementById('btnEditDoc').classList.add('hidden');
+                document.getElementById('btnReanalyzeDoc').classList.add('hidden');
             }
 
-            // Logika Tombol Bagikan (Hanya Admin/Istri)
+            // Opsi Berbagi (Khusus Admin/Istri)
             if (isAdminOrIstri) {
                 document.getElementById('adminShareSection').classList.remove('hidden');
-                
-                // Isi daftar Anak/Anggota
                 const selectUser = document.getElementById('shareTargetUser');
-                selectUser.innerHTML = '<option value="">Pilih Anak/Anggota...</option>';
+                selectUser.innerHTML = '<option value="">Pilih Anggota Keluarga...</option>';
                 AppState.users.forEach(u => {
-                    if (u.role === 'Anak' || u.role === 'Anggota' || u.role === 'User') {
+                    if (u.role === 'Anak' || u.role === 'Anggota' || u.role === 'User' || u.role === 'Kerabat') {
                         selectUser.insertAdjacentHTML('beforeend', `<option value="${u.email}">${u.nama} (${u.role})</option>`);
                     }
                 });
@@ -1405,7 +1417,7 @@
             const doc = AppState.documents.find(d => d.docId === AppState.currentDetailDocId);
             
             const els = {
-                view: ['detailTitle', 'btnCopyTitle', 'detailCategory', 'detailTglTerbit', 'btnCopyTglTerbit', 'detailTglKadaluwarsa', 'btnCopyTglKadaluwarsa', 'btnCloseDocDetail', 'btnEditDoc', 'adminShareSection', 'adminDeleteSection'],
+                view: ['detailTitle', 'btnCopyTitle', 'detailCategory', 'detailTglTerbit', 'btnCopyTglTerbit', 'detailTglKadaluwarsa', 'btnCopyTglKadaluwarsa', 'btnCloseDocDetail', 'btnEditDoc', 'btnReanalyzeDoc', 'adminShareSection', 'adminDeleteSection'],
                 edit: ['editDetailTitle', 'editDetailCategory', 'editDetailTglTerbit', 'editDetailTglKadaluwarsa', 'editDocActions']
             };
 
@@ -1423,6 +1435,7 @@
                     if (!(isAdminOrIstri || isOwner)) {
                         document.getElementById('adminDeleteSection').classList.add('hidden');
                         document.getElementById('btnEditDoc').classList.add('hidden');
+                        document.getElementById('btnReanalyzeDoc').classList.add('hidden');
                     }
                     if (!isAdminOrIstri) {
                         document.getElementById('adminShareSection').classList.add('hidden');
@@ -1477,6 +1490,60 @@
                 document.getElementById('detailTglKadaluwarsa').textContent = payload.tglKadaluwarsa || '-';
                 
                 toggleEditDocMode(false); // Kembalikan ke mode Tampil
+            } else {
+                showToast(res.message, true);
+            }
+        }
+
+        async function handleReanalyzeDoc() {
+            const groqKeyLocal = localStorage.getItem('arsipCerdasku_groqKey');
+            if (!groqKeyLocal) {
+                return showToast("Peringatan: API Key Groq AI (Gratis) belum dikonfigurasi di menu Pengaturan.", true);
+            }
+
+            const btn = document.getElementById('btnReanalyzeDoc');
+            const origHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-spinner animate-spin mr-1"></i> Menganalisa...';
+            btn.disabled = true;
+
+            showToast("AI sedang membaca ulang dokumen...", false);
+
+            const res = await fetchAPI('reanalyze_document', { 
+                docId: AppState.currentDetailDocId,
+                groqKey: groqKeyLocal
+            });
+
+            btn.innerHTML = origHtml;
+            btn.disabled = false;
+
+            if (res.success) {
+                showToast("Selesai! Data diperbarui berdasarkan analisa AI terbaru.");
+                
+                const docIndex = AppState.documents.findIndex(d => d.docId === AppState.currentDetailDocId);
+                if(docIndex > -1) {
+                    AppState.documents[docIndex].namaFile = res.data.namaFile;
+                    AppState.documents[docIndex].kategori = res.data.kategori;
+                    AppState.documents[docIndex].tglTerbit = res.data.tglTerbit;
+                    AppState.documents[docIndex].tglKadaluwarsa = res.data.tglKadaluwarsa;
+                    AppState.documents[docIndex].dataPenting = res.data.dataPenting;
+                }
+                
+                renderDocumentsGrid(); 
+                
+                document.getElementById('detailTitle').textContent = res.data.namaFile;
+                document.getElementById('editDetailTitle').value = res.data.namaFile;
+                document.getElementById('detailCategory').textContent = res.data.kategori;
+                document.getElementById('editDetailCategory').value = res.data.kategori;
+                document.getElementById('detailTglTerbit').textContent = res.data.tglTerbit || '-';
+                document.getElementById('editDetailTglTerbit').value = res.data.tglTerbit || '';
+                document.getElementById('detailTglKadaluwarsa').textContent = res.data.tglKadaluwarsa || '-';
+                document.getElementById('editDetailTglKadaluwarsa').value = res.data.tglKadaluwarsa || '';
+                
+                renderDataPentingGrid(res.data.dataPenting, false);
+                
+                const warn = document.getElementById('detailWarning');
+                (res.data.tglKadaluwarsa && res.data.tglKadaluwarsa !== '-' && res.data.tglKadaluwarsa !== 'Seumur Hidup') ? warn.classList.remove('hidden') : warn.classList.add('hidden');
+
             } else {
                 showToast(res.message, true);
             }
@@ -1549,7 +1616,7 @@
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '';
             AppState.users.forEach(u => {
-                const badge = u.role === 'Admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
+                const badge = u.role === 'Admin' || u.role === 'Kepala Keluarga' || u.role === 'Istri' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
                 tbody.insertAdjacentHTML('beforeend', `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="py-3 px-4">
@@ -1598,7 +1665,6 @@
                 activeNav.classList.add('bg-indigo-600', 'text-white');
             }
 
-            // HANYA MENGAMBIL API KEY GROQ DARI LOCALSTORAGE
             if (viewName === 'settings') {
                 const savedGroq = localStorage.getItem('arsipCerdasku_groqKey');
                 if(savedGroq) document.getElementById('setGroqApi').value = savedGroq;
@@ -1621,7 +1687,6 @@
                 resetFileInput();
                 document.getElementById('uploadForm').reset();
                 
-                // LOGIKA BARU: Tampilkan pilihan pemilik untuk Admin/Istri
                 const ownerContainer = document.getElementById('uploadOwnerContainer');
                 const isAdminOrIstri = AppState.user && (AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri');
                 
@@ -1664,7 +1729,6 @@
                 phone: document.getElementById('addUserPhone').value
             };
 
-            // Mengirim request ke Backend (Pastikan Code.gs memiliki action 'add_user')
             const res = await fetchAPI('register_user', payload);
 
             btnText.textContent = 'Tambah Anggota';
@@ -1673,7 +1737,7 @@
             if(res.success) {
                 toggleAddUserModal();
                 showToast("Anggota baru berhasil ditambahkan!");
-                loadUsersAndLogs(); // Refresh tabel user
+                loadUsersAndLogs(); 
             } else {
                 showToast(res.message || "Gagal menambah anggota, coba lagi.", true);
             }
