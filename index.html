@@ -62,11 +62,6 @@
                     <label for="rememberMe" class="text-sm text-slate-600 cursor-pointer font-medium">Ingat saya (Auto Login)</label>
                 </div>
 
-                <div id="deviceWarningLogin" class="hidden bg-red-50 text-red-600 text-xs p-3 rounded-lg border border-red-100 flex items-start space-x-2">
-                    <i class="ph ph-warning-circle text-base"></i>
-                    <span>Perangkat ini terikat pada akun lain. Satu HP hanya untuk satu akun.</span>
-                </div>
-
                 <button type="submit" id="btnLoginSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg shadow-sm transition flex justify-center items-center">
                     <span id="btnLoginText">Masuk ke Brankas</span>
                     <div id="btnLoginSpinner" class="loader hidden" style="width: 18px; height: 18px; border-width: 2px; margin-left: 8px; border-top-color: white;"></div>
@@ -112,13 +107,6 @@
                             <i id="regEyeIcon" class="ph ph-eye text-lg"></i>
                         </button>
                     </div>
-                </div>
-
-                <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-lg flex items-start space-x-2 mt-2">
-                    <i class="ph ph-device-mobile text-indigo-500 text-lg"></i>
-                    <p class="text-[10px] text-indigo-800 leading-tight">
-                        <strong>Keamanan Ketat:</strong> Pendaftaran ini akan mengikat perangkat HP/Laptop ini HANYA untuk akun ini.
-                    </p>
                 </div>
 
                 <button type="submit" id="btnRegSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg shadow-sm transition mt-4 flex justify-center items-center">
@@ -187,7 +175,8 @@
             </div>
         </aside>
 
-        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-30 hidden md:hidden"></div>
+        <!-- DIPERBAIKI: Lapisan gelap sidebar dihapus, diganti kaca buram terang -->
+        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-500/10 backdrop-blur-sm z-30 hidden md:hidden transition-opacity"></div>
 
         <!-- Main Content area -->
         <div class="flex-1 flex flex-col h-full overflow-hidden w-full relative">
@@ -262,9 +251,7 @@
                     <div id="view-documents" class="view-section hidden">
                         <h1 class="text-xl sm:text-2xl font-bold text-slate-800 mb-4">Semua Dokumen</h1>
                         
-                        <!-- FILTER BARU: Prioritas Anggota -> Kategori -->
                         <div class="mb-6 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center gap-4">
-                            <!-- Filter Langkah 1: Anggota Keluarga -->
                             <div class="w-full md:w-1/3">
                                 <label class="block text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2 flex items-center"><i class="ph-fill ph-users mr-1"></i> 1. Filter Nama Anggota</label>
                                 <select id="ownerFilter" onchange="filterOwner(this.value)" class="w-full bg-slate-50 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block py-2 px-3 outline-none transition shadow-sm">
@@ -272,7 +259,6 @@
                                 </select>
                             </div>
                             
-                            <!-- Filter Langkah 2: Jenis Dokumen -->
                             <div class="w-full md:w-2/3 border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-4">
                                 <label class="block text-xs font-bold text-emerald-600 uppercase tracking-wider mb-2 flex items-center"><i class="ph-fill ph-folders mr-1"></i> 2. Filter Kategori Dokumen</label>
                                 <div class="flex overflow-x-auto space-x-2 w-full pb-2 md:pb-0 hide-scrollbar" id="categoryFilters">
@@ -359,9 +345,6 @@
                                 <div class="text-center sm:text-left flex-1">
                                     <h2 class="text-xl font-bold text-slate-800" id="profileDisplayName">Memuat...</h2>
                                     <p class="text-sm text-slate-500 font-medium mb-2" id="profileDisplayRole">Role</p>
-                                    <span class="inline-flex items-center space-x-1 bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md text-xs font-semibold border border-emerald-200">
-                                        <i class="ph ph-device-mobile text-base"></i><span>Perangkat ini terikat pada akun Anda</span>
-                                    </span>
                                 </div>
                             </div>
                             
@@ -391,6 +374,33 @@
                                 </div>
                             </form>
                         </div>
+
+                        <!-- Riwayat Aktivitas Login -->
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden max-w-3xl mt-6">
+                            <div class="p-5 sm:p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800 flex items-center"><i class="ph ph-clock-counter-clockwise text-indigo-500 mr-2"></i> Riwayat Aktivitas Login</h3>
+                                    <p class="text-xs text-slate-500 mt-1">Daftar perangkat yang mengakses akun Anda.</p>
+                                </div>
+                                <button onclick="loadLoginHistory()" class="p-2 bg-white border border-slate-200 text-slate-600 rounded hover:bg-slate-50 transition" title="Refresh Riwayat">
+                                    <i class="ph ph-arrows-clockwise"></i>
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
+                                        <tr>
+                                            <th class="py-3 px-4 sm:px-6">Waktu</th>
+                                            <th class="py-3 px-4 sm:px-6">Perangkat / OS</th>
+                                            <th class="py-3 px-4 sm:px-6">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="loginHistoryBody" class="divide-y divide-slate-100 text-slate-700">
+                                        <tr><td colspan="3" class="text-center py-6 text-slate-400">Memuat riwayat...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Pengaturan Sistem -->
@@ -407,7 +417,6 @@
                                     <input type="password" id="setGroqApi" placeholder="gsk_..." class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
                                 </div>
 
-                                <!-- RESTORED: WA Gateway -->
                                 <div class="bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200 mt-4">
                                     <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-whatsapp-logo mr-2 text-emerald-500 text-lg"></i> WhatsApp Gateway</h3>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -435,8 +444,9 @@
         </div>
     </div>
 
+    <!-- DIPERBAIKI: Lapisan modal diubah dari bg-slate-900/60 menjadi bg-slate-800/10 backdrop-blur-md agar transparan dan terang -->
     <!-- MODAL: UPLOAD DOKUMEN -->
-    <div id="uploadModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3 sm:p-4 transition-opacity">
+    <div id="uploadModal" class="fixed inset-0 bg-slate-800/10 backdrop-blur-md hidden z-50 flex items-center justify-center p-3 sm:p-4 transition-opacity">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
             <div class="p-4 sm:p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50 flex-shrink-0">
                 <h2 class="text-base sm:text-lg font-semibold text-slate-800 flex items-center space-x-2">
@@ -496,7 +506,7 @@
     </div>
 
     <!-- MODAL: DOKUMEN DETAIL -->
-    <div id="docDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-2 sm:p-4 transition-opacity">
+    <div id="docDetailModal" class="fixed inset-0 bg-slate-800/10 backdrop-blur-md hidden z-50 flex items-center justify-center p-2 sm:p-4 transition-opacity">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-5xl overflow-hidden flex flex-col h-[95vh] sm:max-h-[90vh]">
             <div class="p-4 sm:p-5 border-b border-slate-100 flex justify-between items-start bg-slate-50 flex-shrink-0">
                 <div class="flex items-center space-x-3 w-full pr-2 sm:pr-4">
@@ -576,7 +586,6 @@
                     <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-shield-check text-emerald-500 mr-2"></i> Keamanan & Berbagi</h3>
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-4">
                         
-                        <!-- RESTORED: Watermark Button -->
                         <div class="flex flex-col sm:flex-row gap-3">
                             <button onclick="simulateWatermark()" class="flex-1 flex justify-center items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-sm font-medium transition shadow-sm">
                                 <i class="ph ph-drop"></i>
@@ -618,7 +627,7 @@
     </div>
 
     <!-- MODAL: MANAJEMEN ANGGOTA KELUARGA (ADD / EDIT) -->
-    <div id="userFormModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3 sm:p-4 transition-opacity">
+    <div id="userFormModal" class="fixed inset-0 bg-slate-800/10 backdrop-blur-md hidden z-50 flex items-center justify-center p-3 sm:p-4 transition-opacity">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
             <div class="p-4 sm:p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50 flex-shrink-0">
                 <h2 class="text-base sm:text-lg font-semibold text-slate-800 flex items-center space-x-2">
@@ -689,7 +698,7 @@
     </div>
 
     <!-- MODAL: PREVIEW ANGGOTA (LIHAT DETAIL) -->
-    <div id="previewUserModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 transition-opacity">
+    <div id="previewUserModal" class="fixed inset-0 bg-slate-800/10 backdrop-blur-md hidden z-50 flex items-center justify-center p-4 transition-opacity">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col relative transform transition-all scale-100">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-white rounded-full p-1 shadow-sm transition z-10"><i class="ph ph-x text-lg"></i></button>
             <div class="bg-gradient-to-b from-indigo-50 to-white pt-8 pb-6 px-6 flex flex-col items-center border-b border-slate-100">
@@ -745,10 +754,16 @@
             tempPhotoMime: null,
             currentView: 'dashboard'
         };
+        let sessionCheckInterval = null; // Menyimpan timer pengecekan sesi
 
         // --- 2. CORE FETCH API WRAPPER ---
         async function fetchAPI(action, additionalPayload = {}) {
-            const payload = { action: action, email: AppState.user ? AppState.user.email : null, ...additionalPayload };
+            const payload = { 
+                action: action, 
+                email: AppState.user ? AppState.user.email : null, 
+                sessionId: localStorage.getItem('arsipCerdasku_sessionId'), // Kirim sessionId otomatis
+                ...additionalPayload 
+            };
             try {
                 const response = await fetch(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
                 return await response.json();
@@ -851,8 +866,6 @@
         async function handleRegister(e) {
             e.preventDefault();
             const email = document.getElementById('regEmail').value, password = document.getElementById('regPassword').value; 
-            const boundDeviceEmail = localStorage.getItem('arsipCerdasku_deviceBoundEmail');
-            if (boundDeviceEmail && boundDeviceEmail !== email) return showToast("Maaf, perangkat ini sudah terikat dengan akun lain.", true);
 
             const btnText = document.getElementById('btnRegText'), btnSpinner = document.getElementById('btnRegSpinner');
             btnText.textContent = 'Mendaftarkan...'; btnSpinner.classList.remove('hidden');
@@ -861,21 +874,23 @@
             const res = await fetchAPI('register_user', payload);
 
             btnText.textContent = 'Daftar Sekarang'; btnSpinner.classList.add('hidden');
-            localStorage.setItem('arsipCerdasku_deviceBoundEmail', email);
             showToast("Pendaftaran berhasil. Silakan Login.");
             document.getElementById('loginEmail').value = email;
             window.location.hash = '#login';
         }
 
         async function checkAuthStatus() {
-            const autoLoginEmail = localStorage.getItem('arsipCerdasku_rememberMe'), boundDeviceEmail = localStorage.getItem('arsipCerdasku_deviceBoundEmail');
-            if (boundDeviceEmail) { document.getElementById('loginEmail').value = boundDeviceEmail; document.getElementById('deviceWarningLogin').classList.remove('hidden'); }
+            const autoLoginEmail = localStorage.getItem('arsipCerdasku_rememberMe');
+            const savedSessionId = localStorage.getItem('arsipCerdasku_sessionId');
             if (autoLoginEmail) {
-                const res = await fetchAPI('check_auth', { email: autoLoginEmail });
+                const res = await fetchAPI('check_auth', { email: autoLoginEmail, sessionId: savedSessionId, device: navigator.userAgent });
                 if(res.success) {
                     processLoginSuccess(res, autoLoginEmail);
                     return; // exit early
-                } else localStorage.removeItem('arsipCerdasku_rememberMe');
+                } else {
+                    localStorage.removeItem('arsipCerdasku_rememberMe');
+                    localStorage.removeItem('arsipCerdasku_sessionId');
+                }
             }
             handleRoute(); // if no valid session, run router (will lock to login)
         }
@@ -883,18 +898,19 @@
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value, password = document.getElementById('loginPassword').value; 
-            const boundDeviceEmail = localStorage.getItem('arsipCerdasku_deviceBoundEmail');
-            if (boundDeviceEmail && boundDeviceEmail !== email) return showToast(`Perangkat ini HANYA untuk: ${boundDeviceEmail}`, true);
 
             const btnText = document.getElementById('btnLoginText'), btnSpinner = document.getElementById('btnLoginSpinner');
             btnText.textContent = 'Memverifikasi...'; btnSpinner.classList.remove('hidden');
 
-            const res = await fetchAPI('check_auth', { email: email, password: password });
+            const sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2); // Generate Session ID unik
+            const device = navigator.userAgent; // Ambil info Perangkat/Browser
+            
+            const res = await fetchAPI('check_auth', { email: email, password: password, sessionId: sessionId, device: device });
 
             btnText.textContent = 'Masuk ke Brankas'; btnSpinner.classList.add('hidden');
             if (res.success) {
                 if (document.getElementById('rememberMe').checked) localStorage.setItem('arsipCerdasku_rememberMe', email);
-                localStorage.setItem('arsipCerdasku_deviceBoundEmail', email);
+                localStorage.setItem('arsipCerdasku_sessionId', sessionId); // Simpan sesi aktif
                 processLoginSuccess(res, email);
             } else showToast(res.message, true);
         }
@@ -905,6 +921,8 @@
             document.getElementById('appContainer').classList.remove('hidden');
             
             initUserSetup(); 
+            startSessionPolling(); // Mulai pemantauan sesi agar tidak ditabrak perangkat lain
+            loadLoginHistory();    // Muat riwayat perangkat yang login
             
             // Tunggu data core terisi sebelum routing di proses
             await Promise.all([loadDocuments(), loadUsersAndLogs()]); 
@@ -920,10 +938,44 @@
 
         function handleLogout() {
             localStorage.removeItem('arsipCerdasku_rememberMe'); 
+            localStorage.removeItem('arsipCerdasku_sessionId');
+            if (sessionCheckInterval) clearInterval(sessionCheckInterval); // Matikan pemantauan sesi
             AppState.user = null;
             document.getElementById('loginPassword').value = '';
             window.location.hash = '#login'; // Forces route handler to reset UI cleanly
             showToast("Berhasil keluar.");
+        }
+
+        function startSessionPolling() {
+            if (sessionCheckInterval) clearInterval(sessionCheckInterval);
+            sessionCheckInterval = setInterval(verifySession, 15000); // Mengecek sesi setiap 15 detik
+        }
+
+        async function verifySession() {
+            if (!AppState.user) return;
+            const currentSession = localStorage.getItem('arsipCerdasku_sessionId');
+            if (!currentSession) return;
+            try {
+                const res = await fetchAPI('verify_session');
+                // Jika server mengirimkan flag bahwa sesi tidak valid (karena ada login baru)
+                if (res && !res.success && (res.message === 'SESSION_INVALID' || res.error === 'SESSION_INVALID' || res.message.includes('perangkat lain'))) {
+                    forceLogout("Sesi berakhir: Akun Anda baru saja login di perangkat/browser lain.");
+                }
+            } catch(e) {}
+        }
+
+        function forceLogout(msg) {
+            localStorage.removeItem('arsipCerdasku_rememberMe');
+            localStorage.removeItem('arsipCerdasku_sessionId');
+            if (sessionCheckInterval) clearInterval(sessionCheckInterval);
+            AppState.user = null;
+            document.getElementById('loginPassword').value = '';
+            
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('authContainer').classList.remove('hidden');
+            switchAuthViewUI('login');
+            window.location.hash = '#login';
+            showToast(msg, true);
         }
 
         // --- 5. UI POPULATION & DATA LOADERS ---
@@ -1406,6 +1458,63 @@
         async function handleDeleteDoc() { if(!confirm("Hapus permanen dokumen ini?")) return; closeModal(); const res = await fetchAPI('delete_document', { docId: AppState.currentDetailDocId }); if (res.success) { showToast("Dokumen dihapus!"); loadDocuments(); } else showToast(res.message, true); }
         async function handleReanalyzeDoc() { const res = await fetchAPI('reanalyze_document', { docId: AppState.currentDetailDocId, groqKey: localStorage.getItem('arsipCerdasku_groqKey') }); if(res.success){ showToast("Selesai! Data AI diperbarui."); loadDocuments(); closeModal(); } else showToast(res.message, true); }
         async function handleShareDoc() { const res = await fetchAPI('share_document', { docId: AppState.currentDetailDocId, targetEmail: document.getElementById('shareTargetUser').value, expiryHours: document.getElementById('shareExpiry').value }); if(res.success) showToast(res.message); else showToast(res.message, true); }
+
+        // --- 10. FITUR RIWAYAT LOGIN ---
+        function parseUserAgent(ua) {
+            if (!ua) return 'Perangkat Tidak Diketahui';
+            let browser = 'Browser', os = 'OS';
+            
+            // Deteksi Browser
+            if (ua.includes('Firefox')) browser = 'Firefox';
+            else if (ua.includes('SamsungBrowser')) browser = 'Samsung Internet';
+            else if (ua.includes('Opera') || ua.includes('OPR')) browser = 'Opera';
+            else if (ua.includes('Trident') || ua.includes('Edge') || ua.includes('Edg/')) browser = 'Edge';
+            else if (ua.includes('Chrome')) browser = 'Chrome';
+            else if (ua.includes('Safari')) browser = 'Safari';
+
+            // Deteksi OS
+            if (ua.includes('Win')) os = 'Windows';
+            else if (ua.includes('Mac')) os = 'MacOS';
+            else if (ua.includes('Android')) os = 'Android';
+            else if (ua.includes('Linux')) os = 'Linux';
+            else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
+
+            return `${browser} di ${os}`;
+        }
+
+        async function loadLoginHistory() {
+            const tbody = document.getElementById('loginHistoryBody');
+            if(!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-slate-400"><div class="loader mx-auto mb-2 border-slate-200" style="border-top-color: #4f46e5; width: 24px; height: 24px; border-width: 2px;"></div>Memuat riwayat...</td></tr>';
+            
+            const res = await fetchAPI('get_login_history');
+            tbody.innerHTML = '';
+            
+            if (res.success && res.data && res.data.length > 0) {
+                res.data.forEach(log => {
+                    const deviceName = parseUserAgent(log.device || log.Device || '');
+                    const time = log.waktu || log.Timestamp || '-';
+                    const status = log.status || log.Status || 'Sukses';
+                    const currentSession = localStorage.getItem('arsipCerdasku_sessionId');
+                    const isCurrent = (log.sessionId === currentSession && currentSession) ? '<span class="ml-2 bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">Sesi Ini</span>' : '';
+                    
+                    tbody.insertAdjacentHTML('beforeend', `
+                        <tr class="hover:bg-slate-50 transition border-b border-slate-50">
+                            <td class="py-3 px-4 sm:px-6 text-xs text-slate-500 whitespace-nowrap">${time}</td>
+                            <td class="py-3 px-4 sm:px-6 text-xs sm:text-sm font-medium text-slate-700 truncate max-w-[150px] sm:max-w-[200px]" title="${log.device || ''}">
+                                ${deviceName}
+                                ${isCurrent}
+                            </td>
+                            <td class="py-3 px-4 sm:px-6">
+                                <span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">${status}</span>
+                            </td>
+                        </tr>
+                    `);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-slate-400 text-sm">Belum ada data riwayat aktivitas tambahan.</td></tr>';
+            }
+        }
     </script>
 </body>
 </html>
