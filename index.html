@@ -47,7 +47,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-1">
                         <label class="block text-sm font-medium text-slate-700">Kata Sandi</label>
-                        <button type="button" onclick="handleForgotPassword()" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Lupa Sandi?</button>
+                        <a href="#forgot" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition">Lupa Sandi?</a>
                     </div>
                     <div class="relative">
                         <i class="ph ph-lock-key absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg"></i>
@@ -78,7 +78,7 @@
         <div id="auth-register" class="hidden bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-100 flex flex-col mt-auto mb-auto">
             <div class="p-6 text-center border-b border-slate-50 bg-slate-50/50">
                 <h1 class="text-xl font-bold text-slate-800">Daftar Akun Keluarga</h1>
-                <p class="text-xs text-slate-500 mt-1">Akun baru akan berstatus Member sebelum diubah oleh Kepala Keluarga.</p>
+                <p class="text-xs text-slate-500 mt-1">Akun baru akan berstatus PENDING sebelum disetujui Kepala Keluarga.</p>
             </div>
             
             <form id="registerForm" onsubmit="handleRegister(event)" class="p-6 space-y-4">
@@ -117,6 +117,36 @@
 
                 <p class="text-center text-sm text-slate-500 mt-2">
                     Sudah punya akun? <a href="#login" class="font-semibold text-indigo-600 hover:text-indigo-800">Kembali ke Login</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- Lupa Sandi View -->
+        <div id="auth-forgot" class="hidden bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-100 flex flex-col mt-auto mb-auto">
+            <div class="p-6 text-center border-b border-slate-50 bg-slate-50/50">
+                <div class="mx-auto w-14 h-14 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mb-4 shadow-inner">
+                    <i class="ph-fill ph-key text-3xl"></i>
+                </div>
+                <h1 class="text-xl font-bold text-slate-800">Pulihkan Kata Sandi</h1>
+                <p class="text-xs text-slate-500 mt-2">Sandi baru akan otomatis dikirim ke WhatsApp Anda yang terdaftar di dalam sistem.</p>
+            </div>
+            
+            <form id="forgotForm" onsubmit="handleForgotSubmit(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Email Terdaftar</label>
+                    <div class="relative">
+                        <i class="ph ph-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg"></i>
+                        <input type="email" id="forgotEmail" required placeholder="Ketik email Anda..." class="w-full border border-slate-300 rounded-lg py-2.5 pl-10 pr-3 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition">
+                    </div>
+                </div>
+
+                <button type="submit" id="btnForgotSubmit" class="w-full bg-slate-900 hover:bg-black text-white font-medium py-2.5 rounded-lg shadow-sm transition mt-4 flex justify-center items-center">
+                    <span id="btnForgotText">Kirim Sandi Baru ke WA</span>
+                    <div id="btnForgotSpinner" class="loader hidden" style="width: 18px; height: 18px; border-width: 2px; margin-left: 8px; border-top-color: white;"></div>
+                </button>
+
+                <p class="text-center text-sm text-slate-500 mt-4">
+                    Ingat sandi Anda? <a href="#login" class="font-semibold text-orange-600 hover:text-orange-800">Kembali ke Login</a>
                 </p>
             </form>
         </div>
@@ -300,7 +330,7 @@
                                     <thead class="bg-slate-50 text-slate-600 font-medium border-b border-slate-100">
                                         <tr>
                                             <th class="py-3 px-4">Nama & Email</th>
-                                            <th class="py-3 px-4">Role</th>
+                                            <th class="py-3 px-4">Role & Status</th>
                                             <th class="py-3 px-4">Profesi & HP</th>
                                             <th class="py-3 px-4 text-right">Aksi</th>
                                         </tr>
@@ -346,7 +376,6 @@
                                     <h2 class="text-xl font-bold text-slate-800" id="profileDisplayName">Memuat...</h2>
                                     <p class="text-sm text-slate-500 font-medium mb-2" id="profileDisplayRole">Role</p>
                                     
-                                    <!-- DITAMBAHKAN: Lencana Hak Istimewa Multi-Device untuk Kepala Keluarga -->
                                     <div id="superAdminBadge" class="hidden inline-flex items-center space-x-1 bg-amber-100 text-amber-700 px-2.5 py-1.5 rounded-md text-xs font-bold border border-amber-200 mt-1">
                                         <i class="ph-fill ph-crown text-base"></i><span>Super Admin (Multi-Device Login Aktif)</span>
                                     </div>
@@ -423,7 +452,6 @@
                                 </div>
 
                                 <div class="bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200 mt-4">
-                                    <!-- DITAMBAHKAN: Keterangan eksplisit tentang KirimAja -->
                                     <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-whatsapp-logo mr-2 text-emerald-500 text-lg"></i> WhatsApp Gateway (KirimAja Webhook)</h3>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
@@ -807,6 +835,7 @@
         }
 
         // --- 1. GLOBAL STATE & API ENDPOINT ---
+        // PENTING: Ganti string kosong di bawah dengan URL Deployment Web App Apps Script Anda!
         const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwYa9G7SIGP6DNgnZjGFWVyP1YSwrnSKmvizLS5qgKAH8W5_FGJDQvp0PR5Uhakzefnwg/exec';
         
         let AppState = {
@@ -891,6 +920,7 @@
                 document.getElementById('appContainer').classList.add('hidden');
                 document.getElementById('authContainer').classList.remove('hidden');
                 if (path === 'register') { switchAuthViewUI('register'); } 
+                else if (path === 'forgot') { switchAuthViewUI('forgot'); }
                 else { window.location.hash = '#login'; switchAuthViewUI('login'); }
                 return;
             } else {
@@ -917,7 +947,7 @@
             } else if (path === 'user-preview' && param) {
                 switchViewUI('users'); AppState.currentView = 'users'; openPreviewUserUI(decodeURIComponent(param));
             } else {
-                if(path !== 'login' && path !== 'register') window.location.hash = '#dashboard';
+                if(path !== 'login' && path !== 'register' && path !== 'forgot') window.location.hash = '#dashboard';
             }
         }
 
@@ -925,6 +955,10 @@
         function switchAuthViewUI(view) {
             document.getElementById('auth-login').classList.add('hidden');
             document.getElementById('auth-register').classList.add('hidden');
+            
+            const forgotEl = document.getElementById('auth-forgot');
+            if(forgotEl) forgotEl.classList.add('hidden');
+            
             document.getElementById(`auth-${view}`).classList.remove('hidden');
         }
 
@@ -954,9 +988,32 @@
             const res = await fetchAPI('register_user', payload);
 
             btnText.textContent = 'Daftar Sekarang'; btnSpinner.classList.add('hidden');
-            showToast("Pendaftaran berhasil. Silakan Login.");
+            showToast("Pendaftaran berhasil! Menunggu persetujuan Kepala Keluarga.");
             document.getElementById('loginEmail').value = email;
             window.location.hash = '#login';
+        }
+
+        async function handleForgotSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value.trim();
+            
+            const btnText = document.getElementById('btnForgotText'), btnSpinner = document.getElementById('btnForgotSpinner');
+            btnText.textContent = 'Memproses API...'; btnSpinner.classList.remove('hidden');
+            
+            const plainNewPass = Math.floor(100000 + Math.random() * 900000).toString();
+            const hashedPass = await hashPassword(plainNewPass);
+            
+            const res = await fetchAPI('forgot_password', { targetEmail: email, newPasswordHash: hashedPass, plainPass: plainNewPass });
+            
+            btnText.textContent = 'Kirim Sandi Baru ke WA'; btnSpinner.classList.add('hidden');
+            if(res.success) {
+                showToast("Sukses! Kata sandi baru telah dikirim ke WhatsApp Anda.");
+                document.getElementById('loginEmail').value = email;
+                window.location.hash = '#login';
+                document.getElementById('forgotForm').reset();
+            } else {
+                showToast(res.message, true);
+            }
         }
 
         async function checkAuthStatus() {
@@ -1010,7 +1067,7 @@
             showToast(`API Terhubung. Selamat datang, ${escapeHTML(AppState.user.nama)}!`);
             
             const currentHash = window.location.hash.substring(1).split('/')[0];
-            if (!currentHash || currentHash === 'login' || currentHash === 'register') {
+            if (!currentHash || currentHash === 'login' || currentHash === 'register' || currentHash === 'forgot') {
                 window.location.hash = '#dashboard';
             } else {
                 handleRoute(); 
@@ -1039,7 +1096,7 @@
             try {
                 const res = await fetchAPI('verify_session');
                 if (res && !res.success && (res.message === 'SESSION_INVALID' || res.error === 'SESSION_INVALID' || res.message.includes('perangkat lain'))) {
-                    forceLogout("Sesi berakhir: Akun Anda baru saja login di perangkat/browser lain.");
+                    forceLogout("Sesi berakhir: Akun Anda sedang diverifikasi atau login di perangkat lain.");
                 }
             } catch(e) {}
         }
@@ -1103,7 +1160,6 @@
                 document.getElementById('nav-audit').classList.add('hidden'); document.getElementById('nav-settings').classList.add('hidden');
             }
 
-            // Tampilkan Lencana Khusus untuk Kepala Keluarga di Profile
             const badge = document.getElementById('superAdminBadge');
             if (AppState.user.role === 'Kepala Keluarga') {
                 if (badge) badge.classList.remove('hidden');
@@ -1131,7 +1187,7 @@
             if(isAdmin) { const resLogs = await fetchAPI('get_logs'); if(resLogs.success) { AppState.logs = resLogs.data; renderLogs(); } }
         }
 
-        // --- 6. MANAJEMEN ANGGOTA BARU (TAMBAH / EDIT / FOTO / PREVIEW) ---
+        // --- 6. MANAJEMEN ANGGOTA BARU (TAMBAH / EDIT / VERIFIKASI / FOTO / PREVIEW) ---
         function openAddUserModalUI() {
             document.getElementById('userFormModal').classList.remove('hidden');
             document.getElementById('userActionForm').reset();
@@ -1250,11 +1306,35 @@
             else showToast(res.message, true);
         }
 
+        async function handleUserVerify(targetEmail, newStatus) {
+            if(!confirm(`Ubah status anggota ini menjadi ${newStatus}?`)) return;
+            showToast("Memproses verifikasi...");
+            const res = await fetchAPI('verify_user_status', { targetEmail: targetEmail, newStatus: newStatus });
+            if(res.success) { showToast(res.message); loadUsersAndLogs(); } 
+            else showToast(res.message, true);
+        }
+
         function renderUsers() {
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '';
             AppState.users.forEach(u => {
-                const badge = u.role === 'Admin' || u.role === 'Kepala Keluarga' || u.role === 'Istri' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
+                const roleBadge = u.role === 'Admin' || u.role === 'Kepala Keluarga' || u.role === 'Istri' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
+                
+                let statusBadge = '';
+                let actionBtn = '';
+                const status = u.status || 'Aktif';
+                
+                if (status === 'Aktif') {
+                    statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-emerald-100 text-emerald-700 uppercase">Aktif</span>';
+                    actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Nonaktif')" class="text-amber-600 hover:text-amber-800 bg-amber-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Nonaktifkan / Blokir"><i class="ph ph-prohibit text-base sm:text-lg"></i></button>`;
+                } else if (status === 'Pending') {
+                    statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-amber-100 text-amber-700 uppercase">Pending</span>';
+                    actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Aktif')" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Setujui & Aktifkan"><i class="ph ph-check-circle text-base sm:text-lg"></i></button>`;
+                } else {
+                    statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-red-100 text-red-700 uppercase">Nonaktif</span>';
+                    actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Aktif')" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Aktifkan Ulang"><i class="ph ph-check-circle text-base sm:text-lg"></i></button>`;
+                }
+
                 const photoHtml = u.photoUrl ? `<img src="${u.photoUrl}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shadow-sm mr-2 sm:mr-3">` : `<div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold mr-2 sm:mr-3 shadow-sm">${escapeHTML(u.nama.charAt(0))}</div>`;
                 
                 tbody.insertAdjacentHTML('beforeend', `
@@ -1266,15 +1346,19 @@
                                 <div class="text-[10px] sm:text-[11px] text-slate-400 truncate">${escapeHTML(u.email)}</div>
                             </div>
                         </td>
-                        <td class="py-2 sm:py-3 px-3 sm:px-4"><span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold ${badge} uppercase">${escapeHTML(u.role)}</span></td>
+                        <td class="py-2 sm:py-3 px-3 sm:px-4 space-y-1 flex flex-col items-start">
+                            <span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold ${roleBadge} uppercase w-max">${escapeHTML(u.role)}</span>
+                            ${statusBadge}
+                        </td>
                         <td class="py-2 sm:py-3 px-3 sm:px-4">
                             <div class="text-xs sm:text-sm font-medium text-slate-700 truncate">${escapeHTML(u.profesi || '-')}</div>
                             <div class="text-[10px] sm:text-[11px] text-slate-400 truncate"><i class="ph-fill ph-phone mr-1"></i>${escapeHTML(u.phone || '-')}</div>
                         </td>
                         <td class="py-2 sm:py-3 px-3 sm:px-4 text-right">
                             <div class="flex justify-end space-x-1 sm:space-x-2">
-                                <button onclick="window.location.hash='#user-preview/${encodeURIComponent(u.email)}'" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Lihat"><i class="ph ph-eye text-base sm:text-lg"></i></button>
-                                <button onclick="window.location.hash='#user-edit/${encodeURIComponent(u.email)}'" class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Edit"><i class="ph ph-pencil-simple text-base sm:text-lg"></i></button>
+                                ${actionBtn}
+                                <button onclick="window.location.hash='#user-preview/${encodeURIComponent(u.email)}'" class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Lihat"><i class="ph ph-eye text-base sm:text-lg"></i></button>
+                                <button onclick="window.location.hash='#user-edit/${encodeURIComponent(u.email)}'" class="text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Edit"><i class="ph ph-pencil-simple text-base sm:text-lg"></i></button>
                                 <button onclick="handleUserDelete('${u.email}', '${escapeHTML(u.nama)}')" class="text-red-600 hover:text-red-800 bg-red-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Hapus"><i class="ph ph-trash text-base sm:text-lg"></i></button>
                             </div>
                         </td>
