@@ -803,9 +803,9 @@
     </div>
 
     <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="fixed bottom-4 right-4 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-[60] flex items-center space-x-3 border border-slate-700">
-        <i id="toastIcon" class="ph ph-check-circle text-green-400 text-xl"></i>
-        <span id="toastMsg" class="text-sm font-medium">Pesan notifikasi</span>
+    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-300 ease-out z-[70] flex items-center gap-3 px-5 py-3.5 bg-slate-800/95 backdrop-blur-md border border-slate-700/50 text-white rounded-full shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] w-max max-w-[90vw]">
+        <i id="toastIcon" class="ph-fill ph-check-circle text-emerald-400 text-2xl flex-shrink-0 drop-shadow-md"></i>
+        <span id="toastMsg" class="text-sm font-medium tracking-wide">Pesan notifikasi</span>
     </div>
 
     <!-- SCRIPT UTAMA -->
@@ -1005,9 +1005,9 @@
             
             const res = await fetchAPI('forgot_password', { targetEmail: email, newPasswordHash: hashedPass, plainPass: plainNewPass });
             
-            btnText.textContent = 'Kirim Sandi Baru ke WA'; btnSpinner.classList.add('hidden');
+            btnText.textContent = 'Kirim Sandi Baru ke Email'; btnSpinner.classList.add('hidden');
             if(res.success) {
-                showToast("Sukses! Kata sandi baru telah dikirim ke WhatsApp Anda.");
+                showToast("Sukses! Kata sandi baru telah dikirim ke Email Anda.");
                 document.getElementById('loginEmail').value = email;
                 window.location.hash = '#login';
                 document.getElementById('forgotForm').reset();
@@ -1142,6 +1142,21 @@
 
             const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
             const isAdmin = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga';
+
+            // DITAMBAHKAN: Logika Menyembunyikan Filter Nama Anggota untuk Anak
+            const ownerFilterContainer = document.getElementById('ownerFilterContainer');
+            const categoryFilterContainer = document.getElementById('categoryFilterContainer');
+            const categoryFilterLabel = document.getElementById('categoryFilterLabel');
+
+            if (isAdminOrIstri) {
+                if (ownerFilterContainer) ownerFilterContainer.classList.remove('hidden');
+                if (categoryFilterContainer) categoryFilterContainer.className = "w-full md:w-2/3 border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-4";
+                if (categoryFilterLabel) categoryFilterLabel.innerHTML = '<i class="ph-fill ph-folders mr-1"></i> 2. Filter Kategori Dokumen';
+            } else {
+                if (ownerFilterContainer) ownerFilterContainer.classList.add('hidden');
+                if (categoryFilterContainer) categoryFilterContainer.className = "w-full";
+                if (categoryFilterLabel) categoryFilterLabel.innerHTML = '<i class="ph-fill ph-folders mr-1"></i> Filter Kategori Dokumen';
+            }
 
             const btnSync = document.getElementById('btnSyncDrive'), btnBackup = document.getElementById('btnBackup');
             if (isAdminOrIstri) {
@@ -1622,9 +1637,14 @@
             finally { document.body.removeChild(textarea); }
         }
         function showToast(message, isError = false) {
-            const toast = document.getElementById('toast'); document.getElementById('toastMsg').textContent = message;
-            document.getElementById('toastIcon').className = isError ? "ph ph-x-circle text-red-400 text-2xl flex-shrink-0" : "ph ph-check-circle text-green-400 text-2xl flex-shrink-0";
-            toast.classList.remove('translate-y-20', 'opacity-0'); setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3500);
+            const toast = document.getElementById('toast'); 
+            document.getElementById('toastMsg').textContent = message;
+            document.getElementById('toastIcon').className = isError ? "ph-fill ph-warning-circle text-red-400 text-2xl flex-shrink-0 drop-shadow-md" : "ph-fill ph-check-circle text-emerald-400 text-2xl flex-shrink-0 drop-shadow-md";
+            
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            
+            if(window.toastTimer) clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 3500);
         }
 
         // IMPLEMENTASI DETAIL DOKUMEN & LAINNYA 
