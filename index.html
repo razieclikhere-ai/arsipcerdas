@@ -175,7 +175,7 @@
             </div>
         </aside>
 
-        <!-- DIPERBAIKI: Lapisan gelap sidebar dihapus, diganti kaca buram terang -->
+        <!-- Lapisan kaca buram terang untuk sidebar -->
         <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-500/10 backdrop-blur-sm z-30 hidden md:hidden transition-opacity"></div>
 
         <!-- Main Content area -->
@@ -201,13 +201,14 @@
                     <button id="btnBackup" onclick="triggerBackup()" style="display: none;" class="items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 sm:px-3 py-1.5 rounded-lg text-sm font-medium transition shadow-sm">
                         <i class="ph ph-hard-drives text-lg"></i><span class="hidden lg:inline">Backup</span>
                     </button>
-                    <button onclick="window.location.hash='#upload'" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-1.5 rounded-lg text-sm font-medium shadow-sm transition flex items-center space-x-1.5 sm:space-x-2">
-                        <i class="ph ph-upload-simple text-lg"></i><span class="hidden sm:inline">Unggah</span>
+                    <button onclick="window.location.hash='#upload'" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-1.5 rounded-lg text-sm font-medium shadow-sm transition flex items-center space-x-1.5 sm:space-x-2 md:flex hidden">
+                        <i class="ph ph-upload-simple text-lg"></i><span>Unggah</span>
                     </button>
                 </div>
             </header>
 
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 relative">
+            <!-- Diubah: Ditambahkan padding bottom ekstra (pb-24) untuk ruang Button Bar Mobile -->
+            <main class="flex-1 overflow-y-auto p-4 pb-24 md:pb-6 sm:p-6 lg:p-8 relative">
                 <div class="max-w-7xl mx-auto space-y-6">
 
                     <!-- Dashboard -->
@@ -441,10 +442,42 @@
                     </div>
                 </div>
             </main>
+
+            <!-- DITAMBAHKAN: Mobile Bottom Navigation Bar -->
+            <nav id="mobileBottomNav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-200 z-40 px-2 pb-2 pt-1 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.05)]">
+                <div class="flex justify-between items-center h-14 relative">
+                    <a href="#dashboard" id="mob-nav-dashboard" class="mobile-nav-item flex flex-col items-center justify-center w-[20%] text-indigo-600 transition group">
+                        <i class="ph-fill ph-squares-four text-[22px] mb-1 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[9px] font-semibold">Beranda</span>
+                    </a>
+                    
+                    <a href="#documents" id="mob-nav-documents" class="mobile-nav-item flex flex-col items-center justify-center w-[20%] text-slate-400 hover:text-indigo-500 transition group">
+                        <i class="ph-fill ph-folders text-[22px] mb-1 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[9px] font-medium">Dokumen</span>
+                    </a>
+                    
+                    <!-- Center Action Button (Upload) -->
+                    <div class="w-[20%] flex justify-center relative">
+                        <a href="#upload" class="absolute -top-7 flex items-center justify-center w-14 h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-full shadow-lg shadow-indigo-300 hover:shadow-indigo-400 hover:-translate-y-1 transition-all border-4 border-slate-50 group">
+                            <i class="ph ph-plus text-2xl group-hover:rotate-90 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                    
+                    <a href="#profile" id="mob-nav-profile" class="mobile-nav-item flex flex-col items-center justify-center w-[20%] text-slate-400 hover:text-indigo-500 transition group">
+                        <i class="ph-fill ph-user-circle text-[22px] mb-1 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[9px] font-medium">Profil</span>
+                    </a>
+                    
+                    <button onclick="toggleSidebar()" class="flex flex-col items-center justify-center w-[20%] text-slate-400 hover:text-indigo-500 transition group outline-none">
+                        <i class="ph-fill ph-list text-[22px] mb-1 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[9px] font-medium">Menu</span>
+                    </button>
+                </div>
+            </nav>
         </div>
     </div>
 
-    <!-- DIPERBAIKI: Lapisan modal diubah dari bg-slate-900/60 menjadi bg-slate-800/10 backdrop-blur-md agar transparan dan terang -->
+    <!-- Lapisan modal diubah dari bg-slate-900/60 menjadi bg-slate-800/10 backdrop-blur-md agar transparan dan terang -->
     <!-- MODAL: UPLOAD DOKUMEN -->
     <div id="uploadModal" class="fixed inset-0 bg-slate-800/10 backdrop-blur-md hidden z-50 flex items-center justify-center p-3 sm:p-4 transition-opacity">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
@@ -1382,15 +1415,33 @@
         }
 
         function switchViewUI(viewName) {
+            // Sembunyikan semua section dan kembalikan warna awal nav item (Sidebar)
             document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('bg-indigo-600', 'text-white'); el.classList.add('hover:bg-slate-800', 'hover:text-white'); });
             
+            // DITAMBAHKAN: Reset status aktif di Mobile Bottom Nav
+            document.querySelectorAll('.mobile-nav-item').forEach(el => { 
+                el.classList.remove('text-indigo-600'); 
+                el.querySelector('span')?.classList.replace('font-semibold', 'font-medium');
+                el.classList.add('text-slate-400'); 
+            });
+
+            // Tampilkan View yang dituju
             const viewEl = document.getElementById(`view-${viewName}`);
             if(viewEl) viewEl.classList.remove('hidden');
             
+            // Set nav aktif di Sidebar Desktop
             const activeNav = document.getElementById(`nav-${viewName}`);
             if(activeNav) { activeNav.classList.remove('hover:bg-slate-800', 'hover:text-white'); activeNav.classList.add('bg-indigo-600', 'text-white'); }
             
+            // Set nav aktif di Mobile Bottom Nav
+            const activeMobNav = document.getElementById(`mob-nav-${viewName}`);
+            if(activeMobNav) { 
+                activeMobNav.classList.remove('text-slate-400'); 
+                activeMobNav.classList.add('text-indigo-600'); 
+                activeMobNav.querySelector('span')?.classList.replace('font-medium', 'font-semibold');
+            }
+
             if (window.innerWidth < 768) {
                 const sidebar = document.getElementById('sidebar');
                 if(!sidebar.classList.contains('-translate-x-full')) toggleSidebar();
