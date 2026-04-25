@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';">
     <title>Arsip Cerdasku - Family Vault AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -121,7 +122,6 @@
         </div>
     </div>
 
-
     <!-- APP CONTAINER -->
     <div id="appContainer" class="hidden flex-1 flex h-full overflow-hidden w-full relative">
         <!-- Sidebar -->
@@ -207,7 +207,6 @@
                 </div>
             </header>
 
-            <!-- Diubah: Ditambahkan padding bottom ekstra (pb-24) untuk ruang Button Bar Mobile -->
             <main class="flex-1 overflow-y-auto p-4 pb-24 md:pb-6 sm:p-6 lg:p-8 relative">
                 <div class="max-w-7xl mx-auto space-y-6">
 
@@ -346,6 +345,11 @@
                                 <div class="text-center sm:text-left flex-1">
                                     <h2 class="text-xl font-bold text-slate-800" id="profileDisplayName">Memuat...</h2>
                                     <p class="text-sm text-slate-500 font-medium mb-2" id="profileDisplayRole">Role</p>
+                                    
+                                    <!-- DITAMBAHKAN: Lencana Hak Istimewa Multi-Device untuk Kepala Keluarga -->
+                                    <div id="superAdminBadge" class="hidden inline-flex items-center space-x-1 bg-amber-100 text-amber-700 px-2.5 py-1.5 rounded-md text-xs font-bold border border-amber-200 mt-1">
+                                        <i class="ph-fill ph-crown text-base"></i><span>Super Admin (Multi-Device Login Aktif)</span>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -419,15 +423,24 @@
                                 </div>
 
                                 <div class="bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200 mt-4">
-                                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-whatsapp-logo mr-2 text-emerald-500 text-lg"></i> WhatsApp Gateway</h3>
+                                    <!-- DITAMBAHKAN: Keterangan eksplisit tentang KirimAja -->
+                                    <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center"><i class="ph ph-whatsapp-logo mr-2 text-emerald-500 text-lg"></i> WhatsApp Gateway (KirimAja Webhook)</h3>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-xs font-medium text-slate-700 mb-1">Endpoint URL Gateway</label>
-                                            <input type="url" id="setWaUrl" placeholder="https://api.fonnte.com/send" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                                            <label class="block text-xs font-medium text-slate-700 mb-1">Endpoint URL (POST)</label>
+                                            <input type="url" id="setWaUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-medium text-slate-700 mb-1">Token / API Key WhatsApp</label>
-                                            <input type="password" id="setWaToken" placeholder="Masukkan Token WA" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                                            <label class="block text-xs font-medium text-slate-700 mb-1">API Key / Token Developer</label>
+                                            <input type="password" id="setWaToken" placeholder="KA-ADMIN-9C967D65" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700 mb-1">Device ID</label>
+                                            <input type="text" id="setWaDevice" placeholder="40c8b51a-..." class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700 mb-1">Nomor Tujuan WA</label>
+                                            <input type="tel" id="setWaTarget" placeholder="628123456789" class="w-full border border-slate-300 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-600 outline-none transition">
                                         </div>
                                     </div>
                                 </div>
@@ -443,7 +456,7 @@
                 </div>
             </main>
 
-            <!-- DITAMBAHKAN: Mobile Bottom Navigation Bar -->
+            <!-- Mobile Bottom Navigation Bar -->
             <nav id="mobileBottomNav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-200 z-40 px-2 pb-2 pt-1 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.05)]">
                 <div class="flex justify-between items-center h-14 relative">
                     <a href="#dashboard" id="mob-nav-dashboard" class="mobile-nav-item flex flex-col items-center justify-center w-[20%] text-indigo-600 transition group">
@@ -477,7 +490,6 @@
         </div>
     </div>
 
-    <!-- Lapisan modal diubah dari bg-slate-900/60 menjadi bg-slate-800/10 backdrop-blur-md agar transparan dan terang -->
     <!-- MODAL: UPLOAD DOKUMEN -->
     <div id="uploadModal" class="fixed inset-0 bg-slate-800/10 backdrop-blur-md hidden z-50 flex items-center justify-center p-3 sm:p-4 transition-opacity">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
@@ -770,6 +782,30 @@
 
     <!-- SCRIPT UTAMA -->
     <script>
+        // --- 0. KEAMANAN: SANITASI & KRIPTOGRAFI ---
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>'"]/g, function(tag) {
+                const chars = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' };
+                return chars[tag] || tag;
+            });
+        }
+
+        async function hashPassword(str) {
+            if (!str) return '';
+            const buf = await crypto.subtle.digest("SHA-256", new TextEncoder("utf-8").encode(str));
+            return Array.prototype.map.call(new Uint8Array(buf), x=>(('00'+x.toString(16)).slice(-2))).join('');
+        }
+
+        function getSecureStorage(key) {
+            try { return atob(localStorage.getItem(key) || ''); }
+            catch(e) { return localStorage.getItem(key) || ''; } 
+        }
+        function setSecureStorage(key, value) {
+            if(value) localStorage.setItem(key, btoa(value));
+            else localStorage.removeItem(key);
+        }
+
         // --- 1. GLOBAL STATE & API ENDPOINT ---
         const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwYa9G7SIGP6DNgnZjGFWVyP1YSwrnSKmvizLS5qgKAH8W5_FGJDQvp0PR5Uhakzefnwg/exec';
         
@@ -787,18 +823,22 @@
             tempPhotoMime: null,
             currentView: 'dashboard'
         };
-        let sessionCheckInterval = null; // Menyimpan timer pengecekan sesi
+        let sessionCheckInterval = null; 
 
         // --- 2. CORE FETCH API WRAPPER ---
         async function fetchAPI(action, additionalPayload = {}) {
             const payload = { 
                 action: action, 
                 email: AppState.user ? AppState.user.email : null, 
-                sessionId: localStorage.getItem('arsipCerdasku_sessionId'), // Kirim sessionId otomatis
+                sessionId: localStorage.getItem('arsipCerdasku_sessionId'), 
                 ...additionalPayload 
             };
             try {
-                const response = await fetch(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+                const response = await fetch(GAS_API_URL, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+                    body: JSON.stringify(payload) 
+                });
                 return await response.json();
             } catch (error) { return { success: false, message: "Koneksi ke Server gagal. Pastikan internet stabil." }; }
         }
@@ -814,7 +854,7 @@
                     const file = e.target.files[0];
                     if (file) {
                         if (file.size > 5 * 1024 * 1024) return showToast("Ukuran file melebihi batas 5MB.", true), resetFileInput();
-                        document.getElementById('fileNameDisplay').textContent = file.name;
+                        document.getElementById('fileNameDisplay').textContent = escapeHTML(file.name);
                         document.getElementById('uploadPreviewContainer').classList.remove('hidden');
                         const previewImg = document.getElementById('uploadImagePreview');
                         if (file.type.startsWith('image/')) {
@@ -827,7 +867,6 @@
             }
         });
 
-        // ROUTER HANDLER
         function hideAllModals() {
             document.getElementById('uploadModal').classList.add('hidden');
             document.getElementById('docDetailModal').classList.add('hidden');
@@ -878,7 +917,6 @@
             } else if (path === 'user-preview' && param) {
                 switchViewUI('users'); AppState.currentView = 'users'; openPreviewUserUI(decodeURIComponent(param));
             } else {
-                // Unknown route, fallback to dashboard
                 if(path !== 'login' && path !== 'register') window.location.hash = '#dashboard';
             }
         }
@@ -898,12 +936,21 @@
 
         async function handleRegister(e) {
             e.preventDefault();
-            const email = document.getElementById('regEmail').value, password = document.getElementById('regPassword').value; 
+            const email = document.getElementById('regEmail').value;
+            const plainPassword = document.getElementById('regPassword').value; 
 
             const btnText = document.getElementById('btnRegText'), btnSpinner = document.getElementById('btnRegSpinner');
             btnText.textContent = 'Mendaftarkan...'; btnSpinner.classList.remove('hidden');
 
-            const payload = { name: document.getElementById('regName').value, email: email, password: password, profesi: document.getElementById('regProfesi').value, phone: document.getElementById('regPhone').value };
+            const hashedPassword = await hashPassword(plainPassword); 
+
+            const payload = { 
+                name: document.getElementById('regName').value, 
+                email: email, 
+                password: hashedPassword, 
+                profesi: document.getElementById('regProfesi').value, 
+                phone: document.getElementById('regPhone').value 
+            };
             const res = await fetchAPI('register_user', payload);
 
             btnText.textContent = 'Daftar Sekarang'; btnSpinner.classList.add('hidden');
@@ -919,31 +966,33 @@
                 const res = await fetchAPI('check_auth', { email: autoLoginEmail, sessionId: savedSessionId, device: navigator.userAgent });
                 if(res.success) {
                     processLoginSuccess(res, autoLoginEmail);
-                    return; // exit early
+                    return; 
                 } else {
                     localStorage.removeItem('arsipCerdasku_rememberMe');
                     localStorage.removeItem('arsipCerdasku_sessionId');
                 }
             }
-            handleRoute(); // if no valid session, run router (will lock to login)
+            handleRoute(); 
         }
 
         async function handleLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value, password = document.getElementById('loginPassword').value; 
+            const email = document.getElementById('loginEmail').value;
+            const plainPassword = document.getElementById('loginPassword').value; 
 
             const btnText = document.getElementById('btnLoginText'), btnSpinner = document.getElementById('btnLoginSpinner');
             btnText.textContent = 'Memverifikasi...'; btnSpinner.classList.remove('hidden');
 
-            const sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2); // Generate Session ID unik
-            const device = navigator.userAgent; // Ambil info Perangkat/Browser
+            const hashedPassword = await hashPassword(plainPassword); 
+            const sessionId = crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).substr(2)); 
+            const device = navigator.userAgent; 
             
-            const res = await fetchAPI('check_auth', { email: email, password: password, sessionId: sessionId, device: device });
+            const res = await fetchAPI('check_auth', { email: email, password: hashedPassword, sessionId: sessionId, device: device });
 
             btnText.textContent = 'Masuk ke Brankas'; btnSpinner.classList.add('hidden');
             if (res.success) {
                 if (document.getElementById('rememberMe').checked) localStorage.setItem('arsipCerdasku_rememberMe', email);
-                localStorage.setItem('arsipCerdasku_sessionId', sessionId); // Simpan sesi aktif
+                localStorage.setItem('arsipCerdasku_sessionId', sessionId); 
                 processLoginSuccess(res, email);
             } else showToast(res.message, true);
         }
@@ -954,12 +1003,11 @@
             document.getElementById('appContainer').classList.remove('hidden');
             
             initUserSetup(); 
-            startSessionPolling(); // Mulai pemantauan sesi agar tidak ditabrak perangkat lain
-            loadLoginHistory();    // Muat riwayat perangkat yang login
+            startSessionPolling(); 
+            loadLoginHistory();    
             
-            // Tunggu data core terisi sebelum routing di proses
             await Promise.all([loadDocuments(), loadUsersAndLogs()]); 
-            showToast(`API Terhubung. Selamat datang, ${AppState.user.nama}!`);
+            showToast(`API Terhubung. Selamat datang, ${escapeHTML(AppState.user.nama)}!`);
             
             const currentHash = window.location.hash.substring(1).split('/')[0];
             if (!currentHash || currentHash === 'login' || currentHash === 'register') {
@@ -972,16 +1020,16 @@
         function handleLogout() {
             localStorage.removeItem('arsipCerdasku_rememberMe'); 
             localStorage.removeItem('arsipCerdasku_sessionId');
-            if (sessionCheckInterval) clearInterval(sessionCheckInterval); // Matikan pemantauan sesi
+            if (sessionCheckInterval) clearInterval(sessionCheckInterval); 
             AppState.user = null;
             document.getElementById('loginPassword').value = '';
-            window.location.hash = '#login'; // Forces route handler to reset UI cleanly
+            window.location.hash = '#login'; 
             showToast("Berhasil keluar.");
         }
 
         function startSessionPolling() {
             if (sessionCheckInterval) clearInterval(sessionCheckInterval);
-            sessionCheckInterval = setInterval(verifySession, 15000); // Mengecek sesi setiap 15 detik
+            sessionCheckInterval = setInterval(verifySession, 15000); 
         }
 
         async function verifySession() {
@@ -990,7 +1038,6 @@
             if (!currentSession) return;
             try {
                 const res = await fetchAPI('verify_session');
-                // Jika server mengirimkan flag bahwa sesi tidak valid (karena ada login baru)
                 if (res && !res.success && (res.message === 'SESSION_INVALID' || res.error === 'SESSION_INVALID' || res.message.includes('perangkat lain'))) {
                     forceLogout("Sesi berakhir: Akun Anda baru saja login di perangkat/browser lain.");
                 }
@@ -1014,9 +1061,9 @@
         // --- 5. UI POPULATION & DATA LOADERS ---
         function initUserSetup() {
             if(!AppState.user) return;
-            document.getElementById('userName').textContent = `${AppState.user.nama} (${AppState.user.role})`;
-            document.getElementById('userEmail').textContent = AppState.user.email;
-            document.getElementById('welcomeName').textContent = AppState.user.nama;
+            document.getElementById('userName').textContent = `${escapeHTML(AppState.user.nama)} (${escapeHTML(AppState.user.role)})`;
+            document.getElementById('userEmail').textContent = escapeHTML(AppState.user.email);
+            document.getElementById('welcomeName').textContent = escapeHTML(AppState.user.nama);
             
             if (AppState.user.photoUrl) {
                 document.getElementById('sidebarUserPhoto').src = AppState.user.photoUrl;
@@ -1028,11 +1075,11 @@
                 document.getElementById('profileBigInitial').classList.add('hidden');
             } else {
                 document.getElementById('sidebarUserPhoto').classList.add('hidden');
-                document.getElementById('userInitial').textContent = AppState.user.initial;
+                document.getElementById('userInitial').textContent = escapeHTML(AppState.user.initial);
                 document.getElementById('userInitial').classList.remove('hidden');
                 
                 document.getElementById('profileBigPhoto').classList.add('hidden');
-                document.getElementById('profileBigInitial').textContent = AppState.user.initial;
+                document.getElementById('profileBigInitial').textContent = escapeHTML(AppState.user.initial);
                 document.getElementById('profileBigInitial').classList.remove('hidden');
             }
 
@@ -1056,8 +1103,16 @@
                 document.getElementById('nav-audit').classList.add('hidden'); document.getElementById('nav-settings').classList.add('hidden');
             }
 
-            document.getElementById('profileDisplayName').textContent = AppState.user.nama;
-            document.getElementById('profileDisplayRole').textContent = AppState.user.role + ' Keluarga';
+            // Tampilkan Lencana Khusus untuk Kepala Keluarga di Profile
+            const badge = document.getElementById('superAdminBadge');
+            if (AppState.user.role === 'Kepala Keluarga') {
+                if (badge) badge.classList.remove('hidden');
+            } else {
+                if (badge) badge.classList.add('hidden');
+            }
+
+            document.getElementById('profileDisplayName').textContent = escapeHTML(AppState.user.nama);
+            document.getElementById('profileDisplayRole').textContent = escapeHTML(AppState.user.role + ' Keluarga');
             document.getElementById('profNama').value = AppState.user.nama; document.getElementById('profEmail').value = AppState.user.email;
             document.getElementById('profProfesi').value = AppState.user.profesi || ''; document.getElementById('profPhone').value = AppState.user.phone || '';
         }
@@ -1120,11 +1175,11 @@
             const u = AppState.users.find(user => user.email === email);
             if (!u) { showToast("Anggota tidak ditemukan", true); closeModal(); return; }
 
-            document.getElementById('previewUserName').textContent = u.nama;
-            document.getElementById('previewUserEmail').textContent = u.email;
-            document.getElementById('previewUserRole').textContent = u.role;
-            document.getElementById('previewUserProfesi').textContent = u.profesi || '-';
-            document.getElementById('previewUserPhone').textContent = u.phone || '-';
+            document.getElementById('previewUserName').textContent = escapeHTML(u.nama);
+            document.getElementById('previewUserEmail').textContent = escapeHTML(u.email);
+            document.getElementById('previewUserRole').textContent = escapeHTML(u.role);
+            document.getElementById('previewUserProfesi').textContent = escapeHTML(u.profesi || '-');
+            document.getElementById('previewUserPhone').textContent = escapeHTML(u.phone || '-');
 
             const imgEl = document.getElementById('previewUserImg');
             const initEl = document.getElementById('previewUserInitial');
@@ -1132,7 +1187,7 @@
             if (u.photoUrl) {
                 imgEl.src = u.photoUrl; imgEl.classList.remove('hidden'); initEl.classList.add('hidden');
             } else {
-                imgEl.classList.add('hidden'); initEl.classList.remove('hidden'); initEl.textContent = u.nama.charAt(0).toUpperCase();
+                imgEl.classList.add('hidden'); initEl.classList.remove('hidden'); initEl.textContent = escapeHTML(u.nama.charAt(0).toUpperCase());
             }
             document.getElementById('previewUserModal').classList.remove('hidden');
         }
@@ -1156,11 +1211,16 @@
             const btnText = document.getElementById('btnUserText'), btnSpinner = document.getElementById('btnUserSpinner');
             btnText.textContent = 'Menyimpan...'; btnSpinner.classList.remove('hidden');
 
+            let finalPassword = document.getElementById('addUserPassword').value;
+            if(finalPassword) {
+                finalPassword = await hashPassword(finalPassword); 
+            }
+
             const payload = {
                 name: document.getElementById('addUserName').value,
                 email: document.getElementById('addUserEmail').value, 
                 targetEmail: document.getElementById('userFormTargetEmail').value, 
-                password: document.getElementById('addUserPassword').value,
+                password: finalPassword,
                 role: document.getElementById('addUserRole').value,
                 profesi: document.getElementById('addUserProfesi').value,
                 phone: document.getElementById('addUserPhone').value,
@@ -1195,27 +1255,27 @@
             tbody.innerHTML = '';
             AppState.users.forEach(u => {
                 const badge = u.role === 'Admin' || u.role === 'Kepala Keluarga' || u.role === 'Istri' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
-                const photoHtml = u.photoUrl ? `<img src="${u.photoUrl}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shadow-sm mr-2 sm:mr-3">` : `<div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold mr-2 sm:mr-3 shadow-sm">${u.nama.charAt(0)}</div>`;
+                const photoHtml = u.photoUrl ? `<img src="${u.photoUrl}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shadow-sm mr-2 sm:mr-3">` : `<div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold mr-2 sm:mr-3 shadow-sm">${escapeHTML(u.nama.charAt(0))}</div>`;
                 
                 tbody.insertAdjacentHTML('beforeend', `
                     <tr class="hover:bg-slate-50 transition border-b border-slate-50">
                         <td class="py-2 sm:py-3 px-3 sm:px-4 flex items-center">
                             ${photoHtml}
                             <div class="min-w-0">
-                                <div class="font-bold text-slate-800 text-xs sm:text-sm truncate">${u.nama}</div>
-                                <div class="text-[10px] sm:text-[11px] text-slate-400 truncate">${u.email}</div>
+                                <div class="font-bold text-slate-800 text-xs sm:text-sm truncate">${escapeHTML(u.nama)}</div>
+                                <div class="text-[10px] sm:text-[11px] text-slate-400 truncate">${escapeHTML(u.email)}</div>
                             </div>
                         </td>
-                        <td class="py-2 sm:py-3 px-3 sm:px-4"><span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold ${badge} uppercase">${u.role}</span></td>
+                        <td class="py-2 sm:py-3 px-3 sm:px-4"><span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold ${badge} uppercase">${escapeHTML(u.role)}</span></td>
                         <td class="py-2 sm:py-3 px-3 sm:px-4">
-                            <div class="text-xs sm:text-sm font-medium text-slate-700 truncate">${u.profesi || '-'}</div>
-                            <div class="text-[10px] sm:text-[11px] text-slate-400 truncate"><i class="ph-fill ph-phone mr-1"></i>${u.phone || '-'}</div>
+                            <div class="text-xs sm:text-sm font-medium text-slate-700 truncate">${escapeHTML(u.profesi || '-')}</div>
+                            <div class="text-[10px] sm:text-[11px] text-slate-400 truncate"><i class="ph-fill ph-phone mr-1"></i>${escapeHTML(u.phone || '-')}</div>
                         </td>
                         <td class="py-2 sm:py-3 px-3 sm:px-4 text-right">
                             <div class="flex justify-end space-x-1 sm:space-x-2">
                                 <button onclick="window.location.hash='#user-preview/${encodeURIComponent(u.email)}'" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Lihat"><i class="ph ph-eye text-base sm:text-lg"></i></button>
                                 <button onclick="window.location.hash='#user-edit/${encodeURIComponent(u.email)}'" class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Edit"><i class="ph ph-pencil-simple text-base sm:text-lg"></i></button>
-                                <button onclick="handleUserDelete('${u.email}', '${u.nama}')" class="text-red-600 hover:text-red-800 bg-red-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Hapus"><i class="ph ph-trash text-base sm:text-lg"></i></button>
+                                <button onclick="handleUserDelete('${u.email}', '${escapeHTML(u.nama)}')" class="text-red-600 hover:text-red-800 bg-red-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Hapus"><i class="ph ph-trash text-base sm:text-lg"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -1231,8 +1291,7 @@
             if (isAdminOrIstri) {
                 document.getElementById('uploadOwnerContainer').classList.remove('hidden');
                 const sel = document.getElementById('uploadOwnerInput'); sel.innerHTML = '<option value="">-- Milik Saya Sendiri --</option>';
-                // Memastikan nilai value = email agar tersambung sempurna dengan Backend `targetOwnerEmail`
-                AppState.users.forEach(u => { if(u.email !== AppState.user.email) sel.insertAdjacentHTML('beforeend', `<option value="${u.email}">${u.nama} (${u.role})</option>`); });
+                AppState.users.forEach(u => { if(u.email !== AppState.user.email) sel.insertAdjacentHTML('beforeend', `<option value="${escapeHTML(u.email)}">${escapeHTML(u.nama)} (${escapeHTML(u.role)})</option>`); });
             } else document.getElementById('uploadOwnerContainer').classList.add('hidden');
         }
 
@@ -1240,7 +1299,7 @@
             e.preventDefault();
             const file = document.getElementById('fileInput').files[0];
             if (!file) return showToast("Pilih file terlebih dahulu", true);
-            const groqKeyLocal = localStorage.getItem('arsipCerdasku_groqKey');
+            const groqKeyLocal = getSecureStorage('arsipCerdasku_groqKey');
 
             const btnText = document.getElementById('btnText'), btnSpinner = document.getElementById('btnSpinner');
             btnText.textContent = 'Mengekstrak Data...'; btnSpinner.classList.remove('hidden');
@@ -1267,7 +1326,7 @@
                     let displayOwner = ownerId;
                     const foundUser = AppState.users.find(u => u.userId === ownerId || u.email === ownerId);
                     if(foundUser) displayOwner = foundUser.nama;
-                    ownerSelect.insertAdjacentHTML('beforeend', `<option value="${ownerId}">${displayOwner}</option>`);
+                    ownerSelect.insertAdjacentHTML('beforeend', `<option value="${escapeHTML(ownerId)}">${escapeHTML(displayOwner)}</option>`);
                 }
             });
         }
@@ -1331,22 +1390,22 @@
 
             const shareBadge = doc.isShared ? `<span class="absolute top-2 right-2 bg-emerald-100 text-emerald-700 border border-emerald-200 text-[9px] font-bold px-2 py-0.5 rounded-full z-10 flex items-center shadow-sm"><i class="ph ph-share-network mr-1"></i>Shared</span>` : '';
             return `
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition flex flex-col h-full cursor-pointer group relative" onclick="window.location.hash='#doc-detail/${doc.docId}'">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition flex flex-col h-full cursor-pointer group relative" onclick="window.location.hash='#doc-detail/${escapeHTML(doc.docId)}'">
                     ${shareBadge}
                     <div class="p-4 flex items-start space-x-3 border-b border-slate-100 bg-gradient-to-br from-white to-slate-50 pt-6">
                         <div class="p-2.5 rounded-lg shadow-inner ${iconClass}"><i class="ph ${iconClass.split(' ')[0]} text-xl sm:text-2xl"></i></div>
                         <div class="flex-1 min-w-0">
-                            <h3 class="text-sm font-bold text-slate-800 truncate group-hover:text-indigo-600 transition" title="${doc.namaFile}">${doc.namaFile}</h3>
+                            <h3 class="text-sm font-bold text-slate-800 truncate group-hover:text-indigo-600 transition" title="${escapeHTML(doc.namaFile)}">${escapeHTML(doc.namaFile)}</h3>
                             <div class="flex items-center space-x-2 mt-1">
-                                <span class="inline-block bg-slate-200 px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold text-slate-600 uppercase">${doc.kategori}</span>
-                                <span class="flex items-center text-[9px] sm:text-[10px] font-medium text-slate-500 truncate"><i class="ph ph-user mr-1"></i> ${displayOwner}</span>
+                                <span class="inline-block bg-slate-200 px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold text-slate-600 uppercase">${escapeHTML(doc.kategori)}</span>
+                                <span class="flex items-center text-[9px] sm:text-[10px] font-medium text-slate-500 truncate"><i class="ph ph-user mr-1"></i> ${escapeHTML(displayOwner)}</span>
                             </div>
                         </div>
                     </div>
                     <div class="p-3 sm:p-4 flex-grow">
-                        ${firstKey ? `<div class="mb-2 sm:mb-3 flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-100"><div class="flex flex-col overflow-hidden"><span class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider">${firstKey.replace(/_/g, ' ')}</span><span class="text-xs font-semibold text-slate-700 truncate">${firstVal}</span></div><button onclick="event.stopPropagation(); copyToClipboard('${firstVal}', this)" class="text-slate-400 hover:text-indigo-600 p-1.5 bg-white rounded shadow-sm border border-slate-200 transition"><i class="ph ph-copy"></i></button></div>` : ''}
+                        ${firstKey ? `<div class="mb-2 sm:mb-3 flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-100"><div class="flex flex-col overflow-hidden"><span class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider">${escapeHTML(firstKey.replace(/_/g, ' '))}</span><span class="text-xs font-semibold text-slate-700 truncate">${escapeHTML(firstVal)}</span></div><button onclick="event.stopPropagation(); copyToClipboard('${escapeHTML(firstVal)}', this)" class="text-slate-400 hover:text-indigo-600 p-1.5 bg-white rounded shadow-sm border border-slate-200 transition"><i class="ph ph-copy"></i></button></div>` : ''}
                     </div>
-                    <div class="p-2.5 sm:p-3 border-t border-slate-100 bg-slate-50 flex justify-between items-center text-xs text-slate-500"><span class="flex items-center"><i class="ph ph-calendar-blank mr-1"></i> ${doc.tglTerbit || '-'}</span><span class="flex items-center text-indigo-600 font-medium group-hover:underline">Detail <i class="ph ph-arrow-right ml-1"></i></span></div>
+                    <div class="p-2.5 sm:p-3 border-t border-slate-100 bg-slate-50 flex justify-between items-center text-xs text-slate-500"><span class="flex items-center"><i class="ph ph-calendar-blank mr-1"></i> ${escapeHTML(doc.tglTerbit || '-')}</span><span class="flex items-center text-indigo-600 font-medium group-hover:underline">Detail <i class="ph ph-arrow-right ml-1"></i></span></div>
                 </div>`;
         }
 
@@ -1368,7 +1427,7 @@
         function renderLogs() {
             const tbody = document.getElementById('auditTableBody'); tbody.innerHTML = '';
             AppState.logs.forEach(log => {
-                tbody.insertAdjacentHTML('beforeend', `<tr class="hover:bg-slate-50 transition border-b border-slate-50"><td class="py-2 sm:py-3 px-3 sm:px-4 text-[10px] sm:text-xs text-slate-500 whitespace-nowrap">${log.waktu || log.Timestamp}</td><td class="py-2 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-medium">${log.user || log.Email}</td><td class="py-2 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-indigo-600 font-bold">${log.aksi || log.Action}</td><td class="py-2 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-slate-600">${log.target || log.Target}</td></tr>`);
+                tbody.insertAdjacentHTML('beforeend', `<tr class="hover:bg-slate-50 transition border-b border-slate-50"><td class="py-2 sm:py-3 px-3 sm:px-4 text-[10px] sm:text-xs text-slate-500 whitespace-nowrap">${escapeHTML(log.waktu || log.Timestamp)}</td><td class="py-2 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-medium">${escapeHTML(log.user || log.Email)}</td><td class="py-2 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-indigo-600 font-bold">${escapeHTML(log.aksi || log.Action)}</td><td class="py-2 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm text-slate-600">${escapeHTML(log.target || log.Target)}</td></tr>`);
             });
         }
         
@@ -1377,7 +1436,7 @@
             btn.disabled = true; const origHtml = btn.innerHTML;
             btn.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> <span class="hidden sm:inline">Syncing...</span>';
             showToast("Mencari file baru & AI berjalan...", false);
-            const res = await fetchAPI('sync_drive', { groqKey: localStorage.getItem('arsipCerdasku_groqKey') });
+            const res = await fetchAPI('sync_drive', { groqKey: getSecureStorage('arsipCerdasku_groqKey') });
             btn.disabled = false; btn.innerHTML = origHtml;
             if (res.success) { showToast(res.message); loadDocuments(); } else showToast(res.message, true);
         }
@@ -1389,13 +1448,11 @@
             initUserSetup(); showToast("Profil berhasil diperbarui.");
         }
         
-        // RESTORED: Watermark Function
         function simulateWatermark() {
             showToast("Meminta File dari Server...");
             setTimeout(() => showToast("Dokumen siap diunduh!"), 1500);
         }
 
-        // RESTORED: Settings Update Function
         async function handleSettingsUpdate(e) {
             e.preventDefault();
             const btn = document.getElementById('btnSaveSettings');
@@ -1403,11 +1460,22 @@
             btn.innerHTML = '<div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-top-color: white;"></div> <span class="ml-2">Menyimpan...</span>';
             
             const groqVal = document.getElementById('setGroqApi').value;
-            if(groqVal) localStorage.setItem('arsipCerdasku_groqKey', groqVal);
+            const waUrl = document.getElementById('setWaUrl').value;
+            const waToken = document.getElementById('setWaToken').value;
+            const waDevice = document.getElementById('setWaDevice').value;
+            const waTarget = document.getElementById('setWaTarget').value;
+            
+            setSecureStorage('arsipCerdasku_groqKey', groqVal);
+            setSecureStorage('arsipCerdasku_waUrl', waUrl);
+            setSecureStorage('arsipCerdasku_waToken', waToken);
+            setSecureStorage('arsipCerdasku_waDevice', waDevice);
+            setSecureStorage('arsipCerdasku_waTarget', waTarget);
 
             const res = await fetchAPI('update_settings', {
-               waUrl: document.getElementById('setWaUrl').value,
-               waToken: document.getElementById('setWaToken').value
+               waUrl: waUrl,
+               waToken: waToken,
+               waDevice: waDevice,
+               waTarget: waTarget
             });
             
             btn.innerHTML = originalText;
@@ -1415,26 +1483,21 @@
         }
 
         function switchViewUI(viewName) {
-            // Sembunyikan semua section dan kembalikan warna awal nav item (Sidebar)
             document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('bg-indigo-600', 'text-white'); el.classList.add('hover:bg-slate-800', 'hover:text-white'); });
             
-            // DITAMBAHKAN: Reset status aktif di Mobile Bottom Nav
             document.querySelectorAll('.mobile-nav-item').forEach(el => { 
                 el.classList.remove('text-indigo-600'); 
                 el.querySelector('span')?.classList.replace('font-semibold', 'font-medium');
                 el.classList.add('text-slate-400'); 
             });
 
-            // Tampilkan View yang dituju
             const viewEl = document.getElementById(`view-${viewName}`);
             if(viewEl) viewEl.classList.remove('hidden');
             
-            // Set nav aktif di Sidebar Desktop
             const activeNav = document.getElementById(`nav-${viewName}`);
             if(activeNav) { activeNav.classList.remove('hover:bg-slate-800', 'hover:text-white'); activeNav.classList.add('bg-indigo-600', 'text-white'); }
             
-            // Set nav aktif di Mobile Bottom Nav
             const activeMobNav = document.getElementById(`mob-nav-${viewName}`);
             if(activeMobNav) { 
                 activeMobNav.classList.remove('text-slate-400'); 
@@ -1448,8 +1511,20 @@
             }
 
             if (viewName === 'settings') {
-                const savedGroq = localStorage.getItem('arsipCerdasku_groqKey');
+                const savedGroq = getSecureStorage('arsipCerdasku_groqKey');
                 if(savedGroq) document.getElementById('setGroqApi').value = savedGroq;
+                
+                const savedWaUrl = getSecureStorage('arsipCerdasku_waUrl');
+                if(savedWaUrl) document.getElementById('setWaUrl').value = savedWaUrl;
+                
+                const savedWaToken = getSecureStorage('arsipCerdasku_waToken');
+                if(savedWaToken) document.getElementById('setWaToken').value = savedWaToken;
+                
+                const savedWaDevice = getSecureStorage('arsipCerdasku_waDevice');
+                if(savedWaDevice) document.getElementById('setWaDevice').value = savedWaDevice;
+                
+                const savedWaTarget = getSecureStorage('arsipCerdasku_waTarget');
+                if(savedWaTarget) document.getElementById('setWaTarget').value = savedWaTarget;
             }
         }
 
@@ -1475,11 +1550,11 @@
             
             document.getElementById('docDetailModal').classList.remove('hidden');
             AppState.currentDetailDocId = docId; toggleEditDocMode(false, true);
-            document.getElementById('detailTitle').textContent = doc.namaFile; document.getElementById('editDetailTitle').value = doc.namaFile;
-            document.getElementById('detailCategory').textContent = doc.kategori; document.getElementById('editDetailCategory').value = doc.kategori;
+            document.getElementById('detailTitle').textContent = escapeHTML(doc.namaFile); document.getElementById('editDetailTitle').value = doc.namaFile;
+            document.getElementById('detailCategory').textContent = escapeHTML(doc.kategori); document.getElementById('editDetailCategory').value = doc.kategori;
             document.getElementById('detailViewLink').href = doc.link || '#';
-            document.getElementById('detailTglTerbit').textContent = doc.tglTerbit || '-'; document.getElementById('editDetailTglTerbit').value = doc.tglTerbit || '';
-            document.getElementById('detailTglKadaluwarsa').textContent = doc.tglKadaluwarsa || '-'; document.getElementById('editDetailTglKadaluwarsa').value = doc.tglKadaluwarsa || '';
+            document.getElementById('detailTglTerbit').textContent = escapeHTML(doc.tglTerbit || '-'); document.getElementById('editDetailTglTerbit').value = doc.tglTerbit || '';
+            document.getElementById('detailTglKadaluwarsa').textContent = escapeHTML(doc.tglKadaluwarsa || '-'); document.getElementById('editDetailTglKadaluwarsa').value = doc.tglKadaluwarsa || '';
             
             const iframe = document.getElementById('detailPreviewIframe'), img = document.getElementById('detailPreviewImg'), placeholder = document.getElementById('detailPreviewPlaceholder');
             iframe.classList.add('hidden'); img.classList.add('hidden'); placeholder.classList.remove('hidden');
@@ -1497,17 +1572,17 @@
             const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
             const isOwner = doc.ownerId === AppState.user.userId || doc.ownerId === AppState.user.email;
             if (isAdminOrIstri || isOwner) { document.getElementById('adminDeleteSection').classList.remove('hidden'); document.getElementById('btnEditDoc').classList.remove('hidden'); document.getElementById('btnReanalyzeDoc').classList.remove('hidden'); } else { document.getElementById('adminDeleteSection').classList.add('hidden'); document.getElementById('btnEditDoc').classList.add('hidden'); document.getElementById('btnReanalyzeDoc').classList.add('hidden'); }
-            if (isAdminOrIstri) { document.getElementById('adminShareSection').classList.remove('hidden'); const selectUser = document.getElementById('shareTargetUser'); selectUser.innerHTML = '<option value="">Pilih Anggota Keluarga...</option>'; AppState.users.forEach(u => { if (u.role === 'Anak' || u.role === 'Kerabat') selectUser.insertAdjacentHTML('beforeend', `<option value="${u.email}">${u.nama} (${u.role})</option>`); }); } else document.getElementById('adminShareSection').classList.add('hidden');
+            if (isAdminOrIstri) { document.getElementById('adminShareSection').classList.remove('hidden'); const selectUser = document.getElementById('shareTargetUser'); selectUser.innerHTML = '<option value="">Pilih Anggota Keluarga...</option>'; AppState.users.forEach(u => { if (u.role === 'Anak' || u.role === 'Kerabat') selectUser.insertAdjacentHTML('beforeend', `<option value="${escapeHTML(u.email)}">${escapeHTML(u.nama)} (${escapeHTML(u.role)})</option>`); }); } else document.getElementById('adminShareSection').classList.add('hidden');
         }
 
         function toggleEditDocMode(enable, isInit = false) { AppState.isEditingDoc = enable; const doc = AppState.documents.find(d => d.docId === AppState.currentDetailDocId); const els = { view: ['detailTitle', 'btnCopyTitle', 'detailCategory', 'detailTglTerbit', 'btnCopyTglTerbit', 'detailTglKadaluwarsa', 'btnCopyTglKadaluwarsa', 'btnCloseDocDetail', 'btnEditDoc', 'btnReanalyzeDoc', 'adminShareSection', 'adminDeleteSection'], edit: ['editDetailTitle', 'editDetailCategory', 'editDetailTglTerbit', 'editDetailTglKadaluwarsa', 'editDocActions'] }; if (enable) { els.view.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); }); els.edit.forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('hidden'); }); renderDataPentingGrid(doc ? doc.dataPenting : {}, true); } else { els.view.forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('hidden'); }); els.edit.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); }); if (doc && !isInit) { const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri'; const isOwner = doc.ownerId === AppState.user.userId || doc.ownerId === AppState.user.email; if (!(isAdminOrIstri || isOwner)) { document.getElementById('adminDeleteSection').classList.add('hidden'); document.getElementById('btnEditDoc').classList.add('hidden'); document.getElementById('btnReanalyzeDoc').classList.add('hidden'); } if (!isAdminOrIstri) document.getElementById('adminShareSection').classList.add('hidden'); renderDataPentingGrid(doc.dataPenting, false); } } }
         
         function renderDataPentingGrid(dataPenting, isEditMode) { const grid = document.getElementById('detailDataGrid'); grid.innerHTML = ''; if (!dataPenting || Object.keys(dataPenting).length === 0) { if(isEditMode) grid.insertAdjacentHTML('beforeend', `<button type="button" onclick="addDataPentingRow('', '', true)" class="w-full py-2 border-2 border-dashed border-indigo-200 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50 transition">+ Tambah Data</button>`); else grid.innerHTML = '<p class="text-sm text-slate-400 italic">Tidak ada data ekstraksi.</p>'; return; } for (const [key, value] of Object.entries(dataPenting)) addDataPentingRow(key, value, isEditMode); if(isEditMode) grid.insertAdjacentHTML('beforeend', `<button type="button" onclick="addDataPentingRow('', '', true)" class="w-full py-2 border-2 border-dashed border-indigo-200 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50 transition mt-2">+ Tambah Data</button>`); }
-        function addDataPentingRow(key, value, isEditMode = AppState.isEditingDoc) { const grid = document.getElementById('detailDataGrid'); if (isEditMode) { const addBtn = grid.querySelector('button'); if(addBtn) addBtn.remove(); grid.insertAdjacentHTML('beforeend', ` <div class="data-penting-row flex items-center space-x-2 mb-2"> <input type="text" placeholder="Kunci (cth: NIK)" value="${key}" class="dp-key w-1/3 border border-slate-300 rounded px-2 py-1.5 text-xs font-bold text-slate-600 focus:ring-2 focus:ring-indigo-600 outline-none"> <input type="text" placeholder="Nilai" value="${value}" class="dp-val flex-1 border border-slate-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-indigo-600 outline-none"> <button onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-600 p-1.5 bg-red-50 rounded transition" title="Hapus"><i class="ph ph-trash text-lg"></i></button> </div> `); grid.insertAdjacentHTML('beforeend', `<button type="button" onclick="addDataPentingRow('', '', true)" class="w-full py-2 border-2 border-dashed border-indigo-200 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50 transition mt-2">+ Tambah Data</button>`); } else grid.insertAdjacentHTML('beforeend', `<div class="bg-slate-50 p-2.5 sm:p-3 rounded-xl border border-slate-100 flex justify-between items-center group relative"><div class="flex flex-col min-w-0 pr-2 flex-1"><span class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider truncate">${key.replace(/_/g, ' ')}</span><span class="text-xs sm:text-sm font-semibold text-slate-700 break-words">${value}</span></div><button onclick="copyToClipboard('${value}', this)" class="flex-shrink-0 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 p-1.5 sm:p-2 rounded-lg transition self-end" title="Salin"><i class="ph ph-copy text-base sm:text-lg"></i></button></div>`); }
+        function addDataPentingRow(key, value, isEditMode = AppState.isEditingDoc) { const grid = document.getElementById('detailDataGrid'); if (isEditMode) { const addBtn = grid.querySelector('button'); if(addBtn) addBtn.remove(); grid.insertAdjacentHTML('beforeend', ` <div class="data-penting-row flex items-center space-x-2 mb-2"> <input type="text" placeholder="Kunci (cth: NIK)" value="${escapeHTML(key)}" class="dp-key w-1/3 border border-slate-300 rounded px-2 py-1.5 text-xs font-bold text-slate-600 focus:ring-2 focus:ring-indigo-600 outline-none"> <input type="text" placeholder="Nilai" value="${escapeHTML(value)}" class="dp-val flex-1 border border-slate-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-indigo-600 outline-none"> <button onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-600 p-1.5 bg-red-50 rounded transition" title="Hapus"><i class="ph ph-trash text-lg"></i></button> </div> `); grid.insertAdjacentHTML('beforeend', `<button type="button" onclick="addDataPentingRow('', '', true)" class="w-full py-2 border-2 border-dashed border-indigo-200 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50 transition mt-2">+ Tambah Data</button>`); } else grid.insertAdjacentHTML('beforeend', `<div class="bg-slate-50 p-2.5 sm:p-3 rounded-xl border border-slate-100 flex justify-between items-center group relative"><div class="flex flex-col min-w-0 pr-2 flex-1"><span class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider truncate">${escapeHTML(key.replace(/_/g, ' '))}</span><span class="text-xs sm:text-sm font-semibold text-slate-700 break-words">${escapeHTML(value)}</span></div><button onclick="copyToClipboard('${escapeHTML(value)}', this)" class="flex-shrink-0 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 p-1.5 sm:p-2 rounded-lg transition self-end" title="Salin"><i class="ph ph-copy text-base sm:text-lg"></i></button></div>`); }
 
         async function saveDocumentChanges() { const newDataPenting = {}; document.querySelectorAll('.data-penting-row').forEach(row => { const key = row.querySelector('.dp-key').value.trim(), val = row.querySelector('.dp-val').value.trim(); if(key) newDataPenting[key] = val; }); const payload = { docId: AppState.currentDetailDocId, namaFile: document.getElementById('editDetailTitle').value, kategori: document.getElementById('editDetailCategory').value, tglTerbit: document.getElementById('editDetailTglTerbit').value, tglKadaluwarsa: document.getElementById('editDetailTglKadaluwarsa').value, dataPenting: newDataPenting }; const res = await fetchAPI('update_document', payload); if (res.success) { showToast("Perubahan tersimpan & disinkronkan ke Drive!"); const docIndex = AppState.documents.findIndex(d => d.docId === AppState.currentDetailDocId); if(docIndex > -1) { AppState.documents[docIndex].namaFile = payload.namaFile; AppState.documents[docIndex].kategori = payload.kategori; AppState.documents[docIndex].tglTerbit = payload.tglTerbit; AppState.documents[docIndex].tglKadaluwarsa = payload.tglKadaluwarsa; AppState.documents[docIndex].dataPenting = payload.dataPenting; } renderDocumentsGrid(); toggleEditDocMode(false); } else showToast(res.message, true); }
         async function handleDeleteDoc() { if(!confirm("Hapus permanen dokumen ini?")) return; closeModal(); const res = await fetchAPI('delete_document', { docId: AppState.currentDetailDocId }); if (res.success) { showToast("Dokumen dihapus!"); loadDocuments(); } else showToast(res.message, true); }
-        async function handleReanalyzeDoc() { const res = await fetchAPI('reanalyze_document', { docId: AppState.currentDetailDocId, groqKey: localStorage.getItem('arsipCerdasku_groqKey') }); if(res.success){ showToast("Selesai! Data AI diperbarui."); loadDocuments(); closeModal(); } else showToast(res.message, true); }
+        async function handleReanalyzeDoc() { const res = await fetchAPI('reanalyze_document', { docId: AppState.currentDetailDocId, groqKey: getSecureStorage('arsipCerdasku_groqKey') }); if(res.success){ showToast("Selesai! Data AI diperbarui."); loadDocuments(); closeModal(); } else showToast(res.message, true); }
         async function handleShareDoc() { const res = await fetchAPI('share_document', { docId: AppState.currentDetailDocId, targetEmail: document.getElementById('shareTargetUser').value, expiryHours: document.getElementById('shareExpiry').value }); if(res.success) showToast(res.message); else showToast(res.message, true); }
 
         // --- 10. FITUR RIWAYAT LOGIN ---
@@ -1515,7 +1590,6 @@
             if (!ua) return 'Perangkat Tidak Diketahui';
             let browser = 'Browser', os = 'OS';
             
-            // Deteksi Browser
             if (ua.includes('Firefox')) browser = 'Firefox';
             else if (ua.includes('SamsungBrowser')) browser = 'Samsung Internet';
             else if (ua.includes('Opera') || ua.includes('OPR')) browser = 'Opera';
@@ -1523,7 +1597,6 @@
             else if (ua.includes('Chrome')) browser = 'Chrome';
             else if (ua.includes('Safari')) browser = 'Safari';
 
-            // Deteksi OS
             if (ua.includes('Win')) os = 'Windows';
             else if (ua.includes('Mac')) os = 'MacOS';
             else if (ua.includes('Android')) os = 'Android';
@@ -1551,13 +1624,13 @@
                     
                     tbody.insertAdjacentHTML('beforeend', `
                         <tr class="hover:bg-slate-50 transition border-b border-slate-50">
-                            <td class="py-3 px-4 sm:px-6 text-xs text-slate-500 whitespace-nowrap">${time}</td>
-                            <td class="py-3 px-4 sm:px-6 text-xs sm:text-sm font-medium text-slate-700 truncate max-w-[150px] sm:max-w-[200px]" title="${log.device || ''}">
-                                ${deviceName}
+                            <td class="py-3 px-4 sm:px-6 text-xs text-slate-500 whitespace-nowrap">${escapeHTML(time)}</td>
+                            <td class="py-3 px-4 sm:px-6 text-xs sm:text-sm font-medium text-slate-700 truncate max-w-[150px] sm:max-w-[200px]" title="${escapeHTML(log.device || '')}">
+                                ${escapeHTML(deviceName)}
                                 ${isCurrent}
                             </td>
                             <td class="py-3 px-4 sm:px-6">
-                                <span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">${status}</span>
+                                <span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">${escapeHTML(status)}</span>
                             </td>
                         </tr>
                     `);
