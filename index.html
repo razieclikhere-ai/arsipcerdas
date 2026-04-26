@@ -1782,18 +1782,24 @@
             const waDevice = document.getElementById('setWaDevice').value;
             const waTarget = document.getElementById('setWaTarget').value;
 
+            // Simpan ke Browser (Keamanan Lokal)
             setSecureStorage('arsipCerdasku_groqKey', groqVal);
             setSecureStorage('arsipCerdasku_waUrl', waUrl);
             setSecureStorage('arsipCerdasku_waToken', waToken);
             setSecureStorage('arsipCerdasku_waDevice', waDevice);
             setSecureStorage('arsipCerdasku_waTarget', waTarget);
 
+            // Simpan ke Spreadsheet (Database Pusat)
             const res = await fetchAPI('update_settings', {
-                waUrl: waUrl, waToken: waToken, waDevice: waDevice, waTarget: waTarget
+                waUrl: waUrl, 
+                waToken: waToken, 
+                waDevice: waDevice, 
+                waTarget: waTarget,
+                groqKey: groqVal
             });
 
             btn.innerHTML = originalText;
-            if(res.success) { showToast("Konfigurasi tersimpan dengan aman!"); } 
+            if(res.success) { showToast("Konfigurasi tersimpan dengan aman ke Database!"); } 
             else { showToast(res.message, true); }
         }
 
