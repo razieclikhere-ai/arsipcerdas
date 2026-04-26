@@ -1391,6 +1391,10 @@
         function renderUsers() {
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '';
+            
+            // Pengecekan Hak Akses: Apakah yang login Kepala Keluarga / Super Admin?
+            const isSuperOrKepala = AppState.user.role === 'Super Admin' || AppState.user.role === 'Kepala Keluarga';
+
             AppState.users.forEach(u => {
                 const roleBadge = u.role === 'Super Admin' || u.role === 'Admin' || u.role === 'Kepala Keluarga' || u.role === 'Istri' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
 
@@ -1398,18 +1402,39 @@
                 let actionBtn = '';
                 const status = u.status || 'Aktif';
 
-                if (status === 'Aktif') {
-                    statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-emerald-100 text-emerald-700 uppercase">Aktif</span>';
-                    actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Nonaktif')" class="text-amber-600 hover:text-amber-800 bg-amber-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Nonaktifkan / Blokir"><i class="ph ph-prohibit text-base sm:text-lg"></i></button>`;
-                } else if (status === 'Pending') {
-                    statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-amber-100 text-amber-700 uppercase">Pending</span>';
-                    actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Aktif')" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Setujui & Aktifkan"><i class="ph ph-check-circle text-base sm:text-lg"></i></button>`;
+                // Tombol Verifikasi/Blokir HANYA untuk Super Admin & Kepala Keluarga
+                if (isSuperOrKepala) {
+                    if (status === 'Aktif') {
+                        statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-emerald-100 text-emerald-700 uppercase">Aktif</span>';
+                        actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Nonaktif')" class="text-amber-600 hover:text-amber-800 bg-amber-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Nonaktifkan / Blokir"><i class="ph ph-prohibit text-base sm:text-lg"></i></button>`;
+                    } else if (status === 'Pending') {
+                        statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-amber-100 text-amber-700 uppercase">Pending</span>';
+                        actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Aktif')" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Setujui & Aktifkan"><i class="ph ph-check-circle text-base sm:text-lg"></i></button>`;
+                    } else {
+                        statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-red-100 text-red-700 uppercase">Nonaktif</span>';
+                        actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Aktif')" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Aktifkan Ulang"><i class="ph ph-check-circle text-base sm:text-lg"></i></button>`;
+                    }
                 } else {
-                    statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-red-100 text-red-700 uppercase">Nonaktif</span>';
-                    actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Aktif')" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Aktifkan Ulang"><i class="ph ph-check-circle text-base sm:text-lg"></i></button>`;
+                    // Jika bukan Kepala Keluarga, hanya tampilkan lencana status (tanpa tombol)
+                    if (status === 'Aktif') statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-emerald-100 text-emerald-700 uppercase">Aktif</span>';
+                    else if (status === 'Pending') statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-amber-100 text-amber-700 uppercase">Pending</span>';
+                    else statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-red-100 text-red-700 uppercase">Nonaktif</span>';
                 }
 
                 const photoHtml = u.photoUrl ? `<img src="${u.photoUrl}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shadow-sm mr-2 sm:mr-3">` : `<div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold mr-2 sm:mr-3 shadow-sm">${escapeHTML(u.nama.charAt(0))}</div>`;
+
+                // Logika memunculkan tombol Edit dan Hapus KHUSUS Kepala Keluarga & Super Admin
+                let editButtonHtml = '';
+                let deleteButtonHtml = '';
+                
+                if (isSuperOrKepala) {
+                    editButtonHtml = `<button onclick="window.location.hash='#user-edit/${encodeURIComponent(u.email)}'" class="text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Edit"><i class="ph ph-pencil-simple text-base sm:text-lg"></i></button>`;
+                    
+                    // Mencegah Kepala Keluarga / Admin menghapus dirinya sendiri secara tidak sengaja
+                    if (u.email !== AppState.user.email) {
+                        deleteButtonHtml = `<button onclick="handleUserDelete('${u.email}', '${escapeHTML(u.nama)}')" class="text-red-600 hover:text-red-800 bg-red-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Hapus"><i class="ph ph-trash text-base sm:text-lg"></i></button>`;
+                    }
+                }
 
                 tbody.insertAdjacentHTML('beforeend', `
                     <tr class="hover:bg-slate-50 transition border-b border-slate-50">
@@ -1430,10 +1455,10 @@
                         </td>
                         <td class="py-2 sm:py-3 px-3 sm:px-4 text-right">
                             <div class="flex justify-end space-x-1 sm:space-x-2">
-                                ${u.email !== AppState.user.email ? actionBtn : ''}
+                                ${actionBtn}
                                 <button onclick="window.location.hash='#user-preview/${encodeURIComponent(u.email)}'" class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Lihat"><i class="ph ph-eye text-base sm:text-lg"></i></button>
-                                ${u.email !== AppState.user.email || AppState.user.role === 'Super Admin' ? `<button onclick="window.location.hash='#user-edit/${encodeURIComponent(u.email)}'" class="text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Edit"><i class="ph ph-pencil-simple text-base sm:text-lg"></i></button>` : ''}
-                                ${u.email !== AppState.user.email ? `<button onclick="handleUserDelete('${u.email}', '${escapeHTML(u.nama)}')" class="text-red-600 hover:text-red-800 bg-red-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Hapus"><i class="ph ph-trash text-base sm:text-lg"></i></button>` : ''}
+                                ${editButtonHtml}
+                                ${deleteButtonHtml}
                             </div>
                         </td>
                     </tr>
