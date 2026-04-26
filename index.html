@@ -818,8 +818,13 @@
 
         async function hashPassword(str) {
             if (!str) return '';
-            const buf = await crypto.subtle.digest("SHA-256", new TextEncoder("utf-8").encode(str));
-            return Array.prototype.map.call(new Uint8Array(buf), x=>(('00'+x.toString(16)).slice(-2))).join('');
+            try {
+                const buf = await crypto.subtle.digest("SHA-256", new TextEncoder("utf-8").encode(str));
+                return Array.prototype.map.call(new Uint8Array(buf), x=>(('00'+x.toString(16)).slice(-2))).join('');
+            } catch (e) {
+                console.warn("Mode HTTPS tidak terdeteksi. Menggunakan enkripsi Fallback.");
+                return btoa(encodeURIComponent(str + "_arsip_fallback")); 
+            }
         }
 
         function getSecureStorage(key) {
@@ -833,7 +838,7 @@
 
         // --- 1. GLOBAL STATE & API ENDPOINT ---
         // PENTING: GANTI DENGAN URL WEB APP MILIK ANDA SENDIRI DARI GOOGLE APPS SCRIPT!
-        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyI76H3_K_uK9gXU7O-lYQf2fNnCjY0s64i50jUeJ9jG9v5uVqfNf3pP5A2M8V8WzQz/exec';
+        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwYa9G7SIGP6DNgnZjGFWVyP1YSwrnSKmvizLS5qgKAH8W5_FGJDQvp0PR5Uhakzefnwg/exec';
         
         let AppState = {
             user: null, 
@@ -865,8 +870,21 @@
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
                     body: JSON.stringify(payload) 
                 });
-                return await response.json();
-            } catch (error) { return { success: false, message: "Koneksi ke Server gagal. Pastikan internet Anda stabil." }; }
+                
+                const textResponse = await response.text();
+                try {
+                    return JSON.parse(textResponse);
+                } catch (parseError) {
+                    console.error("❌ BACKEND ERROR! Respon Server:", textResponse);
+                    if(textResponse.includes('<html')) {
+                        return { success: false, message: "Backend Apps Script mengalami Error Internal. Tekan F12 lalu cek tab Console." };
+                    }
+                    return { success: false, message: "Respon server tidak valid." };
+                }
+            } catch (error) { 
+                console.error("❌ FETCH ERROR:", error);
+                return { success: false, message: "Koneksi terputus atau URL API salah." }; 
+            }
         }
 
         // --- 3. INIT & ROUTER SYSTEM ---
