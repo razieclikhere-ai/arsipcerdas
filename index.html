@@ -181,11 +181,11 @@
                 <a href="#profile" id="nav-profile" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
                     <i class="ph ph-user-circle text-xl"></i><span class="font-medium">Profil Saya</span>
                 </a>
-
-                <p id="adminMenuTitle" class="px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-6 hidden">Menu Admin</p>
-                <a href="#users" id="nav-users" class="nav-item hidden items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
+                <a href="#users" id="nav-users" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
                     <i class="ph ph-users text-xl"></i><span class="font-medium">Anggota Keluarga</span>
                 </a>
+
+                <p id="adminMenuTitle" class="px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-6 hidden">Menu Admin</p>
                 <a href="#audit" id="nav-audit" class="nav-item hidden items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
                     <i class="ph ph-shield-check text-xl"></i><span class="font-medium">Log Keamanan</span>
                 </a>
@@ -323,7 +323,7 @@
                     <div id="view-users" class="view-section hidden">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                             <h1 class="text-xl sm:text-2xl font-bold text-slate-800">Manajemen Anggota</h1>
-                            <button onclick="window.location.hash='#user-add'" class="mt-3 sm:mt-0 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition flex items-center space-x-2">
+                            <button id="btnAddUser" onclick="window.location.hash='#user-add'" class="mt-3 sm:mt-0 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition flex items-center space-x-2 hidden">
                                 <i class="ph ph-user-plus text-lg"></i>
                                 <span>Tambah Anggota</span>
                             </button>
@@ -382,7 +382,7 @@
                                     <p class="text-sm text-slate-500 font-medium mb-2" id="profileDisplayRole">Role</p>
 
                                     <div id="superAdminBadge" class="hidden inline-flex items-center space-x-1 bg-amber-100 text-amber-700 px-2.5 py-1.5 rounded-md text-xs font-bold border border-amber-200 mt-1">
-                                        <i class="ph-fill ph-crown text-base"></i><span>Super Admin (Multi-Device Login Aktif)</span>
+                                        <i class="ph-fill ph-crown text-base"></i><span>Super Admin / Akses Penuh</span>
                                     </div>
                                 </div>
                             </div>
@@ -1103,12 +1103,12 @@
 
         async function verifySession() {
             if (!AppState.user) return;
-            const currentSession = localStorage.getItem('arsipCerdasku_sessionId');
-            if (!currentSession) return;
             try {
                 const res = await fetchAPI('verify_session');
-                if (res && !res.success && (res.message === 'SESSION_INVALID' || res.error === 'SESSION_INVALID' || res.message.includes('perangkat lain'))) {
-                    forceLogout("Sesi berakhir: Akun diverifikasi, dinonaktifkan, atau login di perangkat lain.");
+                // Fitur 1 Device 1 Login dihapus: Sistem mengizinkan Multi-Device untuk semua
+                // Sekarang hanya akan force logout jika akun benar-benar dinonaktifkan/diblokir oleh Admin
+                if (res && !res.success && (res.message.includes('nonaktif') || res.message.includes('blokir') || res.message.includes('dihapus') || res.message.includes('tidak ditemukan'))) {
+                    forceLogout("Akses ditolak: Akun Anda dinonaktifkan atau diblokir.");
                 }
             } catch(e) {}
         }
@@ -1169,17 +1169,26 @@
                 if (categoryFilterLabel) categoryFilterLabel.innerHTML = '<i class="ph-fill ph-folders mr-1"></i> Filter Kategori Dokumen';
             }
 
-            const btnSync = document.getElementById('btnSyncDrive'), btnBackup = document.getElementById('btnBackup');
+            const btnSync = document.getElementById('btnSyncDrive');
+            const btnBackup = document.getElementById('btnBackup');
+            const btnAddUser = document.getElementById('btnAddUser');
+
             if (isAdminOrIstri) {
                 if(btnSync) btnSync.style.display = 'flex'; 
-                if(isAdmin && btnBackup) btnBackup.style.display = 'flex'; 
-                
+                if(btnAddUser) btnAddUser.classList.remove('hidden'); 
                 document.getElementById('adminMenuTitle').classList.remove('hidden');
-                document.getElementById('nav-users').classList.remove('hidden'); document.getElementById('nav-users').classList.add('flex');
             } else {
-                if(btnSync) btnSync.style.display = 'none'; if(btnBackup) btnBackup.style.display = 'none';
-                document.getElementById('adminMenuTitle').classList.add('hidden'); document.getElementById('nav-users').classList.add('hidden');
+                if(btnSync) btnSync.style.display = 'none'; 
+                if(btnAddUser) btnAddUser.classList.add('hidden');
+                document.getElementById('adminMenuTitle').classList.add('hidden');
             }
+            
+            if (isAdmin && btnBackup) btnBackup.style.display = 'flex';
+            else if (btnBackup) btnBackup.style.display = 'none';
+
+            // Menu "Anggota Keluarga" selalu ditampilkan untuk semua orang (agar fitur Preview bekerja)
+            document.getElementById('nav-users').classList.remove('hidden'); 
+            document.getElementById('nav-users').classList.add('flex');
 
             if (isAdmin) {
                 document.getElementById('nav-audit').classList.remove('hidden'); document.getElementById('nav-audit').classList.add('flex');
@@ -1209,13 +1218,12 @@
         }
 
         async function loadUsersAndLogs() {
-            const isAdminOrIstri = AppState.user.role === 'Super Admin' || AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
             const isAdmin = AppState.user.role === 'Super Admin' || AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga';
             
-            if(isAdminOrIstri) { 
-                const resUsers = await fetchAPI('get_users'); 
-                if(resUsers.success) { AppState.users = resUsers.data; renderUsers(); } 
-            }
+            // Semua orang kini mengambil data pengguna (untuk kebutuhan preview anggota)
+            const resUsers = await fetchAPI('get_users'); 
+            if(resUsers.success) { AppState.users = resUsers.data; renderUsers(); } 
+            
             if(isAdmin) { 
                 const resLogs = await fetchAPI('get_logs'); 
                 if(resLogs.success) { AppState.logs = resLogs.data; renderLogs(); } 
@@ -1234,6 +1242,10 @@
             document.getElementById('addUserEmail').disabled = false;
             document.getElementById('addUserPassword').required = true;
             document.getElementById('passwordHintText').classList.add('hidden');
+
+            const roleSelect = document.getElementById('addUserRole');
+            roleSelect.disabled = false;
+            roleSelect.classList.remove('bg-slate-100', 'cursor-not-allowed');
         }
 
         function openEditUserModalUI(email) {
@@ -1257,6 +1269,17 @@
 
             document.getElementById('addUserPassword').required = false; 
             document.getElementById('passwordHintText').classList.remove('hidden');
+
+            // Proteksi agar anak tidak bisa mengubah jabatan diri sendiri
+            const isPrivileged = AppState.user && ['Super Admin', 'Admin', 'Kepala Keluarga', 'Istri'].includes(AppState.user.role);
+            const roleSelect = document.getElementById('addUserRole');
+            if (isPrivileged) {
+                roleSelect.disabled = false;
+                roleSelect.classList.remove('bg-slate-100', 'cursor-not-allowed');
+            } else {
+                roleSelect.disabled = true;
+                roleSelect.classList.add('bg-slate-100', 'cursor-not-allowed');
+            }
 
             if(u.photoUrl) { document.getElementById('userPhotoPreview').src = u.photoUrl; }
             else { document.getElementById('userPhotoPreview').src = "https://via.placeholder.com/150?text=Foto"; }
@@ -1352,25 +1375,41 @@
         function renderUsers() {
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '';
+            
+            const isPrivileged = AppState.user && ['Super Admin', 'Admin', 'Kepala Keluarga', 'Istri'].includes(AppState.user.role);
+
             AppState.users.forEach(u => {
-                const roleBadge = u.role === 'Super Admin' || u.role === 'Admin' || u.role === 'Kepala Keluarga' || u.role === 'Istri' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
+                const roleBadge = ['Super Admin', 'Admin', 'Kepala Keluarga', 'Istri'].includes(u.role) ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
 
                 let statusBadge = '';
                 let actionBtn = '';
                 const status = u.status || 'Aktif';
+                const isSelf = AppState.user && u.email === AppState.user.email;
 
                 if (status === 'Aktif') {
                     statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-emerald-100 text-emerald-700 uppercase">Aktif</span>';
-                    actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Nonaktif')" class="text-amber-600 hover:text-amber-800 bg-amber-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Nonaktifkan / Blokir"><i class="ph ph-prohibit text-base sm:text-lg"></i></button>`;
+                    if (isPrivileged && !isSelf) actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Nonaktif')" class="text-amber-600 hover:text-amber-800 bg-amber-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Nonaktifkan / Blokir"><i class="ph ph-prohibit text-base sm:text-lg"></i></button>`;
                 } else if (status === 'Pending') {
                     statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-amber-100 text-amber-700 uppercase">Pending</span>';
-                    actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Aktif')" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Setujui & Aktifkan"><i class="ph ph-check-circle text-base sm:text-lg"></i></button>`;
+                    if (isPrivileged && !isSelf) actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Aktif')" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Setujui & Aktifkan"><i class="ph ph-check-circle text-base sm:text-lg"></i></button>`;
                 } else {
                     statusBadge = '<span class="px-2 py-1 rounded text-[9px] sm:text-[10px] font-bold bg-red-100 text-red-700 uppercase">Nonaktif</span>';
-                    actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Aktif')" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Aktifkan Ulang"><i class="ph ph-check-circle text-base sm:text-lg"></i></button>`;
+                    if (isPrivileged && !isSelf) actionBtn = `<button onclick="handleUserVerify('${u.email}', 'Aktif')" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Aktifkan Ulang"><i class="ph ph-check-circle text-base sm:text-lg"></i></button>`;
                 }
 
                 const photoHtml = u.photoUrl ? `<img src="${u.photoUrl}" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover shadow-sm mr-2 sm:mr-3">` : `<div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold mr-2 sm:mr-3 shadow-sm">${escapeHTML(u.nama.charAt(0))}</div>`;
+
+                let editBtn = '';
+                if (isPrivileged || isSelf) {
+                    editBtn = `<button onclick="window.location.hash='#user-edit/${encodeURIComponent(u.email)}'" class="text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Edit"><i class="ph ph-pencil-simple text-base sm:text-lg"></i></button>`;
+                }
+
+                let deleteBtn = '';
+                if (isPrivileged && !isSelf) {
+                    deleteBtn = `<button onclick="handleUserDelete('${u.email}', '${escapeHTML(u.nama)}')" class="text-red-600 hover:text-red-800 bg-red-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Hapus"><i class="ph ph-trash text-base sm:text-lg"></i></button>`;
+                }
+
+                let previewBtn = `<button onclick="window.location.hash='#user-preview/${encodeURIComponent(u.email)}'" class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Lihat"><i class="ph ph-eye text-base sm:text-lg"></i></button>`;
 
                 tbody.insertAdjacentHTML('beforeend', `
                     <tr class="hover:bg-slate-50 transition border-b border-slate-50">
@@ -1391,10 +1430,10 @@
                         </td>
                         <td class="py-2 sm:py-3 px-3 sm:px-4 text-right">
                             <div class="flex justify-end space-x-1 sm:space-x-2">
-                                ${u.email !== AppState.user.email ? actionBtn : ''}
-                                <button onclick="window.location.hash='#user-preview/${encodeURIComponent(u.email)}'" class="text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Lihat"><i class="ph ph-eye text-base sm:text-lg"></i></button>
-                                ${u.email !== AppState.user.email || AppState.user.role === 'Super Admin' ? `<button onclick="window.location.hash='#user-edit/${encodeURIComponent(u.email)}'" class="text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Edit"><i class="ph ph-pencil-simple text-base sm:text-lg"></i></button>` : ''}
-                                ${u.email !== AppState.user.email ? `<button onclick="handleUserDelete('${u.email}', '${escapeHTML(u.nama)}')" class="text-red-600 hover:text-red-800 bg-red-50 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded transition" title="Hapus"><i class="ph ph-trash text-base sm:text-lg"></i></button>` : ''}
+                                ${actionBtn}
+                                ${previewBtn}
+                                ${editBtn}
+                                ${deleteBtn}
                             </div>
                         </td>
                     </tr>
