@@ -2032,12 +2032,35 @@
         }
 
         async function handleReanalyzeDoc() { 
-            const groqKey = prompt("Silakan masukkan API Key Groq AI untuk menganalisa ulang OCR dokumen ini:");
-            if(!groqKey) return;
-            showToast("Sedang membaca ulang teks dan menganalisa AI...", false);
-            const res = await fetchAPI('reanalyze_document', { docId: AppState.currentDetailDocId, groqKey: groqKey }); 
-            if(res.success){ showToast("Selesai! Data AI diperbarui."); loadDocuments(); closeModal(); } 
-            else showToast(res.message, true); 
+            // Mengambil Kunci API secara otomatis dari memori sistem
+            const groqKeyLocal = getSecureStorage('arsipCerdasku_groqKey');
+            
+            if(!groqKeyLocal) {
+                showToast("API Key Groq kosong! Silakan isi di menu Pengaturan Sistem.", true);
+                return;
+            }
+
+            // Mengunci tombol dan memberikan animasi loading
+            const btn = document.getElementById('btnReanalyzeDoc');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ph ph-spinner animate-spin sm:mr-1"></i> <span class="hidden sm:inline">Menganalisa...</span>';
+
+            showToast("Sedang membaca teks & AI menganalisa ulang...", false);
+            
+            const res = await fetchAPI('reanalyze_document', { docId: AppState.currentDetailDocId, groqKey: groqKeyLocal }); 
+            
+            // Melepaskan kunci tombol
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+
+            if(res.success) { 
+                showToast("Selesai! Data AI diperbarui."); 
+                loadDocuments(); 
+                closeModal(); 
+            } else {
+                showToast(res.message, true); 
+            }
         }
 
         async function handleShareDoc() { 
