@@ -273,7 +273,7 @@
                                 <div class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i class="ph ph-robot text-2xl"></i></div>
                                 <div>
                                     <p class="text-sm text-slate-500 font-medium">AI Engine</p>
-                                    <p class="text-xl font-bold text-slate-800">Groq Llama 3.3</p>
+                                    <p class="text-xl font-bold text-slate-800">Groq Llama 3</p>
                                 </div>
                             </div>
                         </div>
@@ -579,7 +579,7 @@
                         <span id="btnText">Proses OCR & Unggah</span>
                         <div id="btnSpinner" class="loader hidden" style="width: 20px; height: 20px; border-width: 2px; margin-left: 10px;"></div>
                     </button>
-                    <p id="uploadWarningText" class="text-[10px] text-center text-slate-400 mt-2 hidden">Proses AI mungkin memakan waktu hingga 30 detik. Harap tunggu.</p>
+                    <p id="uploadWarningText" class="text-[10px] text-center text-slate-400 mt-2 hidden">Proses OCR & AI memakan waktu. Mohon tunggu hingga 30 detik.</p>
                 </div>
             </form>
         </div>
@@ -835,7 +835,7 @@
         // ==========================================
         
         // PENTING: Ganti URL di bawah dengan Web App URL Deployment dari script "code.gs" Anda!
-        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwS1zy0N-Sp1h_CbDRa49y3ajPzNneAu6BQcdWUbvzNXZbJJdBtJ9Dn5d_0LgSLFKo/exec'; // CONTOH URL, PASTIKAN DIGANTI
+        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwYa9G7SIGP6DNgnZjGFWVyP1YSwrnSKmvizLS5qgKAH8W5_FGJDQvp0PR5Uhakzefnwg/exec'; 
         
         let AppState = {
             user: null, 
@@ -1241,7 +1241,7 @@
             
             btnText.textContent = 'Mengekstrak & Analisa...'; 
             btnSpinner.classList.remove('hidden');
-            warningText.classList.remove('hidden'); // Beri tahu user kalau ini mungkin lama
+            warningText.classList.remove('hidden'); 
 
             const reader = new FileReader();
             reader.onload = async function() {
@@ -1262,7 +1262,7 @@
                 
                 if(res.success) { 
                     closeModal(); 
-                    showToast("Selesai! Dokumen dan Data AI tersimpan."); 
+                    showToast("Selesai! Dokumen tersimpan. " + (res.message.includes('Namun') ? "Ada peringatan, periksa detailnya." : "")); 
                     loadDocuments(); 
                 } else {
                     showToast(res.message, true);
@@ -1364,16 +1364,27 @@
         function generateCardHTML(doc) {
             const iconClass = getIconForCategory(doc.kategori);
             const dataKeys = Object.keys(doc.dataPenting || {});
-            const firstKey = dataKeys.length > 0 ? dataKeys[0] : null, firstVal = firstKey ? doc.dataPenting[firstKey] : null;
+            
+            // Check if there's an error from the backend processing
+            let hasError = false;
+            let firstKey = null, firstVal = null;
+
+            if (dataKeys.length > 0) {
+                firstKey = dataKeys[0];
+                firstVal = doc.dataPenting[firstKey];
+                if (firstKey === "Status" || firstKey === "Peringatan") hasError = true;
+            }
             
             let displayOwner = doc.owner || doc.ownerId || 'Umum';
             const foundUser = AppState.users.find(u => u.userId === displayOwner || u.email === displayOwner);
             if(foundUser) displayOwner = foundUser.nama;
 
             const shareBadge = doc.isShared ? `<span class="absolute top-2 right-2 bg-emerald-100 text-emerald-700 border border-emerald-200 text-[9px] font-bold px-2 py-0.5 rounded-full z-10 flex items-center shadow-sm"><i class="ph ph-share-network mr-1"></i>Shared</span>` : '';
+            const warningBadge = hasError ? `<span class="absolute top-2 right-8 bg-amber-100 text-amber-700 border border-amber-200 text-[9px] font-bold px-2 py-0.5 rounded-full z-10 flex items-center shadow-sm"><i class="ph ph-warning mr-1"></i>Periksa AI</span>` : '';
+            
             return `
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition flex flex-col h-full cursor-pointer group relative" onclick="window.location.hash='#doc-detail/${escapeHTML(doc.docId)}'">
-                    ${shareBadge}
+                    ${shareBadge} ${warningBadge}
                     <div class="p-4 flex items-start space-x-3 border-b border-slate-100 bg-gradient-to-br from-white to-slate-50 pt-6">
                         <div class="p-2.5 rounded-lg shadow-inner ${iconClass}"><i class="ph ${iconClass.split(' ')[0]} text-xl sm:text-2xl"></i></div>
                         <div class="flex-1 min-w-0">
@@ -1385,7 +1396,7 @@
                         </div>
                     </div>
                     <div class="p-3 sm:p-4 flex-grow">
-                        ${firstKey ? `<div class="mb-2 sm:mb-3 flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-100"><div class="flex flex-col overflow-hidden"><span class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider">${escapeHTML(firstKey.replace(/_/g, ' '))}</span><span class="text-xs font-semibold text-slate-700 truncate">${escapeHTML(firstVal)}</span></div><button onclick="event.stopPropagation(); copyToClipboard('${escapeHTML(firstVal)}', this)" class="text-slate-400 hover:text-indigo-600 p-1.5 bg-white rounded shadow-sm border border-slate-200 transition"><i class="ph ph-copy"></i></button></div>` : ''}
+                        ${firstKey ? `<div class="mb-2 sm:mb-3 flex justify-between items-center ${hasError ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-100'} p-2 rounded border"><div class="flex flex-col overflow-hidden"><span class="text-[9px] sm:text-[10px] uppercase font-bold ${hasError ? 'text-amber-500' : 'text-slate-400'} tracking-wider">${escapeHTML(firstKey.replace(/_/g, ' '))}</span><span class="text-xs font-semibold ${hasError ? 'text-amber-700' : 'text-slate-700'} truncate" title="${escapeHTML(firstVal)}">${escapeHTML(firstVal)}</span></div>${!hasError ? `<button onclick="event.stopPropagation(); copyToClipboard('${escapeHTML(firstVal)}', this)" class="text-slate-400 hover:text-indigo-600 p-1.5 bg-white rounded shadow-sm border border-slate-200 transition"><i class="ph ph-copy"></i></button>` : ''}</div>` : ''}
                     </div>
                     <div class="p-2.5 sm:p-3 border-t border-slate-100 bg-slate-50 flex justify-between items-center text-xs text-slate-500"><span class="flex items-center"><i class="ph ph-calendar-blank mr-1"></i> ${escapeHTML(doc.tglTerbit || '-')}</span><span class="flex items-center text-indigo-600 font-medium group-hover:underline">Detail <i class="ph ph-arrow-right ml-1"></i></span></div>
                 </div>`;
@@ -1501,13 +1512,15 @@
             } 
             
             for (const [key, value] of Object.entries(dataPenting)) {
-                addDataPentingRow(key, value, isEditMode); 
+                // Formatting untuk menampilkan pesan error jika OCR/AI gagal pada detail view
+                const isErrorData = (key === "Status" || key === "Peringatan" || key === "Error" || key === "Detail");
+                addDataPentingRow(key, value, isEditMode, isErrorData); 
             }
             
             if(isEditMode) grid.insertAdjacentHTML('beforeend', `<button type="button" onclick="addDataPentingRow('', '', true)" class="w-full py-2 border-2 border-dashed border-indigo-200 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50 transition mt-2">+ Tambah Data</button>`); 
         }
 
-        function addDataPentingRow(key, value, isEditMode = AppState.isEditingDoc) { 
+        function addDataPentingRow(key, value, isEditMode = AppState.isEditingDoc, isErrorData = false) { 
             const grid = document.getElementById('detailDataGrid'); 
             if (isEditMode) { 
                 const addBtn = grid.querySelector('button'); 
@@ -1521,13 +1534,17 @@
                 `); 
                 grid.insertAdjacentHTML('beforeend', `<button type="button" onclick="addDataPentingRow('', '', true)" class="w-full py-2 border-2 border-dashed border-indigo-200 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-50 transition mt-2">+ Tambah Data</button>`); 
             } else {
+                const bgStyle = isErrorData ? "bg-amber-50 border-amber-200" : "bg-slate-50 border-slate-100";
+                const labelStyle = isErrorData ? "text-amber-600" : "text-slate-400";
+                const valueStyle = isErrorData ? "text-amber-800" : "text-slate-700";
+
                 grid.insertAdjacentHTML('beforeend', `
-                    <div class="bg-slate-50 p-2.5 sm:p-3 rounded-xl border border-slate-100 flex justify-between items-center group relative">
+                    <div class="${bgStyle} p-2.5 sm:p-3 rounded-xl border flex justify-between items-center group relative">
                         <div class="flex flex-col min-w-0 pr-2 flex-1">
-                            <span class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider truncate">${escapeHTML(key.replace(/_/g, ' '))}</span>
-                            <span class="text-xs sm:text-sm font-semibold text-slate-700 break-words">${escapeHTML(value)}</span>
+                            <span class="text-[9px] sm:text-[10px] uppercase font-bold ${labelStyle} tracking-wider truncate">${escapeHTML(key.replace(/_/g, ' '))}</span>
+                            <span class="text-xs sm:text-sm font-semibold ${valueStyle} break-words">${escapeHTML(value)}</span>
                         </div>
-                        <button onclick="copyToClipboard('${escapeHTML(value)}', this)" class="flex-shrink-0 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 p-1.5 sm:p-2 rounded-lg transition self-end" title="Salin"><i class="ph ph-copy text-base sm:text-lg"></i></button>
+                        ${!isErrorData ? `<button onclick="copyToClipboard('${escapeHTML(value)}', this)" class="flex-shrink-0 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 p-1.5 sm:p-2 rounded-lg transition self-end" title="Salin"><i class="ph ph-copy text-base sm:text-lg"></i></button>` : ''}
                     </div>
                 `); 
             }
@@ -1579,7 +1596,7 @@
         async function handleReanalyzeDoc() { 
             const btn = document.getElementById('btnReanalyzeDoc');
             const originalHtml = btn.innerHTML;
-            btn.innerHTML = `<i class="ph ph-spinner animate-spin mr-1"></i> <span class="hidden sm:inline">Menganalisa...</span>`;
+            btn.innerHTML = `<i class="ph ph-spinner animate-spin mr-1 text-lg"></i> <span class="hidden sm:inline">Menganalisa...</span>`;
             showToast("AI membaca ulang (Max 30s)...");
             
             const res = await fetchAPI('reanalyze_document', { 
