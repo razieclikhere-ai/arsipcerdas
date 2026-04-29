@@ -243,119 +243,158 @@
                     <!-- Dashboard -->
                     <div id="view-dashboard" class="view-section">
                         
-                        <!-- NEW HERO BANNER: Tampilan Profesional & Presisi -->
-                        <div class="bg-[#0f172a] rounded-3xl p-6 sm:p-8 mb-8 text-white relative overflow-hidden shadow-2xl shadow-slate-900/20 border border-slate-800">
-                            <!-- Efek pencahayaan halus (ambient light) -->
-                            <div class="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-indigo-600/30 via-transparent to-transparent pointer-events-none"></div>
-                            <div class="absolute -right-16 -top-16 w-80 h-80 bg-indigo-500/20 blur-3xl rounded-full pointer-events-none"></div>
-                            <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-blue-500/20 blur-3xl rounded-full pointer-events-none"></div>
+                        <!-- NEW HERO BANNER: Ultra-Modern SaaS Look -->
+                        <div class="bg-slate-900 rounded-[2rem] p-7 sm:p-10 mb-10 text-white relative overflow-hidden shadow-2xl shadow-slate-900/20 border border-slate-800 group">
+                            <!-- Efek Ambient Glow / Cahaya Latar -->
+                            <div class="absolute top-0 right-0 w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none transition-transform duration-1000 group-hover:translate-x-1/4"></div>
+                            <div class="absolute bottom-0 left-0 w-[20rem] h-[20rem] bg-cyan-500/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+                            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-50 pointer-events-none"></div>
 
-                            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
                                 <div class="flex-1">
-                                    <div class="inline-flex items-center space-x-2 bg-slate-800/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-700/50 mb-5 shadow-sm">
-                                        <span class="relative flex h-2 w-2">
+                                    <div class="inline-flex items-center space-x-2.5 bg-slate-800/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-slate-700/50 mb-5 shadow-sm">
+                                        <span class="relative flex h-2.5 w-2.5">
                                           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                                         </span>
-                                        <span class="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">Sistem AI Aktif</span>
+                                        <span class="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">Sistem AI Siaga</span>
                                     </div>
-                                    <h1 class="text-3xl sm:text-4xl font-black tracking-tight mb-3 drop-shadow-sm">Halo, <span id="welcomeName" class="text-indigo-400">User</span>! 👋</h1>
-                                    <p class="text-slate-300/90 text-sm sm:text-base font-medium max-w-lg leading-relaxed">Mesin AI memantau brankas secara *real-time*. Kelola dan amankan dokumen keluarga Anda dengan cepat.</p>
+                                    <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-3">
+                                        <span id="greetingText" class="opacity-90">Halo</span>, <span id="welcomeName" class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 drop-shadow-sm">User</span>! 👋
+                                    </h1>
+                                    <p class="text-slate-400 text-sm sm:text-base font-medium max-w-lg leading-relaxed">Kelola, pantau, dan temukan dokumen vital keluarga dalam hitungan detik. Brankas digital Anda terlindungi dengan enkripsi penuh.</p>
                                 </div>
                                 
-                                <div class="flex items-stretch gap-3 w-full lg:w-auto">
-                                    <div class="bg-white/5 backdrop-blur-md px-6 py-5 rounded-2xl border border-white/10 flex-1 lg:min-w-[180px] flex flex-col justify-center relative overflow-hidden group shadow-inner">
-                                        <div class="absolute top-0 right-0 w-16 h-16 bg-white/5 rounded-bl-full -mr-4 -mt-4 transition-transform duration-500 group-hover:scale-110"></div>
-                                        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-extrabold mb-1.5">Total Arsip</p>
-                                        <div class="flex items-baseline space-x-2">
-                                            <p class="text-4xl sm:text-5xl font-black leading-none tracking-tighter text-white drop-shadow-md" id="statTotalDocs">0</p>
-                                            <span class="text-xs font-bold text-slate-400">Berkas</span>
-                                        </div>
+                                <div class="flex items-stretch gap-4 w-full md:w-auto">
+                                    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 flex-1 md:min-w-[140px] flex flex-col items-center justify-center text-center hover:bg-white/10 transition-colors shadow-inner">
+                                        <i class="ph-fill ph-files text-3xl text-indigo-400 mb-2"></i>
+                                        <p class="text-4xl font-black text-white drop-shadow-md" id="statTotalDocs">0</p>
+                                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Total Arsip</p>
                                     </div>
-                                    <button onclick="window.location.hash='#upload'" class="bg-indigo-600 text-white hover:bg-indigo-500 px-6 sm:px-8 py-5 rounded-2xl text-sm font-black transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95 flex flex-col items-center justify-center gap-1.5 border border-indigo-500">
-                                        <i class="ph-bold ph-cloud-arrow-up text-2xl"></i>
-                                        <span class="uppercase tracking-widest text-[10px]">Unggah</span>
+                                    <button onclick="window.location.hash='#upload'" class="bg-gradient-to-br from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white p-5 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/25 border border-indigo-400/30 md:min-w-[120px]">
+                                        <div class="bg-white/20 p-2.5 rounded-xl mb-2.5 shadow-inner"><i class="ph-bold ph-plus text-xl"></i></div>
+                                        <span class="text-[11px] font-black uppercase tracking-widest">Unggah Baru</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Card Alert Terstruktur -->
-                        <div id="expiringAlertContainer" class="hidden mb-8 bg-orange-50 border border-orange-200/60 rounded-[1.5rem] p-1.5 shadow-sm relative overflow-hidden group transition-all hover:shadow-md">
-                            <div class="bg-white rounded-[1.25rem] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 relative z-10">
+                        <!-- Card Alert Presisi -->
+                        <div id="expiringAlertContainer" class="hidden mb-10 bg-orange-50 border border-orange-200/60 rounded-[1.5rem] p-1.5 shadow-sm relative overflow-hidden group transition-all hover:shadow-md">
+                            <div class="absolute right-0 top-0 w-40 h-40 bg-orange-300/20 rounded-full blur-3xl pointer-events-none"></div>
+                            <div class="bg-white rounded-[1.25rem] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 relative z-10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                                 <div class="bg-orange-100 text-orange-600 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 border border-orange-200/50">
                                     <i class="ph-fill ph-warning-circle text-2xl animate-pulse"></i>
                                 </div>
                                 <div class="flex-1">
                                     <div class="flex items-center space-x-2.5 mb-1">
                                         <h3 class="text-sm font-extrabold text-slate-800 tracking-tight">Tinjauan Masa Berlaku</h3>
-                                        <span class="bg-orange-100 text-orange-700 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-orange-200/50">Penting</span>
+                                        <span class="bg-orange-100 text-orange-700 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-orange-200/50">Tindakan Diperlukan</span>
                                     </div>
                                     <p id="expiringCountText" class="text-xs font-semibold text-slate-500">Terdapat dokumen yang masa berlakunya segera habis.</p>
                                 </div>
-                                <button onclick="filterCategory('Kadaluwarsa'); window.location.hash='#documents'" class="w-full sm:w-auto text-xs font-black bg-orange-500 text-white px-6 py-3 rounded-xl hover:bg-orange-600 transition-all shadow-md shadow-orange-500/20 whitespace-nowrap active:scale-95 border border-orange-600/50">Tinjau Sekarang</button>
+                                <button onclick="filterCategory('Kadaluwarsa'); window.location.hash='#documents'" class="w-full sm:w-auto text-xs font-black bg-orange-500 text-white px-6 py-3 rounded-xl hover:bg-orange-600 transition-all shadow-md shadow-orange-500/20 whitespace-nowrap active:scale-95 border border-orange-600/50 hover:-translate-y-0.5">Tinjau Berkas</button>
                             </div>
                         </div>
 
-                        <div class="mb-10">
+                        <div class="mb-12">
                             <!-- Presisi Tipografi Heading -->
-                            <h2 class="text-base font-black text-slate-800 tracking-tight mb-5 flex items-center"><i class="ph-fill ph-chart-pie-slice mr-2.5 text-indigo-500 text-xl"></i> Distribusi Kategori Dokumen</h2>
-                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-5">
-                                <!-- Kategori Cards dengan presisi padding dan border -->
-                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Identitas'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="bg-emerald-50 text-emerald-600 w-11 h-11 rounded-xl flex items-center justify-center border border-emerald-100 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-identification-card text-2xl"></i></div>
-                                        <span class="text-lg font-black text-slate-800" id="count-Identitas">0</span>
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-base font-black text-slate-800 tracking-tight flex items-center"><i class="ph-fill ph-chart-pie-slice mr-2.5 text-indigo-500 text-xl"></i> Distribusi Kategori Dokumen</h2>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                                <!-- Kategori Cards Ultra-SaaS -->
+                                <div class="bg-white p-5 rounded-[1.25rem] border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden group" onclick="filterCategory('Identitas'); window.location.hash='#documents'">
+                                    <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-emerald-100 to-transparent opacity-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+                                    <div class="relative z-10">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div class="bg-emerald-50 text-emerald-600 w-11 h-11 rounded-xl flex items-center justify-center border border-emerald-100 shadow-inner group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300"><i class="ph-fill ph-identification-card text-2xl"></i></div>
+                                            <span class="text-xl font-black text-slate-800" id="count-Identitas">0</span>
+                                        </div>
+                                        <div class="flex justify-between items-end mb-2.5">
+                                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest truncate">Identitas</p>
+                                            <span class="text-[10px] font-bold text-emerald-600" id="pct-Identitas">0%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Identitas" class="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                     </div>
-                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Identitas</p>
-                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Identitas" class="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
-                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Pendidikan'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="bg-orange-50 text-orange-600 w-11 h-11 rounded-xl flex items-center justify-center border border-orange-100 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-graduation-cap text-2xl"></i></div>
-                                        <span class="text-lg font-black text-slate-800" id="count-Pendidikan">0</span>
+                                <div class="bg-white p-5 rounded-[1.25rem] border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden group" onclick="filterCategory('Pendidikan'); window.location.hash='#documents'">
+                                    <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-orange-100 to-transparent opacity-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+                                    <div class="relative z-10">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div class="bg-orange-50 text-orange-600 w-11 h-11 rounded-xl flex items-center justify-center border border-orange-100 shadow-inner group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300"><i class="ph-fill ph-graduation-cap text-2xl"></i></div>
+                                            <span class="text-xl font-black text-slate-800" id="count-Pendidikan">0</span>
+                                        </div>
+                                        <div class="flex justify-between items-end mb-2.5">
+                                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest truncate">Pendidikan</p>
+                                            <span class="text-[10px] font-bold text-orange-600" id="pct-Pendidikan">0%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Pendidikan" class="bg-orange-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                     </div>
-                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Pendidikan</p>
-                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Pendidikan" class="bg-orange-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
-                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Profesi'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="bg-blue-50 text-blue-600 w-11 h-11 rounded-xl flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-briefcase text-2xl"></i></div>
-                                        <span class="text-lg font-black text-slate-800" id="count-Profesi">0</span>
+                                <div class="bg-white p-5 rounded-[1.25rem] border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden group" onclick="filterCategory('Profesi'); window.location.hash='#documents'">
+                                    <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-blue-100 to-transparent opacity-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+                                    <div class="relative z-10">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div class="bg-blue-50 text-blue-600 w-11 h-11 rounded-xl flex items-center justify-center border border-blue-100 shadow-inner group-hover:bg-blue-500 group-hover:text-white transition-colors duration-300"><i class="ph-fill ph-briefcase text-2xl"></i></div>
+                                            <span class="text-xl font-black text-slate-800" id="count-Profesi">0</span>
+                                        </div>
+                                        <div class="flex justify-between items-end mb-2.5">
+                                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest truncate">Profesi</p>
+                                            <span class="text-[10px] font-bold text-blue-600" id="pct-Profesi">0%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Profesi" class="bg-blue-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                     </div>
-                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Profesi</p>
-                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Profesi" class="bg-blue-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
-                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Keuangan'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="bg-yellow-50 text-yellow-600 w-11 h-11 rounded-xl flex items-center justify-center border border-yellow-100 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-bank text-2xl"></i></div>
-                                        <span class="text-lg font-black text-slate-800" id="count-Keuangan">0</span>
+                                <div class="bg-white p-5 rounded-[1.25rem] border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden group" onclick="filterCategory('Keuangan'); window.location.hash='#documents'">
+                                    <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-yellow-100 to-transparent opacity-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+                                    <div class="relative z-10">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div class="bg-yellow-50 text-yellow-600 w-11 h-11 rounded-xl flex items-center justify-center border border-yellow-100 shadow-inner group-hover:bg-yellow-500 group-hover:text-white transition-colors duration-300"><i class="ph-fill ph-bank text-2xl"></i></div>
+                                            <span class="text-xl font-black text-slate-800" id="count-Keuangan">0</span>
+                                        </div>
+                                        <div class="flex justify-between items-end mb-2.5">
+                                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest truncate">Keuangan</p>
+                                            <span class="text-[10px] font-bold text-yellow-600" id="pct-Keuangan">0%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Keuangan" class="bg-yellow-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                     </div>
-                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Keuangan</p>
-                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Keuangan" class="bg-yellow-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
-                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Aset'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="bg-purple-50 text-purple-600 w-11 h-11 rounded-xl flex items-center justify-center border border-purple-100 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-house-line text-2xl"></i></div>
-                                        <span class="text-lg font-black text-slate-800" id="count-Aset">0</span>
+                                <div class="bg-white p-5 rounded-[1.25rem] border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden group" onclick="filterCategory('Aset'); window.location.hash='#documents'">
+                                    <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-purple-100 to-transparent opacity-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+                                    <div class="relative z-10">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div class="bg-purple-50 text-purple-600 w-11 h-11 rounded-xl flex items-center justify-center border border-purple-100 shadow-inner group-hover:bg-purple-500 group-hover:text-white transition-colors duration-300"><i class="ph-fill ph-house-line text-2xl"></i></div>
+                                            <span class="text-xl font-black text-slate-800" id="count-Aset">0</span>
+                                        </div>
+                                        <div class="flex justify-between items-end mb-2.5">
+                                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest truncate">Aset Berharga</p>
+                                            <span class="text-[10px] font-bold text-purple-600" id="pct-Aset">0%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Aset" class="bg-purple-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                     </div>
-                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Aset Berharga</p>
-                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Aset" class="bg-purple-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
-                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Lainnya'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="bg-slate-100 text-slate-600 w-11 h-11 rounded-xl flex items-center justify-center border border-slate-200 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-file-text text-2xl"></i></div>
-                                        <span class="text-lg font-black text-slate-800" id="count-Lainnya">0</span>
+                                <div class="bg-white p-5 rounded-[1.25rem] border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden group" onclick="filterCategory('Lainnya'); window.location.hash='#documents'">
+                                    <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-slate-100 to-transparent opacity-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+                                    <div class="relative z-10">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div class="bg-slate-100 text-slate-600 w-11 h-11 rounded-xl flex items-center justify-center border border-slate-200 shadow-inner group-hover:bg-slate-700 group-hover:text-white transition-colors duration-300"><i class="ph-fill ph-file-text text-2xl"></i></div>
+                                            <span class="text-xl font-black text-slate-800" id="count-Lainnya">0</span>
+                                        </div>
+                                        <div class="flex justify-between items-end mb-2.5">
+                                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest truncate">Lainnya</p>
+                                            <span class="text-[10px] font-bold text-slate-500" id="pct-Lainnya">0%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Lainnya" class="bg-slate-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                     </div>
-                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Lainnya</p>
-                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Lainnya" class="bg-slate-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between mb-5 mt-10">
-                            <h2 class="text-base font-black text-slate-800 tracking-tight flex items-center"><i class="ph-bold ph-clock-counter-clockwise mr-2.5 text-indigo-500 text-xl"></i> Aktivitas & Arsip Terbaru</h2>
-                            <button onclick="window.location.hash='#documents'" class="text-[10px] font-extrabold text-indigo-600 hover:text-indigo-800 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-wider flex items-center group bg-indigo-50/50 hover:bg-indigo-50 border border-transparent hover:border-indigo-100">Semua Arsip <i class="ph-bold ph-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i></button>
+                        <div class="flex items-center justify-between mb-6 mt-10">
+                            <h2 class="text-base font-black text-slate-800 tracking-tight flex items-center"><i class="ph-bold ph-clock-counter-clockwise mr-2.5 text-indigo-500 text-xl"></i> Arsip Terbaru</h2>
+                            <button onclick="window.location.hash='#documents'" class="text-[10px] font-extrabold text-indigo-600 hover:text-indigo-800 px-4 py-2 rounded-xl transition-colors uppercase tracking-widest flex items-center group bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100/50 hover:border-indigo-100 shadow-sm active:scale-95">Lihat Semua <i class="ph-bold ph-arrow-right ml-1.5 transform group-hover:translate-x-1 transition-transform"></i></button>
                         </div>
                         <div id="dashboardRecentGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
                     </div>
@@ -664,25 +703,35 @@
             
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden bg-slate-50/50">
                 <!-- Preview Frame -->
-                <div class="w-full md:w-[55%] h-[40vh] md:h-full bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col relative flex-shrink-0 group overflow-hidden">
-                    <div class="absolute top-5 left-5 right-5 flex items-center justify-between z-20 pointer-events-none">
-                        <span class="text-[10px] font-bold text-slate-300 bg-slate-900/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/50 uppercase tracking-widest shadow-lg">Pratinjau Asli</span>
-                        <a id="detailViewLink" href="#" target="_blank" class="pointer-events-auto text-[10px] font-bold text-white bg-indigo-500/80 backdrop-blur-md border border-indigo-400/50 px-3.5 py-2 rounded-xl shadow-lg hover:bg-indigo-500 hover:scale-105 transition-all flex items-center active:scale-95">
-                            <i class="ph-bold ph-arrows-out mr-1.5 text-sm"></i> Layar Penuh
+                <div class="w-full md:w-[55%] h-[40vh] md:h-full bg-[#0f172a] border-b md:border-b-0 md:border-r border-slate-800 flex flex-col relative flex-shrink-0 group overflow-hidden">
+                    
+                    <!-- NEW PREVIEW HEADER: Tampilan Profesional -->
+                    <div class="absolute top-0 left-0 right-0 h-12 bg-slate-900/90 backdrop-blur-md border-b border-slate-700/80 flex items-center justify-between px-4 z-30 shadow-sm">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex space-x-1.5">
+                                <div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
+                            </div>
+                            <div class="h-4 w-px bg-slate-700"></div>
+                            <span class="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest flex items-center"><i class="ph-fill ph-monitor-play mr-1.5 text-indigo-400"></i> Peninjau Berkas</span>
+                        </div>
+                        <a id="detailViewLink" href="#" target="_blank" class="pointer-events-auto text-[10px] font-bold text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-600 px-3 py-1.5 rounded-lg shadow-sm transition-colors flex items-center active:scale-95">
+                            <i class="ph-bold ph-arrow-square-out mr-1.5"></i> Tab Baru
                         </a>
                     </div>
                     
-                    <div class="flex-1 w-full h-full relative flex items-center justify-center">
-                        <div class="absolute inset-0 opacity-[0.04] pointer-events-none" style="background-image: linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
+                    <div class="flex-1 w-full h-full relative flex items-center justify-center mt-12 bg-slate-900/50">
+                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
                         
                         <iframe id="detailPreviewIframe" src="" class="absolute inset-0 w-full h-full border-0 hidden bg-white z-10"></iframe>
-                        <img id="detailPreviewImg" src="" class="absolute inset-0 w-full h-full object-contain hidden transition-transform duration-500 group-hover:scale-[1.03] z-10 p-0 md:p-8 drop-shadow-2xl">
+                        <img id="detailPreviewImg" src="" class="absolute inset-0 w-full h-full object-contain hidden transition-transform duration-500 group-hover:scale-[1.02] z-10 p-4 md:p-8 drop-shadow-2xl">
                         
-                        <div id="detailPreviewPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center w-full h-full p-8 text-center z-10 bg-gradient-to-b from-slate-800 to-slate-900">
-                            <div class="w-20 h-20 bg-slate-800/80 rounded-3xl flex items-center justify-center shadow-xl mb-5 border border-slate-700/50 backdrop-blur-sm">
+                        <div id="detailPreviewPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center w-full h-full p-8 text-center z-10">
+                            <div class="w-20 h-20 bg-slate-800/80 rounded-[1.5rem] flex items-center justify-center shadow-xl mb-5 border border-slate-700/50 backdrop-blur-sm ring-1 ring-white/5">
                                 <i id="placeholderIcon" class="ph-fill ph-eye-slash text-4xl text-slate-500"></i>
                             </div>
-                            <span id="placeholderText" class="text-sm font-bold text-slate-300 mb-6 max-w-xs leading-relaxed">Pratinjau visual tidak tersedia untuk berkas ini.</span>
+                            <span id="placeholderText" class="text-sm font-bold text-slate-400 mb-6 max-w-xs leading-relaxed">Pratinjau visual tidak tersedia untuk berkas ini.</span>
                             
                             <div id="requestAccessContainer" class="hidden flex flex-col items-center w-full max-w-[220px]">
                                 <button id="btnRequestAccess" onclick="requestDocumentAccess()" class="w-full bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-900/50 transition-all active:scale-95 flex justify-center items-center text-xs hover:-translate-y-0.5 border border-indigo-400/30">
@@ -733,9 +782,15 @@
                     <!-- Alat Dokumen -->
                     <div id="docToolsSection" class="pt-6 border-t border-slate-100">
                         <h3 class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-4 flex items-center"><i class="ph-fill ph-wrench text-slate-400 mr-1.5 text-base"></i> Alat Dokumen Lokal</h3>
+                        
+                        <!-- NEW TOOLS LAYOUT WITH DOWNLOAD BUTTON -->
                         <div class="grid grid-cols-2 gap-3">
-                            <button onclick="convertDoc('pdf')" id="btnToPdf" class="bg-white border border-slate-200 text-slate-700 py-3 rounded-xl text-[10px] font-bold hover:bg-slate-50 flex justify-center items-center shadow-sm active:scale-95 transition-all"><i class="ph-fill ph-file-pdf mr-1.5 text-red-500 text-base"></i> Simpan ke PDF</button>
-                            <button onclick="convertDoc('jpg')" id="btnToJpg" class="bg-white border border-slate-200 text-slate-700 py-3 rounded-xl text-[10px] font-bold hover:bg-slate-50 flex justify-center items-center shadow-sm active:scale-95 transition-all"><i class="ph-fill ph-image mr-1.5 text-blue-500 text-base"></i> Simpan ke JPG</button>
+                            <button onclick="downloadOriginalDoc()" class="col-span-2 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-3.5 rounded-xl text-xs font-black hover:from-indigo-700 hover:to-indigo-800 active:scale-95 flex justify-center items-center transition-all shadow-md shadow-indigo-500/20 hover:-translate-y-0.5 border border-indigo-500/50">
+                                <i class="ph-bold ph-download-simple mr-2 text-lg"></i> Unduh File Asli
+                            </button>
+                            
+                            <button onclick="convertDoc('pdf')" id="btnToPdf" class="bg-white border border-slate-200 text-slate-700 py-3 rounded-xl text-[10px] font-bold hover:bg-slate-50 hover:border-slate-300 flex justify-center items-center shadow-sm active:scale-95 transition-all"><i class="ph-fill ph-file-pdf mr-1.5 text-red-500 text-base"></i> Ekspor PDF</button>
+                            <button onclick="convertDoc('jpg')" id="btnToJpg" class="bg-white border border-slate-200 text-slate-700 py-3 rounded-xl text-[10px] font-bold hover:bg-slate-50 hover:border-slate-300 flex justify-center items-center shadow-sm active:scale-95 transition-all"><i class="ph-fill ph-image mr-1.5 text-blue-500 text-base"></i> Ekspor JPG</button>
                             <button onclick="resizeDoc()" id="btnCompress" class="col-span-2 bg-slate-800 text-white py-3.5 rounded-xl text-[11px] font-bold hover:bg-slate-900 active:scale-95 flex justify-center items-center transition-all shadow-md"><i class="ph-bold ph-arrows-in mr-2 text-emerald-400 text-base"></i> Kompres Ukuran Dokumen</button>
                         </div>
                         <p id="toolProcessingText" class="text-[10px] text-indigo-600 font-bold text-center mt-4 hidden animate-pulse bg-indigo-50 py-2 rounded-lg border border-indigo-100">Mengambil data aman dari server...</p>
@@ -1192,6 +1247,14 @@
             safeSetText('userEmail', escapeHTML(AppState.user.role)); 
             safeSetText('welcomeName', escapeHTML(AppState.user.nama.split(' ')[0]));
             
+            // DYNAMIC GREETING (Sapaan Pintar)
+            const hr = new Date().getHours();
+            let greet = 'Selamat Malam';
+            if(hr < 11) greet = 'Selamat Pagi';
+            else if(hr < 15) greet = 'Selamat Siang';
+            else if(hr < 18) greet = 'Selamat Sore';
+            safeSetText('greetingText', greet);
+            
             if (AppState.user.photoUrl) {
                 const sp = document.getElementById('sidebarUserPhoto'); if(sp) sp.src = AppState.user.photoUrl;
                 safeRemoveClass('sidebarUserPhoto', 'hidden'); safeAddClass('userInitial', 'hidden');
@@ -1622,8 +1685,11 @@
                 if(countEl) countEl.textContent = cats[k];
                 
                 const barEl = document.getElementById(`bar-${k}`);
+                const pctEl = document.getElementById(`pct-${k}`);
+                
                 if(barEl) {
                     const pct = docs.length > 0 ? Math.round((cats[k] / docs.length) * 100) : 0;
+                    if(pctEl) pctEl.textContent = pct + '%';
                     setTimeout(() => { barEl.style.width = pct + '%'; }, 100);
                 }
             });
@@ -1704,6 +1770,48 @@
         // ==========================================
         // 8. DOC DETAIL, TOOLS & ACTION HANDLERS
         // ==========================================
+
+        async function downloadOriginalDoc() {
+            const docId = AppState.currentDetailDocId; 
+            const doc = AppState.documents.find(d => d.docId === docId); 
+            if (!doc) return;
+            
+            const ptText = document.getElementById('toolProcessingText'); 
+            if(ptText) {
+                ptText.textContent = "Mengunduh file aman dari server...";
+                ptText.classList.remove('hidden');
+            }
+            showToast("Menyiapkan unduhan...", false);
+
+            try {
+                const res = await fetchAPI('get_drive_file_base64', { docId: docId });
+                if(!res.success) throw new Error(res.message);
+                
+                const blob = base64ToBlob(res.base64, res.mimeType);
+                
+                // Construct filename logic
+                let ext = "";
+                if(res.mimeType.includes('pdf')) ext = ".pdf";
+                else if(res.mimeType.includes('jpeg') || res.mimeType.includes('jpg')) ext = ".jpg";
+                else if(res.mimeType.includes('png')) ext = ".png";
+                
+                let filename = doc.namaFile;
+                if(!filename.toLowerCase().endsWith(ext)) filename += ext;
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                showToast("File asli berhasil diunduh!");
+                if(ptText) ptText.classList.add('hidden');
+            } catch(e) { 
+                if(ptText) ptText.classList.add('hidden'); 
+                showToast(e.message || "Gagal mengunduh file.", true); 
+            }
+        }
 
         async function convertDoc(targetType) {
             const docId = AppState.currentDetailDocId; const doc = AppState.documents.find(d => d.docId === docId); if (!doc) return;
