@@ -50,6 +50,15 @@
         .progress-bar-fill {
             transition: width 0.4s ease-out;
         }
+
+        /* Birthday Special Class */
+        .bday-bg {
+            background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%);
+            border-color: #fde047 !important;
+        }
+        .bday-text {
+            color: #b45309;
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased flex h-screen overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
@@ -113,10 +122,17 @@
             </div>
             <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3">
                 <input type="text" id="regName" required placeholder="Nama Lengkap" class="auth-input w-full rounded-xl py-3 px-4 text-sm font-medium outline-none">
+                
                 <div class="grid grid-cols-2 gap-3">
                     <input type="text" id="regProfesi" required placeholder="Profesi" class="auth-input w-full rounded-xl py-3 px-4 text-sm font-medium outline-none">
                     <input type="tel" id="regPhone" required placeholder="No. WA" class="auth-input w-full rounded-xl py-3 px-4 text-sm font-medium outline-none">
                 </div>
+                
+                <div class="grid grid-cols-1">
+                    <label class="block text-[10px] font-bold text-slate-400 mb-1 ml-1 uppercase tracking-wider">Tanggal Lahir</label>
+                    <input type="date" id="regTglLahir" required class="auth-input w-full rounded-xl py-3 px-4 text-sm font-medium outline-none text-slate-600">
+                </div>
+
                 <input type="email" id="regEmail" required placeholder="Email Login" class="auth-input w-full rounded-xl py-3 px-4 text-sm font-medium outline-none">
                 <div class="relative">
                     <input type="password" id="regPassword" required placeholder="Kata Sandi (Min 6)" class="auth-input w-full rounded-xl py-3 pl-4 pr-12 text-sm font-medium outline-none">
@@ -138,7 +154,7 @@
             </div>
             <form id="forgotForm" onsubmit="handleForgotSubmit(event)" class="space-y-4">
                 <input type="email" id="forgotEmail" required placeholder="Email Terdaftar" class="auth-input w-full rounded-xl py-3.5 px-4 text-sm font-medium outline-none">
-                <button type="submit" id="btnForgotSubmit" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl transition-all transform active:scale-95 flex justify-center items-center text-sm">
+                <button type="submit" id="btnForgotSubmit" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-xl transition-all transform active:scale-95 flex justify-center items-center text-sm">
                     <span id="btnForgotText">Kirim Sandi Baru</span>
                     <div id="btnForgotSpinner" class="loader hidden ml-2"></div>
                 </button>
@@ -166,6 +182,7 @@
                 <a href="#profile" id="nav-profile" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-slate-600 transition-colors font-bold text-xs"><i class="ph-fill ph-user-circle text-lg"></i><span>Profil Akun</span></a>
                 
                 <p id="adminMenuTitle" class="px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-3 mt-8 hidden">Zona Admin</p>
+                <a href="#requests" id="nav-requests" class="nav-item hidden items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-slate-600 transition-colors font-bold text-xs"><i class="ph-fill ph-bell-ringing text-lg"></i><span>Permintaan Akses</span></a>
                 <a href="#users" id="nav-users" class="nav-item hidden items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-slate-600 transition-colors font-bold text-xs"><i class="ph-fill ph-users text-lg"></i><span>Anggota</span></a>
                 <a href="#audit" id="nav-audit" class="nav-item hidden items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-slate-600 transition-colors font-bold text-xs"><i class="ph-fill ph-shield-check text-lg"></i><span>Log Aktivitas</span></a>
                 <a href="#settings" id="nav-settings" class="nav-item hidden items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-slate-600 transition-colors font-bold text-xs"><i class="ph-fill ph-gear text-lg"></i><span>Pengaturan</span></a>
@@ -185,7 +202,6 @@
 
         <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/40 z-30 hidden md:hidden"></div>
 
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col h-full overflow-hidden w-full bg-slate-50 relative">
             <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-10 flex-shrink-0">
                 <div class="flex items-center w-full max-w-[70%] sm:max-w-md">
@@ -196,9 +212,9 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button id="btnSyncDrive" onclick="triggerSyncDrive()" style="display: none;" class="items-center space-x-1.5 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-3 py-1.5 rounded-xl text-xs font-bold"><i class="ph-bold ph-arrows-clockwise text-base"></i><span class="hidden lg:inline">Sync</span></button>
-                    <button id="btnBackup" onclick="triggerBackup()" style="display: none;" class="items-center space-x-1.5 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-3 py-1.5 rounded-xl text-xs font-bold"><i class="ph-bold ph-hard-drives text-base"></i><span class="hidden lg:inline">Backup</span></button>
-                    <button onclick="window.location.hash='#upload'" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold active:scale-95 flex items-center space-x-1.5 hidden md:flex"><i class="ph-bold ph-upload-simple text-base"></i><span>Unggah</span></button>
+                    <button id="btnSyncDrive" onclick="triggerSyncDrive()" style="display: none;" class="items-center space-x-1.5 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors"><i class="ph-bold ph-arrows-clockwise text-base"></i><span class="hidden lg:inline">Sync</span></button>
+                    <button id="btnBackup" onclick="triggerBackup()" style="display: none;" class="items-center space-x-1.5 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors"><i class="ph-bold ph-hard-drives text-base"></i><span class="hidden lg:inline">Backup</span></button>
+                    <button onclick="window.location.hash='#upload'" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold active:scale-95 flex items-center space-x-1.5 hidden md:flex transition-transform"><i class="ph-bold ph-upload-simple text-base"></i><span>Unggah</span></button>
                 </div>
             </header>
 
@@ -233,11 +249,9 @@
                         <div class="flex justify-between items-center mb-6">
                             <div class="flex items-center space-x-3">
                                 <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Dokumen</h1>
-                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg text-xs font-bold" id="docCountBadge">0</span>
+                                <span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg text-xs font-bold border border-indigo-100" id="docCountBadge">0</span>
                             </div>
-                            <button onclick="loadDocuments()" class="bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition-colors shadow-sm" title="Refresh Dokumen">
-                                <i class="ph-bold ph-arrows-clockwise text-lg sm:text-xl"></i>
-                            </button>
+                            <button onclick="loadDocuments()" class="bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg transition-colors shadow-sm" title="Refresh Dokumen"><i class="ph-bold ph-arrows-clockwise text-lg sm:text-xl"></i></button>
                         </div>
                         <div class="mb-6 flex flex-col sm:flex-row gap-4">
                             <div class="w-full sm:w-1/3" id="ownerFilterContainer">
@@ -263,19 +277,45 @@
                     <div id="view-users" class="view-section hidden">
                         <div class="flex justify-between items-center mb-6">
                             <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Anggota</h1>
-                            <button onclick="window.location.hash='#user-add'" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold active:scale-95 flex items-center space-x-1.5"><i class="ph-bold ph-plus text-base"></i> <span class="hidden sm:inline">Tambah</span></button>
+                            <button onclick="window.location.hash='#user-add'" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold active:scale-95 flex items-center space-x-1.5 transition-transform"><i class="ph-bold ph-plus text-base"></i> <span class="hidden sm:inline">Tambah</span></button>
                         </div>
-                        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
                             <div class="overflow-x-auto hide-scrollbar">
-                                <table class="w-full text-left text-sm min-w-[600px]"><thead class="bg-slate-50 text-slate-400 text-[10px] uppercase tracking-widest font-bold border-b border-slate-200"><tr><th class="py-4 px-5">Nama & Info</th><th class="py-4 px-5">Hak Akses</th><th class="py-4 px-5 text-right">Aksi</th></tr></thead><tbody id="usersTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody></table>
+                                <table class="w-full text-left text-sm min-w-[650px]">
+                                    <thead class="bg-slate-50 text-slate-400 text-[10px] uppercase tracking-widest font-bold border-b border-slate-200">
+                                        <tr><th class="py-4 px-5">Nama & Usia</th><th class="py-4 px-5">Info Kontak</th><th class="py-4 px-5">Hak Akses</th><th class="py-4 px-5 text-right">Aksi</th></tr>
+                                    </thead>
+                                    <tbody id="usersTableBody" class="text-slate-700"></tbody>
+                                </table>
                             </div>
+                            <div id="loadingUsers" class="text-center py-10 text-slate-400 text-sm font-semibold hidden">Memuat...</div>
+                        </div>
+                    </div>
+
+                    <!-- Permintaan Akses -->
+                    <div id="view-requests" class="view-section hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Permintaan Buka Dokumen</h1>
+                            <button onclick="loadRequests()" class="bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 p-2 rounded-lg transition-colors shadow-sm" title="Refresh Permintaan"><i class="ph-bold ph-arrows-clockwise text-lg sm:text-xl"></i></button>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                            <div class="overflow-x-auto hide-scrollbar">
+                                <table class="w-full text-left text-sm min-w-[650px]">
+                                    <thead class="bg-slate-50 text-slate-400 text-[10px] uppercase tracking-widest font-bold border-b border-slate-200">
+                                        <tr><th class="py-4 px-5">Nama Dokumen</th><th class="py-4 px-5">Pemohon</th><th class="py-4 px-5 text-right">Aksi Persetujuan</th></tr>
+                                    </thead>
+                                    <tbody id="requestsTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                                </table>
+                            </div>
+                            <div id="loadingRequests" class="text-center py-10 text-slate-400 text-sm font-semibold hidden"><div class="loader-indigo loader mx-auto mb-2" style="width:16px;height:16px;border-width:2px;"></div>Memuat...</div>
+                            <div id="emptyRequests" class="text-center py-10 text-slate-400 text-sm font-semibold hidden">Tidak ada permintaan akses saat ini.</div>
                         </div>
                     </div>
 
                     <!-- Log Keamanan -->
                     <div id="view-audit" class="view-section hidden">
                         <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-6">Log Aktivitas</h1>
-                        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
                             <div class="overflow-x-auto hide-scrollbar">
                                 <table class="w-full text-left text-sm min-w-[600px]"><thead class="bg-slate-50 text-slate-400 text-[10px] uppercase tracking-widest font-bold border-b border-slate-200"><tr><th class="py-4 px-5">Waktu</th><th class="py-4 px-5">Oleh</th><th class="py-4 px-5">Aksi</th><th class="py-4 px-5">Detail / Target</th></tr></thead><tbody id="auditTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody></table>
                             </div>
@@ -287,12 +327,15 @@
                         <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-6">Profil Akun</h1>
                         
                         <!-- Profil Details -->
-                        <div class="bg-white rounded-2xl border border-slate-200 max-w-2xl">
-                            <div class="p-6 sm:p-8 flex items-center space-x-5 border-b border-slate-100 bg-slate-50">
+                        <div class="bg-white rounded-2xl border border-slate-200 max-w-2xl shadow-sm">
+                            <div id="profileHeader" class="p-6 sm:p-8 flex items-center space-x-5 border-b border-slate-100 bg-slate-50 rounded-t-2xl transition-colors">
                                 <div class="w-20 h-20 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-3xl font-extrabold" id="profileBigInitial">U</div>
                                 <img id="profileBigPhoto" src="" class="w-20 h-20 rounded-2xl object-cover border border-slate-200 hidden">
                                 <div>
-                                    <h2 class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight" id="profileDisplayName">Nama</h2>
+                                    <div class="flex items-center space-x-2">
+                                        <h2 class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight" id="profileDisplayName">Nama</h2>
+                                        <span id="profileBdayIcon" class="hidden text-xl animate-bounce" title="Ulang Tahun Hari Ini!">🎂</span>
+                                    </div>
                                     <p class="text-xs text-indigo-600 font-bold uppercase tracking-widest mt-1" id="profileDisplayRole">Role</p>
                                 </div>
                             </div>
@@ -301,15 +344,16 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                     <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Nama Lengkap</label><input type="text" id="profNama" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold focus:border-indigo-500 focus:bg-white outline-none transition-colors"></div>
                                     <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Email Terdaftar</label><input type="email" id="profEmail" disabled class="w-full bg-slate-100 border border-slate-200 text-slate-400 rounded-xl py-3 px-4 text-sm font-semibold cursor-not-allowed"></div>
+                                    <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Tanggal Lahir</label><input type="date" id="profTglLahir" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold focus:border-indigo-500 focus:bg-white outline-none transition-colors text-slate-600"></div>
                                     <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Profesi</label><input type="text" id="profProfesi" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold focus:border-indigo-500 focus:bg-white outline-none transition-colors"></div>
                                     <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">WhatsApp</label><input type="tel" id="profPhone" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold focus:border-indigo-500 focus:bg-white outline-none transition-colors"></div>
                                 </div>
-                                <div class="pt-6 mt-4 border-t border-slate-100"><button type="submit" id="btnSaveProfile" class="w-full sm:w-auto bg-slate-900 text-white font-bold py-3 px-8 rounded-xl active:scale-95 text-sm">Simpan Perubahan</button></div>
+                                <div class="pt-6 mt-4 border-t border-slate-100"><button type="submit" id="btnSaveProfile" class="w-full sm:w-auto bg-slate-900 text-white font-bold py-3 px-8 rounded-xl active:scale-95 transition-transform text-sm">Simpan Perubahan</button></div>
                             </form>
                         </div>
 
                         <!-- Riwayat Aktivitas Login -->
-                        <div class="bg-white rounded-2xl border border-slate-200 max-w-2xl mt-6">
+                        <div class="bg-white rounded-2xl border border-slate-200 max-w-2xl mt-6 shadow-sm">
                             <div class="p-6 flex justify-between items-center border-b border-slate-100 bg-slate-50 rounded-t-2xl">
                                 <h3 class="text-base font-bold text-slate-800">Riwayat Login</h3>
                                 <button onclick="loadLoginHistory()" class="text-slate-400 hover:text-indigo-600 transition-colors p-1" title="Refresh Riwayat">
@@ -335,7 +379,7 @@
 
                     <div id="view-settings" class="view-section hidden">
                         <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-6">Konfigurasi Sistem</h1>
-                        <div class="bg-white rounded-2xl border border-slate-200 max-w-2xl">
+                        <div class="bg-white rounded-2xl border border-slate-200 max-w-2xl shadow-sm">
                             <form id="settingsForm" onsubmit="handleSettingsUpdate(event)" class="p-6 sm:p-8 space-y-8">
                                 <div><h3 class="text-sm font-extrabold text-slate-800 mb-2">Groq AI API Key</h3><input type="password" id="setGroqApi" placeholder="gsk_..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm outline-none font-mono"></div>
                                 <div class="border-t border-slate-100 pt-6"><h3 class="text-sm font-extrabold text-slate-800 mb-4">Gateway WhatsApp</h3><div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -344,7 +388,7 @@
                                         <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Device ID</label><input type="text" id="setWaDevice" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-xs outline-none font-mono"></div>
                                         <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">No. Target Admin</label><input type="tel" id="setWaTarget" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-xs outline-none font-mono"></div>
                                 </div></div>
-                                <div class="pt-6 border-t border-slate-100"><button type="submit" id="btnSaveSettings" class="w-full sm:w-auto bg-slate-900 text-white font-bold py-3 px-8 rounded-xl active:scale-95 text-sm">Simpan & Update</button></div>
+                                <div class="pt-6 border-t border-slate-100"><button type="submit" id="btnSaveSettings" class="w-full sm:w-auto bg-slate-900 text-white font-bold py-3 px-8 rounded-xl active:scale-95 transition-transform text-sm">Simpan & Update</button></div>
                             </form>
                         </div>
                     </div>
@@ -376,7 +420,7 @@
     </div>
 
     <!-- MODAL: UPLOAD DOKUMEN & SCAN PDF -->
-    <div id="uploadModal" class="fixed inset-0 bg-slate-900/60 hidden z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+    <div id="uploadModal" class="fixed inset-0 bg-slate-900/40 hidden z-[60] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
         <div class="bg-white rounded-3xl w-full max-w-sm flex flex-col shadow-2xl">
             <div class="p-5 border-b border-slate-100 flex justify-between items-center">
                 <h2 class="text-sm font-extrabold text-slate-800">Unggah Dokumen Baru</h2>
@@ -439,7 +483,7 @@
                 </div>
 
                 <div class="pt-2" id="uploadSubmitContainer">
-                    <button type="submit" id="btnSubmit" class="w-full bg-indigo-600 text-white font-bold py-3.5 rounded-xl active:scale-95 flex justify-center items-center text-sm">
+                    <button type="submit" id="btnSubmit" class="w-full bg-indigo-600 text-white font-bold py-3.5 rounded-xl active:scale-95 flex justify-center items-center text-sm transition-transform">
                         <span id="btnText">Proses AI & Simpan</span>
                     </button>
                 </div>
@@ -471,19 +515,30 @@
                 <div class="w-full md:w-1/2 h-[30vh] md:h-full border-b md:border-b-0 md:border-r border-slate-100 bg-slate-50 p-4 flex flex-col">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pratinjau Asli</span>
-                        <a id="detailViewLink" href="#" target="_blank" class="text-[10px] font-bold text-indigo-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg">Buka Drive</a>
+                        <a id="detailViewLink" href="#" target="_blank" class="text-[10px] font-bold text-indigo-600 bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors">Buka Drive</a>
                     </div>
                     <div class="flex-1 bg-white border border-slate-200 rounded-xl relative flex items-center justify-center overflow-hidden">
                         <iframe id="detailPreviewIframe" src="" class="absolute inset-0 w-full h-full border-0 hidden"></iframe>
                         <img id="detailPreviewImg" src="" class="max-h-full max-w-full object-contain hidden p-2">
-                        <div id="detailPreviewPlaceholder" class="text-slate-400 text-xs font-medium flex flex-col items-center"><i class="ph-fill ph-eye-slash text-3xl mb-2"></i>Diblokir Google</div>
+                        <div id="detailPreviewPlaceholder" class="text-slate-400 text-xs font-medium flex flex-col items-center justify-center w-full h-full p-4 text-center">
+                            <i id="placeholderIcon" class="ph-fill ph-eye-slash text-4xl mb-3 text-slate-300"></i>
+                            <span id="placeholderText" class="text-sm font-bold text-slate-500 mb-4">Pratinjau diblokir Google</span>
+                            
+                            <div id="requestAccessContainer" class="hidden flex flex-col items-center">
+                                <button id="btnRequestAccess" onclick="requestDocumentAccess()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-sm transition-all active:scale-95 flex items-center text-xs">
+                                    <i class="ph-bold ph-lock-key-open mr-2 text-base"></i> Minta Akses Buka
+                                </button>
+                                <span id="requestPendingText" class="hidden bg-amber-50 text-amber-600 px-4 py-2 rounded-xl border border-amber-200 font-bold text-[10px] uppercase tracking-wider flex items-center">
+                                    <i class="ph-bold ph-hourglass mr-2 text-base animate-pulse"></i> Menunggu Persetujuan
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Info Frame -->
                 <div class="w-full md:w-1/2 p-5 overflow-y-auto pb-24 sm:pb-5 hide-scrollbar relative">
                     
-                    <!-- RE-SCAN PROGRESS UI -->
                     <div id="rescanProgressContainer" class="hidden mb-6 px-4 py-3 bg-indigo-50 border border-indigo-100 rounded-xl">
                         <div class="flex justify-between text-[10px] font-bold text-indigo-800 mb-2 uppercase tracking-widest">
                             <span id="rescanProgressStatus">Menganalisa AI...</span>
@@ -521,7 +576,7 @@
                         <div class="grid grid-cols-2 gap-2">
                             <button onclick="convertDoc('pdf')" id="btnToPdf" class="bg-white border border-slate-200 text-slate-700 py-2.5 rounded-xl text-[10px] font-bold hover:bg-slate-50 flex justify-center items-center"><i class="ph-fill ph-file-pdf mr-1 text-red-500"></i> Ke PDF</button>
                             <button onclick="convertDoc('jpg')" id="btnToJpg" class="bg-white border border-slate-200 text-slate-700 py-2.5 rounded-xl text-[10px] font-bold hover:bg-slate-50 flex justify-center items-center"><i class="ph-fill ph-image mr-1 text-blue-500"></i> Ke JPG</button>
-                            <button onclick="resizeDoc()" id="btnCompress" class="col-span-2 bg-slate-800 text-white py-2.5 rounded-xl text-[10px] font-bold active:scale-95 flex justify-center items-center"><i class="ph-bold ph-arrows-in mr-1 text-emerald-400"></i> Kompres Ukuran</button>
+                            <button onclick="resizeDoc()" id="btnCompress" class="col-span-2 bg-slate-800 text-white py-2.5 rounded-xl text-[10px] font-bold active:scale-95 flex justify-center items-center transition-transform"><i class="ph-bold ph-arrows-in mr-1 text-emerald-400"></i> Kompres Ukuran</button>
                         </div>
                         <p id="toolProcessingText" class="text-[9px] text-indigo-600 font-bold text-center mt-3 hidden animate-pulse">Memproses file di perangkat Anda...</p>
                     </div>
@@ -534,11 +589,11 @@
                                 <div class="flex space-x-2">
                                     <select id="shareTargetUser" class="flex-1 border border-slate-300 rounded-lg text-xs p-2.5 outline-none"><option value="">Pilih Anggota...</option></select>
                                     <select id="shareExpiry" class="w-20 border border-slate-300 rounded-lg text-xs p-2.5 outline-none"><option value="1">1 Jam</option><option value="24">24 Jam</option><option value="999999">Selamanya</option></select>
-                                    <button id="btnShareDoc" onclick="handleShareDoc()" class="bg-slate-800 text-white px-3 rounded-lg text-xs font-bold">Beri</button>
+                                    <button id="btnShareDoc" onclick="handleShareDoc()" class="bg-slate-800 text-white px-3 rounded-lg text-xs font-bold hover:bg-slate-900">Beri</button>
                                 </div>
                             </div>
                             <div id="adminDeleteSection" class="hidden border-t border-slate-200 pt-4">
-                                <button onclick="handleDeleteDoc()" class="w-full bg-white text-red-600 border border-red-200 py-2.5 rounded-lg text-xs font-bold flex justify-center items-center"><i class="ph-bold ph-trash mr-1.5"></i> Hapus Permanen</button>
+                                <button onclick="handleDeleteDoc()" class="w-full bg-white text-red-600 border border-red-200 py-2.5 rounded-lg text-xs font-bold flex justify-center items-center hover:bg-red-50"><i class="ph-bold ph-trash mr-1.5"></i> Hapus Permanen</button>
                             </div>
                         </div>
                     </div>
@@ -591,10 +646,17 @@
                         <input type="text" id="addUserProfesi" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-medium focus:border-indigo-500 outline-none">
                     </div>
                 </div>
+                
+                <div class="grid grid-cols-1">
+                    <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-widest">Tanggal Lahir</label>
+                    <input type="date" id="addUserTglLahir" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-medium focus:border-indigo-500 outline-none text-slate-600">
+                </div>
+
                 <div>
                     <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-widest">Email (Login)</label>
                     <input type="email" id="addUserEmail" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-medium focus:border-indigo-500 outline-none">
                 </div>
+                
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-widest">Sandi Baru</label>
@@ -620,26 +682,30 @@
     <div id="previewUserModal" class="fixed inset-0 bg-slate-900/60 hidden z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-xs flex flex-col relative overflow-hidden">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 bg-white border border-slate-100 shadow-sm rounded-lg p-1.5 z-10 hover:text-slate-800"><i class="ph-bold ph-x text-sm"></i></button>
-            <div class="bg-slate-50 p-8 flex flex-col items-center border-b border-slate-100">
-                <div class="w-20 h-20 rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden mb-4 flex items-center justify-center">
+            <div id="previewHeaderBg" class="bg-slate-50 p-8 flex flex-col items-center border-b border-slate-100 transition-colors">
+                <div class="w-20 h-20 rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden mb-4 flex items-center justify-center relative">
                     <img id="previewUserImg" src="" class="w-full h-full object-cover hidden">
                     <span id="previewUserInitial" class="text-slate-300 font-extrabold text-3xl">U</span>
                 </div>
-                <h3 id="previewUserName" class="text-lg font-extrabold text-slate-900 tracking-tight">Nama</h3>
+                <div class="flex items-center space-x-1.5">
+                    <h3 id="previewUserName" class="text-lg font-extrabold text-slate-900 tracking-tight">Nama</h3>
+                    <span id="previewBdayIcon" class="hidden text-base animate-bounce" title="Ulang Tahun Hari Ini!">🎂</span>
+                </div>
                 <span id="previewUserRole" class="mt-1.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold px-3 py-1 rounded-md uppercase tracking-widest border border-indigo-100">Role</span>
             </div>
             <div class="p-6 space-y-4 bg-white text-sm">
-                <div class="flex items-center space-x-3 text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                    <i class="ph-fill ph-envelope text-slate-400 text-xl"></i>
-                    <span id="previewUserEmail" class="font-semibold truncate text-xs">email</span>
+                <div class="flex items-center justify-between text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <div class="flex items-center space-x-3"><i class="ph-fill ph-cake text-orange-400 text-xl"></i><span class="font-bold text-xs uppercase tracking-wider text-slate-400">Usia</span></div>
+                    <span id="previewUserAge" class="font-bold text-sm text-slate-700">-</span>
                 </div>
                 <div class="flex items-center space-x-3 text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                    <i class="ph-fill ph-whatsapp-logo text-emerald-500 text-xl"></i>
-                    <span id="previewUserPhone" class="font-semibold text-xs">0812</span>
+                    <i class="ph-fill ph-envelope text-slate-400 text-xl"></i><span id="previewUserEmail" class="font-semibold truncate text-xs">email</span>
                 </div>
                 <div class="flex items-center space-x-3 text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                    <i class="ph-fill ph-briefcase text-slate-400 text-xl"></i>
-                    <span id="previewUserProfesi" class="font-semibold truncate text-xs">Profesi</span>
+                    <i class="ph-fill ph-whatsapp-logo text-emerald-500 text-xl"></i><span id="previewUserPhone" class="font-semibold text-xs">0812</span>
+                </div>
+                <div class="flex items-center space-x-3 text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <i class="ph-fill ph-briefcase text-slate-400 text-xl"></i><span id="previewUserProfesi" class="font-semibold truncate text-xs">Profesi</span>
                 </div>
             </div>
         </div>
@@ -679,18 +745,37 @@
             else localStorage.removeItem(key);
         }
 
+        // --- Logika Tanggal Lahir (Usia & Ultah) ---
+        function calculateAge(dobStr) {
+            if(!dobStr) return '-';
+            const dob = new Date(dobStr);
+            if(isNaN(dob.getTime())) return '-';
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) { age--; }
+            return age + ' Thn';
+        }
+
+        function isBirthday(dobStr) {
+            if(!dobStr) return false;
+            const dob = new Date(dobStr);
+            if(isNaN(dob.getTime())) return false;
+            const today = new Date();
+            return dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
+        }
+
         // ==========================================
         // 1. GLOBAL STATE & KONEKSI KE BACKEND
         // ==========================================
-        
-        // URL Web App Apps Script 
         const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwS1zy0N-Sp1h_CbDRa49y3ajPzNneAu6BQcdWUbvzNXZbJJdBtJ9Dn5d_0LgSLFKo/exec'; 
         
         let AppState = {
             user: null, 
             documents: [],
             users: [],     
-            logs: [],      
+            logs: [],
+            requests: [],      
             currentCategory: 'Semua',
             currentOwner: 'Semua',
             searchQuery: '',
@@ -714,11 +799,7 @@
                 ...additionalPayload 
             };
             try {
-                const response = await fetch(GAS_API_URL, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-                    body: JSON.stringify(payload) 
-                });
+                const response = await fetch(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
                 return await response.json();
             } catch (error) { 
                 return { success: false, message: "Koneksi gagal. Cek internet." }; 
@@ -728,23 +809,15 @@
         function startProgress(barId, percentId, statusId, steps) {
             let currentStep = 0; let currentProgress = 0;
             const bar = document.getElementById(barId); const pct = document.getElementById(percentId); const sts = document.getElementById(statusId);
-            
             function nextStep() {
                 if(currentStep >= steps.length) return;
                 let step = steps[currentStep];
                 if(sts) sts.textContent = step.text;
                 let intervalTime = step.time / (step.limit - currentProgress);
-                
                 progressInterval = setInterval(() => {
                     currentProgress++;
-                    if(currentProgress >= step.limit) {
-                        clearInterval(progressInterval);
-                        currentStep++;
-                        nextStep();
-                    } else {
-                        if(bar) bar.style.width = currentProgress + '%';
-                        if(pct) pct.textContent = currentProgress + '%';
-                    }
+                    if(currentProgress >= step.limit) { clearInterval(progressInterval); currentStep++; nextStep(); } 
+                    else { if(bar) bar.style.width = currentProgress + '%'; if(pct) pct.textContent = currentProgress + '%'; }
                 }, intervalTime);
             }
             nextStep();
@@ -753,9 +826,7 @@
         function finishProgress(barId, percentId, statusId, successText = "Selesai!") {
             if(progressInterval) clearInterval(progressInterval);
             const bar = document.getElementById(barId); const pct = document.getElementById(percentId); const sts = document.getElementById(statusId);
-            if(bar) bar.style.width = '100%';
-            if(pct) pct.textContent = '100%';
-            if(sts) sts.textContent = successText;
+            if(bar) bar.style.width = '100%'; if(pct) pct.textContent = '100%'; if(sts) sts.textContent = successText;
         }
 
         // ==========================================
@@ -770,19 +841,14 @@
                 fileInputElement.addEventListener('change', function(e) {
                     const file = e.target.files[0];
                     if (file) {
-                        if (file.size > 5 * 1024 * 1024) {
-                            showToast("Ukuran file melebihi batas 5MB.", true);
-                            return resetFileInput();
-                        }
+                        if (file.size > 5 * 1024 * 1024) { showToast("Ukuran file melebihi batas 5MB.", true); return resetFileInput(); }
                         document.getElementById('fileNameDisplay').textContent = escapeHTML(file.name);
                         document.getElementById('uploadPreviewContainer').classList.remove('hidden');
                         const previewImg = document.getElementById('uploadImagePreview');
                         const pdfToggle = document.getElementById('pdfToggleContainer');
                         
                         if (file.type.startsWith('image/')) {
-                            const reader = new FileReader();
-                            reader.onload = ev => previewImg.src = ev.target.result;
-                            reader.readAsDataURL(file);
+                            const reader = new FileReader(); reader.onload = ev => previewImg.src = ev.target.result; reader.readAsDataURL(file);
                             if(pdfToggle) { pdfToggle.classList.remove('hidden'); pdfToggle.classList.add('flex'); }
                         } else { 
                             previewImg.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>'; 
@@ -800,63 +866,40 @@
             document.getElementById('previewUserModal').classList.add('hidden');
         }
 
-        function closeModal() {
-            window.location.hash = '#' + (AppState.currentView || 'dashboard');
-        }
+        function closeModal() { window.location.hash = '#' + (AppState.currentView || 'dashboard'); }
 
         function handleRoute() {
             let hash = window.location.hash;
             if (!hash || hash === '#' || hash === '') hash = '#login';
-            
             const [path, param] = hash.substring(1).split('/');
-            
             hideAllModals();
 
-            // Guard Auth
             if (!AppState.user) {
                 document.getElementById('appContainer').classList.add('hidden');
                 document.getElementById('authContainer').classList.remove('hidden');
-                
-                document.querySelectorAll('#authContainer > div').forEach(el => {
-                    el.classList.add('hidden', 'opacity-0');
-                });
+                document.querySelectorAll('#authContainer > div').forEach(el => el.classList.add('hidden', 'opacity-0'));
                 
                 let targetView = 'login';
                 if (path === 'register') targetView = 'register';
                 if (path === 'forgot') targetView = 'forgot';
                 
                 const activeEl = document.getElementById(`auth-${targetView}`);
-                if(activeEl) {
-                    activeEl.classList.remove('hidden');
-                    setTimeout(() => {
-                        activeEl.classList.remove('opacity-0');
-                    }, 10);
-                }
+                if(activeEl) { activeEl.classList.remove('hidden'); setTimeout(() => { activeEl.classList.remove('opacity-0'); }, 10); }
                 return;
             } else {
                 document.getElementById('authContainer').classList.add('hidden');
                 document.getElementById('appContainer').classList.remove('hidden');
             }
 
-            const validViews = ['dashboard', 'documents', 'profile', 'users', 'audit', 'settings'];
+            const validViews = ['dashboard', 'documents', 'profile', 'users', 'audit', 'settings', 'requests'];
             
-            if (validViews.includes(path)) {
-                switchViewUI(path);
-                AppState.currentView = path;
-            } 
-            else if (path === 'upload') {
-                switchViewUI('documents'); AppState.currentView = 'documents'; openUploadModalUI();
-            } else if (path === 'doc-detail' && param) {
-                switchViewUI('documents'); AppState.currentView = 'documents'; openDocumentDetailUI(param);
-            } else if (path === 'user-add') {
-                switchViewUI('users'); AppState.currentView = 'users'; openAddUserModalUI();
-            } else if (path === 'user-edit' && param) {
-                switchViewUI('users'); AppState.currentView = 'users'; openEditUserModalUI(decodeURIComponent(param));
-            } else if (path === 'user-preview' && param) {
-                switchViewUI('users'); AppState.currentView = 'users'; openPreviewUserUI(decodeURIComponent(param));
-            } else {
-                if(path !== 'login' && path !== 'register' && path !== 'forgot') window.location.hash = '#dashboard';
-            }
+            if (validViews.includes(path)) { switchViewUI(path); AppState.currentView = path; } 
+            else if (path === 'upload') { switchViewUI('documents'); AppState.currentView = 'documents'; openUploadModalUI(); } 
+            else if (path === 'doc-detail' && param) { switchViewUI('documents'); AppState.currentView = 'documents'; openDocumentDetailUI(param); } 
+            else if (path === 'user-add') { switchViewUI('users'); AppState.currentView = 'users'; openAddUserModalUI(); } 
+            else if (path === 'user-edit' && param) { switchViewUI('users'); AppState.currentView = 'users'; openEditUserModalUI(decodeURIComponent(param)); } 
+            else if (path === 'user-preview' && param) { switchViewUI('users'); AppState.currentView = 'users'; openPreviewUserUI(decodeURIComponent(param)); } 
+            else { if(path !== 'login' && path !== 'register' && path !== 'forgot') window.location.hash = '#dashboard'; }
         }
 
         // ==========================================
@@ -872,142 +915,84 @@
             e.preventDefault();
             const email = document.getElementById('regEmail').value;
             const plainPassword = document.getElementById('regPassword').value; 
+            const tglLahir = document.getElementById('regTglLahir').value;
 
             const btnText = document.getElementById('btnRegText'), btnSpinner = document.getElementById('btnRegSpinner');
             btnText.textContent = 'Mendaftarkan...'; btnSpinner.classList.remove('hidden');
 
-            const hashedPassword = await hashPassword(plainPassword); 
-
             const payload = { 
-                name: document.getElementById('regName').value, 
-                email: email, 
-                password: hashedPassword, 
-                profesi: document.getElementById('regProfesi').value, 
-                phone: document.getElementById('regPhone').value 
+                name: document.getElementById('regName').value, email: email, 
+                password: await hashPassword(plainPassword), profesi: document.getElementById('regProfesi').value, 
+                phone: document.getElementById('regPhone').value, tglLahir: tglLahir
             };
             const res = await fetchAPI('register_user', payload);
 
             btnText.textContent = 'Kirim Pendaftaran'; btnSpinner.classList.add('hidden');
-            if(res.success){
-                showToast("Pendaftaran berhasil! Menunggu persetujuan Kepala Keluarga.");
-                document.getElementById('loginEmail').value = email;
-                window.location.hash = '#login';
-            } else {
-                showToast(res.message, true);
-            }
+            if(res.success){ showToast("Pendaftaran berhasil!"); document.getElementById('loginEmail').value = email; window.location.hash = '#login'; } 
+            else showToast(res.message, true);
         }
 
         async function handleForgotSubmit(e) {
             e.preventDefault();
             const email = document.getElementById('forgotEmail').value.trim();
-            
             const btnText = document.getElementById('btnForgotText'), btnSpinner = document.getElementById('btnForgotSpinner');
             btnText.textContent = 'Memproses API...'; btnSpinner.classList.remove('hidden');
-            
             const plainNewPass = Math.floor(100000 + Math.random() * 900000).toString();
-            const hashedPass = await hashPassword(plainNewPass);
-            
-            const res = await fetchAPI('forgot_password', { targetEmail: email, newPasswordHash: hashedPass, plainPass: plainNewPass });
-            
+            const res = await fetchAPI('forgot_password', { targetEmail: email, newPasswordHash: await hashPassword(plainNewPass), plainPass: plainNewPass });
             btnText.textContent = 'Kirim Sandi Baru'; btnSpinner.classList.add('hidden');
-            if(res.success) {
-                showToast("Sukses! Kata sandi baru telah dikirim ke Email Anda.");
-                document.getElementById('loginEmail').value = email;
-                window.location.hash = '#login';
-                document.getElementById('forgotForm').reset();
-            } else {
-                showToast(res.message, true);
-            }
+            if(res.success) { showToast("Sukses! Sandi dikirim."); document.getElementById('loginEmail').value = email; window.location.hash = '#login'; document.getElementById('forgotForm').reset(); } 
+            else showToast(res.message, true);
         }
 
         async function checkAuthStatus() {
-            const autoLoginEmail = localStorage.getItem('arsipCerdasku_rememberMe');
-            const savedSessionId = localStorage.getItem('arsipCerdasku_sessionId');
+            const autoLoginEmail = localStorage.getItem('arsipCerdasku_rememberMe'), savedSessionId = localStorage.getItem('arsipCerdasku_sessionId');
             if (autoLoginEmail && savedSessionId) {
                 const res = await fetchAPI('check_auth', { email: autoLoginEmail, sessionId: savedSessionId, device: navigator.userAgent });
-                if(res.success) {
-                    processLoginSuccess(res, autoLoginEmail);
-                    return; 
-                } else {
-                    localStorage.removeItem('arsipCerdasku_rememberMe');
-                    localStorage.removeItem('arsipCerdasku_sessionId');
-                }
+                if(res.success) { processLoginSuccess(res, autoLoginEmail); return; } else { localStorage.removeItem('arsipCerdasku_rememberMe'); localStorage.removeItem('arsipCerdasku_sessionId'); }
             }
             handleRoute(); 
         }
 
         async function handleLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const plainPassword = document.getElementById('loginPassword').value; 
-
+            const email = document.getElementById('loginEmail').value, plainPassword = document.getElementById('loginPassword').value; 
             const btnText = document.getElementById('btnLoginText'), btnSpinner = document.getElementById('btnLoginSpinner');
             btnText.textContent = 'Memverifikasi...'; btnSpinner.classList.remove('hidden');
 
-            const hashedPassword = await hashPassword(plainPassword); 
             const sessionId = crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).substr(2)); 
-            const device = navigator.userAgent; 
-            
-            const res = await fetchAPI('check_auth', { email: email, password: hashedPassword, sessionId: sessionId, device: device });
+            const res = await fetchAPI('check_auth', { email: email, password: await hashPassword(plainPassword), sessionId: sessionId, device: navigator.userAgent });
 
             btnText.textContent = 'Buka Brankas'; btnSpinner.classList.add('hidden');
             if (res.success) {
                 if (document.getElementById('rememberMe').checked) localStorage.setItem('arsipCerdasku_rememberMe', email);
-                localStorage.setItem('arsipCerdasku_sessionId', sessionId); 
-                processLoginSuccess(res, email);
+                localStorage.setItem('arsipCerdasku_sessionId', sessionId); processLoginSuccess(res, email);
             } else showToast(res.message, true);
         }
 
         async function processLoginSuccess(res, email) {
             AppState.user = { ...res, initial: res.nama.charAt(0).toUpperCase() };
-            document.getElementById('authContainer').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
+            document.getElementById('authContainer').classList.add('hidden'); document.getElementById('appContainer').classList.remove('hidden');
+            initUserSetup(); startSessionPolling(); loadLoginHistory(); 
             
-            initUserSetup(); 
-            startSessionPolling(); 
-            loadLoginHistory();    
+            const loadPromises = [loadDocuments(), loadUsersAndLogs()];
+            const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
+            if (isAdminOrIstri) loadPromises.push(loadRequests());
             
-            await Promise.all([loadDocuments(), loadUsersAndLogs()]); 
-            showToast(`API Terhubung. Selamat datang, ${escapeHTML(AppState.user.nama)}!`);
-            
+            await Promise.all(loadPromises); 
             const currentHash = window.location.hash.substring(1).split('/')[0];
-            if (!currentHash || currentHash === 'login' || currentHash === 'register' || currentHash === 'forgot') {
-                window.location.hash = '#dashboard';
-            } else {
-                handleRoute(); 
-            }
+            if (!currentHash || currentHash === 'login' || currentHash === 'register' || currentHash === 'forgot') window.location.hash = '#dashboard'; else handleRoute(); 
         }
 
         function handleLogout() {
-            localStorage.removeItem('arsipCerdasku_rememberMe'); 
-            localStorage.removeItem('arsipCerdasku_sessionId');
+            localStorage.removeItem('arsipCerdasku_rememberMe'); localStorage.removeItem('arsipCerdasku_sessionId');
             if (sessionCheckInterval) clearInterval(sessionCheckInterval); 
-            AppState.user = null;
-            document.getElementById('loginPassword').value = '';
-            window.location.hash = '#login'; 
-            showToast("Berhasil keluar.");
+            AppState.user = null; document.getElementById('loginPassword').value = ''; window.location.hash = '#login'; 
         }
 
-        function startSessionPolling() {
-            if (sessionCheckInterval) clearInterval(sessionCheckInterval);
-            sessionCheckInterval = setInterval(verifySession, 20000); 
-        }
-
+        function startSessionPolling() { if (sessionCheckInterval) clearInterval(sessionCheckInterval); sessionCheckInterval = setInterval(verifySession, 20000); }
         async function verifySession() {
-            if (!AppState.user) return;
-            const currentSession = localStorage.getItem('arsipCerdasku_sessionId');
-            if (!currentSession) return;
-            try {
-                const res = await fetchAPI('verify_session');
-                if (res && !res.success && res.message === 'SESSION_INVALID') {
-                    forceLogout("Sesi berakhir: Akun digunakan di perangkat lain.");
-                }
-            } catch(e) {}
-        }
-
-        function forceLogout(msg) {
-            handleLogout();
-            showToast(msg, true);
+            if (!AppState.user) return; const currentSession = localStorage.getItem('arsipCerdasku_sessionId'); if (!currentSession) return;
+            try { const res = await fetchAPI('verify_session'); if (res && !res.success && res.message === 'SESSION_INVALID') { handleLogout(); showToast("Sesi berakhir otomatis.", true); } } catch(e) {}
         }
 
         // ==========================================
@@ -1036,6 +1021,18 @@
                 safeAddClass('profileBigPhoto', 'hidden'); safeSetText('profileBigInitial', escapeHTML(AppState.user.initial)); safeRemoveClass('profileBigInitial', 'hidden');
             }
 
+            // Birthday logic for Profile Page
+            const isBday = isBirthday(AppState.user.tglLahir);
+            const profHeader = document.getElementById('profileHeader');
+            const profBdayIcon = document.getElementById('profileBdayIcon');
+            if (isBday) {
+                if(profHeader) { profHeader.classList.remove('bg-slate-50'); profHeader.classList.add('bday-bg'); }
+                if(profBdayIcon) profBdayIcon.classList.remove('hidden');
+            } else {
+                if(profHeader) { profHeader.classList.add('bg-slate-50'); profHeader.classList.remove('bday-bg'); }
+                if(profBdayIcon) profBdayIcon.classList.add('hidden');
+            }
+
             const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
             const isAdmin = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga';
 
@@ -1043,10 +1040,12 @@
                 safeRemoveClass('ownerFilterContainer', 'hidden');
                 safeSetDisplay('btnSyncDrive', 'flex'); safeSetDisplay('btnBackup', 'flex');
                 safeRemoveClass('adminMenuTitle', 'hidden'); safeRemoveClass('nav-users', 'hidden'); safeAddClass('nav-users', 'flex');
+                safeRemoveClass('nav-requests', 'hidden'); safeAddClass('nav-requests', 'flex');
             } else {
                 safeAddClass('ownerFilterContainer', 'hidden');
                 safeSetDisplay('btnSyncDrive', 'none'); safeSetDisplay('btnBackup', 'none');
                 safeAddClass('adminMenuTitle', 'hidden'); safeAddClass('nav-users', 'hidden');
+                safeAddClass('nav-requests', 'hidden');
             }
 
             if (isAdmin) {
@@ -1060,10 +1059,22 @@
 
             safeSetText('profileDisplayName', escapeHTML(AppState.user.nama));
             safeSetText('profileDisplayRole', escapeHTML(AppState.user.role));
+            
             safeSetVal('profNama', AppState.user.nama); 
             safeSetVal('profEmail', AppState.user.email);
             safeSetVal('profProfesi', AppState.user.profesi || ''); 
             safeSetVal('profPhone', AppState.user.phone || '');
+            
+            // Format for date input is YYYY-MM-DD
+            if (AppState.user.tglLahir) {
+                try {
+                    const d = new Date(AppState.user.tglLahir);
+                    if(!isNaN(d.getTime())){
+                        const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0');
+                        safeSetVal('profTglLahir', `${y}-${m}-${day}`);
+                    }
+                } catch(e){}
+            }
         }
 
         // ==========================================
@@ -1094,52 +1105,11 @@
             }
         }
 
-        async function convertImageToPdfBase64(imgDataUrl) {
-            return new Promise((resolve, reject) => {
-                try {
-                    const { jsPDF } = window.jspdf;
-                    const pdf = new jsPDF('p', 'mm', 'a4');
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = pdf.internal.pageSize.getHeight();
-
-                    const img = new Image();
-                    img.onload = () => {
-                        const imgRatio = img.width / img.height;
-                        const pdfRatio = pdfWidth / pdfHeight;
-                        
-                        let drawWidth = pdfWidth - 20; 
-                        let drawHeight = drawWidth / imgRatio;
-
-                        if (drawHeight > pdfHeight - 20) {
-                            drawHeight = pdfHeight - 20;
-                            drawWidth = drawHeight * imgRatio;
-                        }
-
-                        const x = (pdfWidth - drawWidth) / 2;
-                        const y = (pdfHeight - drawHeight) / 2;
-
-                        pdf.setFillColor(255, 255, 255);
-                        pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
-                        pdf.addImage(img, 'JPEG', x, y, drawWidth, drawHeight, undefined, 'FAST');
-                        
-                        resolve(pdf.output('datauristring'));
-                    };
-                    img.onerror = reject;
-                    img.src = imgDataUrl;
-                } catch (e) {
-                    reject(e);
-                }
-            });
-        }
-
         function handleFileSelection(e) {
             const file = e.target.files[0];
             if (!file) return;
 
-            if (file.size > 5 * 1024 * 1024) {
-                showToast("File melebihi 5MB.", true);
-                return resetFileInput();
-            }
+            if (file.size > 5 * 1024 * 1024) { showToast("File melebihi 5MB.", true); return resetFileInput(); }
 
             AppState.selectedFile = file;
             const fnd = document.getElementById('fileNameDisplay');
@@ -1176,25 +1146,14 @@
                 return;
             }
 
-            const btnText = document.getElementById('btnText'), btnSpinner = document.getElementById('btnSpinner');
-            const warningText = document.getElementById('uploadWarningText');
-            
+            const btnText = document.getElementById('btnText');
             if(btnText) btnText.textContent = 'Mengekstrak...'; 
-            if(btnSpinner) btnSpinner.classList.remove('hidden');
-            if(warningText) warningText.classList.remove('hidden'); 
-
-            const submitContainer = document.getElementById('uploadSubmitContainer');
-            if(submitContainer) submitContainer.classList.add('hidden');
             
-            const progressContainer = document.getElementById('uploadProgressContainer');
-            if(progressContainer) progressContainer.classList.remove('hidden');
+            document.getElementById('uploadSubmitContainer').classList.add('hidden');
+            document.getElementById('uploadProgressContainer').classList.remove('hidden');
 
-            let finalBase64 = AppState.selectedFileBase64;
-            let finalMimeType = AppState.selectedFile.type;
-            let finalFileName = AppState.selectedFile.name;
-
-            const chkPdf = document.getElementById('convertToPdfCheck');
-            const isConvertChecked = chkPdf ? chkPdf.checked : false;
+            let finalBase64 = AppState.selectedFileBase64; let finalMimeType = AppState.selectedFile.type; let finalFileName = AppState.selectedFile.name;
+            const chkPdf = document.getElementById('convertToPdfCheck'); const isConvertChecked = chkPdf ? chkPdf.checked : false;
             
             const steps = [
                 { limit: 20, time: isConvertChecked ? 1500 : 500, text: isConvertChecked ? "Merakit PDF Lokal..." : "Membaca Berkas..." },
@@ -1207,40 +1166,31 @@
             await new Promise(r => setTimeout(r, 50)); 
             if (AppState.selectedFile.type.startsWith('image/') && isConvertChecked) {
                 try {
-                    finalBase64 = await convertImageToPdfBase64(AppState.selectedFileBase64);
-                    finalMimeType = 'application/pdf';
-                    finalFileName = finalFileName.replace(/\.[^/.]+$/, "") + "_scan.pdf";
-                } catch (err) {
-                    console.log(err);
-                }
+                    const { jsPDF } = window.jspdf; const pdf = new jsPDF('p', 'mm', 'a4'); const pdfW = pdf.internal.pageSize.getWidth(), pdfH = pdf.internal.pageSize.getHeight();
+                    const img = new Image();
+                    await new Promise((resolve) => {
+                        img.onload = () => {
+                            const ratio = img.width / img.height; let dW = pdfW - 20; let dH = dW / ratio;
+                            if (dH > pdfH - 20) { dH = pdfH - 20; dW = dH * ratio; }
+                            pdf.setFillColor(255, 255, 255); pdf.rect(0, 0, pdfW, pdfH, 'F');
+                            pdf.addImage(img, 'JPEG', (pdfW - dW)/2, (pdfH - dH)/2, dW, dH, undefined, 'FAST');
+                            finalBase64 = pdf.output('datauristring'); resolve();
+                        }; img.src = AppState.selectedFileBase64;
+                    });
+                    finalMimeType = 'application/pdf'; finalFileName = finalFileName.replace(/\.[^/.]+$/, "") + "_scan.pdf";
+                } catch (err) {}
             }
 
-            const katInput = document.getElementById('kategoriInput');
-            const ownInput = document.getElementById('uploadOwnerInput');
-            
-            const payload = { 
-                fileBase64: finalBase64, 
-                mimeType: finalMimeType, 
-                fileName: finalFileName, 
-                kategori: katInput ? katInput.value : 'Lainnya', 
-                groqKey: groqKeyLocal, 
-                targetOwner: ownInput ? ownInput.value : '' 
-            };
+            const katInput = document.getElementById('kategoriInput'), ownInput = document.getElementById('uploadOwnerInput');
+            const payload = { fileBase64: finalBase64, mimeType: finalMimeType, fileName: finalFileName, kategori: katInput ? katInput.value : 'Lainnya', groqKey: groqKeyLocal, targetOwner: ownInput ? ownInput.value : '' };
             
             const res = await fetchAPI('upload_document', payload);
-            
             finishProgress('uploadProgressBar', 'uploadProgressPercent', 'uploadProgressStatus');
             
             setTimeout(() => {
-                if(submitContainer) submitContainer.classList.remove('hidden');
-                if(progressContainer) progressContainer.classList.add('hidden');
-                if(res.success) { 
-                    closeModal(); 
-                    showToast("Selesai! Dokumen diproses."); 
-                    loadDocuments(); 
-                } else {
-                    showToast(res.message, true);
-                }
+                document.getElementById('uploadSubmitContainer').classList.remove('hidden');
+                document.getElementById('uploadProgressContainer').classList.add('hidden');
+                if(res.success) { closeModal(); showToast("Selesai! Dokumen diproses."); loadDocuments(); } else { showToast(res.message, true); }
             }, 500);
         }
 
@@ -1270,46 +1220,35 @@
             const ownerSelect = document.getElementById('ownerFilter');
             if(!ownerSelect) return;
             ownerSelect.innerHTML = '<option value="Semua">Semua Anggota</option>';
-            const uniqueOwners = [...new Set(AppState.documents.map(d => d.owner || d.ownerId))];
             
-            uniqueOwners.forEach(ownerId => {
-                if(ownerId) {
-                    let displayOwner = ownerId;
-                    const foundUser = AppState.users.find(u => u.userId === ownerId || u.email === ownerId);
-                    if(foundUser) displayOwner = foundUser.nama;
-                    ownerSelect.insertAdjacentHTML('beforeend', `<option value="${escapeHTML(ownerId)}">${escapeHTML(displayOwner)}</option>`);
-                }
-            });
+            if(AppState.users && AppState.users.length > 0) {
+                AppState.users.forEach(u => {
+                    ownerSelect.insertAdjacentHTML('beforeend', `<option value="${escapeHTML(u.email)}">${escapeHTML(u.nama)}</option>`);
+                });
+            }
         }
 
         function filterOwner(ownerId) { AppState.currentOwner = ownerId; renderDocumentsGrid(); }
         
         function filterCategory(cat) {
             AppState.currentCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => btn.className = "cat-btn active px-3 py-1.5 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors");
-            
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.className = "cat-btn active px-4 py-2.5 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-600 whitespace-nowrap transition-all transform active:scale-95");
             if(event && event.target) {
-                event.target.className = "cat-btn active px-3 py-1.5 rounded-md text-xs font-bold bg-indigo-600 text-white whitespace-nowrap transition-colors border border-indigo-600";
+                event.target.className = "cat-btn active px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 text-white whitespace-nowrap transition-all transform active:scale-95";
             }
             renderDocumentsGrid();
         }
 
         function handleSearch() { 
             const sInput = document.getElementById('searchInput');
-            if(sInput) {
-                AppState.searchQuery = sInput.value.toLowerCase(); 
-                renderDocumentsGrid(); 
-            }
+            if(sInput) { AppState.searchQuery = sInput.value.toLowerCase(); renderDocumentsGrid(); }
         }
 
         function getIconForCategory(cat) {
             switch(cat) {
-                case 'Identitas': return "ph-identification-card text-emerald-600 bg-emerald-50";
-                case 'Pendidikan': return "ph-graduation-cap text-orange-600 bg-orange-50";
-                case 'Profesi': return "ph-briefcase text-blue-600 bg-blue-50";
-                case 'Keuangan': return "ph-bank text-yellow-600 bg-yellow-50";
-                case 'Aset': return "ph-house-line text-purple-600 bg-purple-50";
-                default: return "ph-file-text text-indigo-600 bg-indigo-50";
+                case 'Identitas': return "ph-identification-card text-emerald-600 bg-emerald-50"; case 'Pendidikan': return "ph-graduation-cap text-orange-600 bg-orange-50";
+                case 'Profesi': return "ph-briefcase text-blue-600 bg-blue-50"; case 'Keuangan': return "ph-bank text-yellow-600 bg-yellow-50";
+                case 'Aset': return "ph-house-line text-purple-600 bg-purple-50"; default: return "ph-file-text text-indigo-600 bg-indigo-50";
             }
         }
 
@@ -1318,12 +1257,13 @@
             if(loadingDocs) loadingDocs.classList.add('hidden');
             
             const grid = document.getElementById('documentsGrid'), recentGrid = document.getElementById('dashboardRecentGrid');
-            if(grid) grid.innerHTML = ''; 
-            if(recentGrid) recentGrid.innerHTML = '';
+            if(grid) grid.innerHTML = ''; if(recentGrid) recentGrid.innerHTML = '';
 
             let filteredDocs = AppState.documents.filter(doc => {
                 const ownerMatchName = doc.owner || doc.ownerId || '';
-                const matchOwner = AppState.currentOwner === 'Semua' || ownerMatchName === AppState.currentOwner;
+                const matchOwner = AppState.currentOwner === 'Semua' || ownerMatchName === AppState.currentOwner || 
+                                   (AppState.users.find(u => u.email === AppState.currentOwner && u.userId === ownerMatchName) !== undefined);
+                                   
                 const matchCat = AppState.currentCategory === 'Semua' || doc.kategori === AppState.currentCategory;
                 const fileNameStr = doc.namaFile !== undefined && doc.namaFile !== null ? String(doc.namaFile).toLowerCase() : '';
                 const matchSearch = fileNameStr.includes(AppState.searchQuery) || 
@@ -1347,12 +1287,7 @@
                 if(emptyState) emptyState.classList.add('hidden'); 
                 if(grid) grid.classList.remove('hidden');
                 
-                filteredDocs.sort((a,b) => {
-                    const tA = new Date(a.timestamp || 0).getTime();
-                    const tB = new Date(b.timestamp || 0).getTime();
-                    return tB - tA; 
-                });
-
+                filteredDocs.sort((a,b) => { return new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime(); });
                 filteredDocs.forEach((doc, index) => {
                     const cardHTML = generateCardHTML(doc);
                     if(grid) grid.insertAdjacentHTML('beforeend', cardHTML);
@@ -1364,28 +1299,25 @@
         function generateCardHTML(doc) {
             const iconClass = getIconForCategory(doc.kategori);
             const dataKeys = Object.keys(doc.dataPenting || {});
-            
-            let hasError = false;
-            let firstKey = null, firstVal = null;
+            let hasError = false; let firstKey = null, firstVal = null;
 
             if (dataKeys.length > 0) {
-                firstKey = dataKeys[0];
-                firstVal = doc.dataPenting[firstKey];
+                firstKey = dataKeys[0]; firstVal = doc.dataPenting[firstKey];
                 if (firstKey === "Status" || firstKey === "Peringatan" || firstKey === "Error") hasError = true;
             }
             
             let displayOwner = doc.owner || doc.ownerId || 'Keluarga';
             const foundUser = AppState.users.find(u => u.userId === displayOwner || u.email === displayOwner);
             if(foundUser) displayOwner = foundUser.nama;
-
             if(displayOwner.length > 15) displayOwner = displayOwner.split(' ')[0];
 
-            const shareBadge = doc.isShared ? `<span class="absolute top-2 right-2 bg-slate-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center"><i class="ph-bold ph-share-network mr-1"></i>Shared</span>` : '';
-            const warningBadge = hasError ? `<span class="absolute top-2 right-${doc.isShared ? '16' : '2'} bg-red-100 text-red-600 text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center border border-red-200"><i class="ph-bold ph-warning mr-1"></i>Cek AI</span>` : '';
+            const shareBadge = doc.isShared ? `<span class="absolute top-2 right-2 bg-slate-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded"><i class="ph-bold ph-share-network mr-1"></i>Shared</span>` : '';
+            const warningBadge = hasError ? `<span class="absolute top-2 right-${doc.isShared ? '16' : '2'} bg-red-100 text-red-600 text-[9px] font-bold px-1.5 py-0.5 rounded border border-red-200"><i class="ph-bold ph-warning mr-1"></i>Cek AI</span>` : '';
+            const lockedBadge = !doc.hasAccess ? `<span class="absolute top-2 left-2 bg-slate-900/80 backdrop-blur text-white text-[9px] font-bold px-2 py-1 rounded border border-slate-600"><i class="ph-bold ph-lock-key mr-1"></i>Terkunci</span>` : '';
             
             return `
                 <div class="bg-white rounded-md border border-slate-200 hover:border-indigo-300 transition-colors flex flex-col h-full cursor-pointer relative shadow-sm" onclick="window.location.hash='#doc-detail/${escapeHTML(doc.docId)}'">
-                    ${shareBadge} ${warningBadge}
+                    ${shareBadge} ${warningBadge} ${lockedBadge}
                     
                     <div class="p-4 flex items-start space-x-3 border-b border-slate-100">
                         <div class="w-10 h-10 rounded-lg border border-slate-100 flex items-center justify-center flex-shrink-0 ${iconClass}"><i class="ph-fill ${iconClass.split(' ')[0]} text-xl"></i></div>
@@ -1397,15 +1329,8 @@
                             </div>
                         </div>
                     </div>
-                    
                     <div class="px-4 py-3 flex-grow bg-slate-50/50">
-                        ${firstKey ? `
-                        <div class="flex justify-between items-center">
-                            <div class="flex flex-col overflow-hidden w-full pr-2">
-                                <span class="text-[9px] uppercase font-bold ${hasError ? 'text-red-500' : 'text-slate-400'} truncate">${escapeHTML(firstKey.replace(/_/g, ' '))}</span>
-                                <span class="text-xs font-semibold ${hasError ? 'text-red-700' : 'text-slate-700'} truncate" title="${escapeHTML(firstVal)}">${escapeHTML(firstVal)}</span>
-                            </div>
-                        </div>` : '<div class="text-xs text-slate-400 italic">Data kosong</div>'}
+                        ${firstKey ? `<div class="flex justify-between items-center"><div class="flex flex-col overflow-hidden w-full pr-2"><span class="text-[9px] uppercase font-bold ${hasError ? 'text-red-500' : 'text-slate-400'} truncate">${escapeHTML(firstKey.replace(/_/g, ' '))}</span><span class="text-xs font-semibold ${hasError ? 'text-red-700' : 'text-slate-700'} truncate" title="${escapeHTML(firstVal)}">${escapeHTML(firstVal)}</span></div></div>` : '<div class="text-xs text-slate-400 italic">Data kosong</div>'}
                     </div>
                 </div>`;
         }
@@ -1415,178 +1340,76 @@
         // ==========================================
         function getDriveDirectLink(url) {
             const match = url.match(/\/d\/(.+?)\//) || url.match(/id=([a-zA-Z0-9_-]+)/);
-            if(match) return `https://drive.google.com/uc?export=download&id=${match[1]}`;
-            return url;
+            if(match) return `https://drive.google.com/uc?export=download&id=${match[1]}`; return url;
         }
 
         async function convertDoc(targetType) {
-            const docId = AppState.currentDetailDocId;
-            const doc = AppState.documents.find(d => d.docId === docId);
-            if (!doc) return;
+            const docId = AppState.currentDetailDocId; const doc = AppState.documents.find(d => d.docId === docId); if (!doc) return;
+            const ptText = document.getElementById('toolProcessingText'); if(ptText) ptText.classList.remove('hidden');
 
-            const ptText = document.getElementById('toolProcessingText');
-            if(ptText) ptText.classList.remove('hidden');
-
-            const directLink = getDriveDirectLink(doc.link);
-            const proxyLink = `https://api.allorigins.win/raw?url=${encodeURIComponent(directLink)}`;
-
+            const proxyLink = `https://api.allorigins.win/raw?url=${encodeURIComponent(getDriveDirectLink(doc.link))}`;
             try {
-                const response = await fetch(proxyLink);
-                if (!response.ok) throw new Error("CORS Error");
-                const blob = await response.blob();
-                const mime = blob.type;
+                const response = await fetch(proxyLink); if (!response.ok) throw new Error("CORS Error");
+                const blob = await response.blob(); const mime = blob.type;
 
                 if (targetType === 'pdf') {
-                    if (mime === 'application/pdf') { 
-                        if(ptText) ptText.classList.add('hidden'); 
-                        return showToast("File sudah PDF!", true); 
-                    }
-                    
-                    const img = new Image();
-                    img.src = URL.createObjectURL(blob);
+                    if (mime === 'application/pdf') { if(ptText) ptText.classList.add('hidden'); return showToast("File sudah PDF!", true); }
+                    const img = new Image(); img.src = URL.createObjectURL(blob);
                     img.onload = () => {
-                        const { jsPDF } = window.jspdf;
-                        const pdf = new jsPDF('p', 'mm', 'a4');
-                        const pdfWidth = pdf.internal.pageSize.getWidth();
-                        const pdfHeight = pdf.internal.pageSize.getHeight();
-                        const imgRatio = img.width / img.height;
-                        
-                        let drawWidth = pdfWidth - 20; 
-                        let drawHeight = drawWidth / imgRatio;
-
-                        if (drawHeight > pdfHeight - 20) {
-                            drawHeight = pdfHeight - 20;
-                            drawWidth = drawHeight * imgRatio;
-                        }
-
-                        const x = (pdfWidth - drawWidth) / 2;
-                        const y = (pdfHeight - drawHeight) / 2;
-
-                        pdf.setFillColor(255, 255, 255);
-                        pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
-                        pdf.addImage(img, 'JPEG', x, y, drawWidth, drawHeight, undefined, 'FAST');
-                        
+                        const { jsPDF } = window.jspdf; const pdf = new jsPDF('p', 'mm', 'a4');
+                        const pdfW = pdf.internal.pageSize.getWidth(), pdfH = pdf.internal.pageSize.getHeight();
+                        const ratio = img.width / img.height; let dW = pdfW - 20; let dH = dW / ratio;
+                        if (dH > pdfH - 20) { dH = pdfH - 20; dW = dH * ratio; }
+                        pdf.setFillColor(255, 255, 255); pdf.rect(0, 0, pdfW, pdfH, 'F');
+                        pdf.addImage(img, 'JPEG', (pdfW - dW)/2, (pdfH - dH)/2, dW, dH, undefined, 'FAST');
                         pdf.save(`${doc.namaFile.replace(/\.[^/.]+$/, "")}_PDF.pdf`);
-                        showToast("Terunduh sebagai PDF!");
-                        if(ptText) ptText.classList.add('hidden');
-                    };
-                    img.onerror = () => {
-                        throw new Error("Gagal membaca gambar");
+                        showToast("Terunduh sebagai PDF!"); if(ptText) ptText.classList.add('hidden');
                     };
                 } else if (targetType === 'jpg') {
-                    if (mime.startsWith('image/')) { 
-                        if(ptText) ptText.classList.add('hidden'); 
-                        return showToast("File sudah Gambar!", true); 
-                    }
-                    
+                    if (mime.startsWith('image/')) { if(ptText) ptText.classList.add('hidden'); return showToast("File sudah Gambar!", true); }
                     const fileReader = new FileReader();
                     fileReader.onload = async function() {
-                        const typedarray = new Uint8Array(this.result);
-                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                        const page = await pdf.getPage(1); 
-                        
-                        const viewport = page.getViewport({scale: 2.0});
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.height = viewport.height;
-                        canvas.width = viewport.width;
-
-                        await page.render({canvasContext: ctx, viewport: viewport}).promise;
-                        
-                        const link = document.createElement('a');
-                        link.download = `${doc.namaFile.replace(/\.[^/.]+$/, "")}_Gambar.jpg`;
-                        link.href = canvas.toDataURL('image/jpeg', 0.9);
-                        link.click();
-                        
-                        showToast("Terunduh sebagai JPG!");
-                        if(ptText) ptText.classList.add('hidden');
-                    };
-                    fileReader.readAsArrayBuffer(blob);
+                        const typedarray = new Uint8Array(this.result); const pdf = await pdfjsLib.getDocument(typedarray).promise; const page = await pdf.getPage(1); 
+                        const viewport = page.getViewport({scale: 2.0}); const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                        canvas.height = viewport.height; canvas.width = viewport.width; await page.render({canvasContext: ctx, viewport: viewport}).promise;
+                        const link = document.createElement('a'); link.download = `${doc.namaFile.replace(/\.[^/.]+$/, "")}_Gambar.jpg`; link.href = canvas.toDataURL('image/jpeg', 0.9); link.click();
+                        showToast("Terunduh sebagai JPG!"); if(ptText) ptText.classList.add('hidden');
+                    }; fileReader.readAsArrayBuffer(blob);
                 }
-            } catch(e) {
-                if(ptText) ptText.classList.add('hidden');
-                showToast("Gagal. Unduh manual di Drive.", true);
-                console.error(e);
-            }
+            } catch(e) { if(ptText) ptText.classList.add('hidden'); showToast("Gagal. Unduh manual di Drive.", true); }
         }
 
         async function resizeDoc() {
-            const docId = AppState.currentDetailDocId;
-            const doc = AppState.documents.find(d => d.docId === docId);
-            if (!doc) return;
-
-            const ptText = document.getElementById('toolProcessingText');
-            if(ptText) ptText.classList.remove('hidden');
-            
-            const directLink = getDriveDirectLink(doc.link);
-            const proxyLink = `https://api.allorigins.win/raw?url=${encodeURIComponent(directLink)}`;
+            const docId = AppState.currentDetailDocId; const doc = AppState.documents.find(d => d.docId === docId); if (!doc) return;
+            const ptText = document.getElementById('toolProcessingText'); if(ptText) ptText.classList.remove('hidden');
+            const proxyLink = `https://api.allorigins.win/raw?url=${encodeURIComponent(getDriveDirectLink(doc.link))}`;
 
             try {
-                const response = await fetch(proxyLink);
-                if (!response.ok) throw new Error("CORS");
-                const blob = await response.blob();
-                const mime = blob.type;
+                const response = await fetch(proxyLink); if (!response.ok) throw new Error("CORS");
+                const blob = await response.blob(); const mime = blob.type;
 
                 if (mime.startsWith('image/')) {
-                    const img = new Image();
-                    img.src = URL.createObjectURL(blob);
+                    const img = new Image(); img.src = URL.createObjectURL(blob);
                     img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        
-                        let width = img.width;
-                        let height = img.height;
-                        if(width > 1000) {
-                            height = height * (1000 / width);
-                            width = 1000;
-                        }
-                        
-                        canvas.width = width;
-                        canvas.height = height;
-                        
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.fillRect(0, 0, width, height);
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        const link = document.createElement('a');
-                        link.download = `${doc.namaFile.replace(/\.[^/.]+$/, "")}_Resize.jpg`;
-                        link.href = canvas.toDataURL('image/jpeg', 0.6);
-                        link.click();
-                        
-                        showToast("Gambar dikompres!");
-                        if(ptText) ptText.classList.add('hidden');
+                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                        let w = img.width, h = img.height; if(w > 1000) { h = h * (1000 / w); w = 1000; }
+                        canvas.width = w; canvas.height = h; ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h);
+                        const link = document.createElement('a'); link.download = `${doc.namaFile.replace(/\.[^/.]+$/, "")}_Resize.jpg`; link.href = canvas.toDataURL('image/jpeg', 0.6); link.click();
+                        showToast("Gambar dikompres!"); if(ptText) ptText.classList.add('hidden');
                     };
                 } else if (mime === 'application/pdf') {
                     const fileReader = new FileReader();
                     fileReader.onload = async function() {
-                        const typedarray = new Uint8Array(this.result);
-                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                        const page = await pdf.getPage(1); 
-                        
-                        const viewport = page.getViewport({scale: 1.0}); 
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.height = viewport.height;
-                        canvas.width = viewport.width;
-
-                        await page.render({canvasContext: ctx, viewport: viewport}).promise;
-                        
+                        const typedarray = new Uint8Array(this.result); const pdf = await pdfjsLib.getDocument(typedarray).promise; const page = await pdf.getPage(1); 
+                        const viewport = page.getViewport({scale: 1.0}); const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                        canvas.height = viewport.height; canvas.width = viewport.width; await page.render({canvasContext: ctx, viewport: viewport}).promise;
                         const imgData = canvas.toDataURL('image/jpeg', 0.5); 
-                        
-                        const { jsPDF } = window.jspdf;
-                        const newPdf = new jsPDF(viewport.width > viewport.height ? 'l' : 'p', 'px', [viewport.width, viewport.height]);
-                        newPdf.addImage(imgData, 'JPEG', 0, 0, viewport.width, viewport.height);
-                        newPdf.save(`${doc.namaFile.replace(/\.[^/.]+$/, "")}_Kompres.pdf`);
-                        
-                        showToast("PDF dikompres!");
-                        if(ptText) ptText.classList.add('hidden');
-                    };
-                    fileReader.readAsArrayBuffer(blob);
+                        const { jsPDF } = window.jspdf; const newPdf = new jsPDF(viewport.width > viewport.height ? 'l' : 'p', 'px', [viewport.width, viewport.height]);
+                        newPdf.addImage(imgData, 'JPEG', 0, 0, viewport.width, viewport.height); newPdf.save(`${doc.namaFile.replace(/\.[^/.]+$/, "")}_Kompres.pdf`);
+                        showToast("PDF dikompres!"); if(ptText) ptText.classList.add('hidden');
+                    }; fileReader.readAsArrayBuffer(blob);
                 }
-            } catch(e) {
-                if(ptText) ptText.classList.add('hidden');
-                showToast("Gagal kompres. File diproteksi.", true);
-            }
+            } catch(e) { if(ptText) ptText.classList.add('hidden'); showToast("Gagal kompres. File diproteksi.", true); }
         }
 
         function openDocumentDetailUI(docId) {
@@ -1602,38 +1425,60 @@
             const safeSetVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
             const safeSetTxt = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
             
-            safeSetTxt('detailTitle', escapeHTML(doc.namaFile)); 
-            safeSetVal('editDetailTitle', doc.namaFile);
-            
-            safeSetTxt('detailCategory', escapeHTML(doc.kategori)); 
-            safeSetVal('editDetailCategory', doc.kategori);
+            safeSetTxt('detailTitle', escapeHTML(doc.namaFile)); safeSetVal('editDetailTitle', doc.namaFile);
+            safeSetTxt('detailCategory', escapeHTML(doc.kategori)); safeSetVal('editDetailCategory', doc.kategori);
             
             const detailViewLink = document.getElementById('detailViewLink');
             if(detailViewLink) detailViewLink.href = doc.link || '#';
             
-            safeSetTxt('detailTglTerbit', escapeHTML(doc.tglTerbit || '-')); 
-            safeSetVal('editDetailTglTerbit', doc.tglTerbit || '');
-            
-            safeSetTxt('detailTglKadaluwarsa', escapeHTML(doc.tglKadaluwarsa || '-')); 
-            safeSetVal('editDetailTglKadaluwarsa', doc.tglKadaluwarsa || '');
+            safeSetTxt('detailTglTerbit', escapeHTML(doc.tglTerbit || '-')); safeSetVal('editDetailTglTerbit', doc.tglTerbit || '');
+            safeSetTxt('detailTglKadaluwarsa', escapeHTML(doc.tglKadaluwarsa || '-')); safeSetVal('editDetailTglKadaluwarsa', doc.tglKadaluwarsa || '');
             
             const iframe = document.getElementById('detailPreviewIframe');
             const img = document.getElementById('detailPreviewImg');
             const placeholder = document.getElementById('detailPreviewPlaceholder');
-            
+            const placeholderIcon = document.getElementById('placeholderIcon');
+            const placeholderText = document.getElementById('placeholderText');
+            const reqContainer = document.getElementById('requestAccessContainer');
+            const btnReq = document.getElementById('btnRequestAccess');
+            const txtReq = document.getElementById('requestPendingText');
+            const docToolsSection = document.getElementById('docToolsSection');
+
             if(iframe) iframe.classList.add('hidden'); 
             if(img) img.classList.add('hidden'); 
             if(placeholder) placeholder.classList.remove('hidden');
+            if(reqContainer) reqContainer.classList.add('hidden');
             
-            if (doc.link && doc.link !== '#') {
-                if(placeholder) placeholder.classList.add('hidden'); 
-                let embedUrl = doc.link;
-                if(embedUrl.includes('/view')) embedUrl = embedUrl.replace('/view', '/preview');
+            if (!doc.hasAccess) {
+                if(placeholderIcon) placeholderIcon.className = "ph-fill ph-lock-key text-5xl mb-3 text-slate-300";
+                if(placeholderText) placeholderText.textContent = "Dokumen bersifat pribadi / Terkunci.";
+                if(detailViewLink) detailViewLink.classList.add('hidden');
+                if(docToolsSection) docToolsSection.classList.add('hidden');
                 
-                if (doc.isImage || embedUrl.match(/\.(jpeg|jpg|gif|png)$/i) || String(doc.namaFile).match(/\.(jpeg|jpg|gif|png)$/i)) { 
-                    if(img) { img.src = embedUrl; img.classList.remove('hidden'); }
-                } else { 
-                    if(iframe) { iframe.src = embedUrl; iframe.classList.remove('hidden'); }
+                if(reqContainer) reqContainer.classList.remove('hidden');
+                if(doc.isRequested) {
+                    if(btnReq) btnReq.classList.add('hidden');
+                    if(txtReq) txtReq.classList.remove('hidden');
+                } else {
+                    if(btnReq) btnReq.classList.remove('hidden');
+                    if(txtReq) txtReq.classList.add('hidden');
+                }
+            } else {
+                if(placeholderIcon) placeholderIcon.className = "ph-fill ph-eye-slash text-3xl mb-2 text-slate-300";
+                if(placeholderText) placeholderText.textContent = "Diblokir Google";
+                if(detailViewLink) detailViewLink.classList.remove('hidden');
+                if(docToolsSection) docToolsSection.classList.remove('hidden');
+
+                if (doc.link && doc.link !== '#LOCKED') {
+                    if(placeholder) placeholder.classList.add('hidden'); 
+                    let embedUrl = doc.link;
+                    if(embedUrl.includes('/view')) embedUrl = embedUrl.replace('/view', '/preview');
+                    
+                    if (doc.isImage || embedUrl.match(/\.(jpeg|jpg|gif|png)$/i) || String(doc.namaFile).match(/\.(jpeg|jpg|gif|png)$/i)) { 
+                        if(img) { img.src = embedUrl; img.classList.remove('hidden'); }
+                    } else { 
+                        if(iframe) { iframe.src = embedUrl; iframe.classList.remove('hidden'); }
+                    }
                 }
             }
             
@@ -1685,30 +1530,20 @@
                 view: ['detailTitle', 'detailCategory', 'detailTglTerbit', 'detailTglKadaluwarsa', 'desktopActionArea', 'docToolsSection'], 
                 edit: ['editDetailTitle', 'editDetailCategory', 'editDetailTglTerbit', 'editDetailTglKadaluwarsa', 'editDocActions'] 
             }; 
-            
             const safeAddCls = (id, cls) => { const el = document.getElementById(id); if (el) el.classList.add(cls); };
             const safeRemoveCls = (id, cls) => { const el = document.getElementById(id); if (el) el.classList.remove(cls); };
 
             if (enable) { 
-                els.view.forEach(id => safeAddCls(id, 'hidden')); 
-                els.edit.forEach(id => safeRemoveCls(id, 'hidden')); 
-                renderDataPentingGrid(doc ? doc.dataPenting : {}, true); 
+                els.view.forEach(id => safeAddCls(id, 'hidden')); els.edit.forEach(id => safeRemoveCls(id, 'hidden')); renderDataPentingGrid(doc ? doc.dataPenting : {}, true); 
             } else { 
-                els.view.forEach(id => safeRemoveCls(id, 'hidden')); 
-                els.edit.forEach(id => safeAddCls(id, 'hidden')); 
-                
-                const dAction = document.getElementById('desktopActionArea'); 
-                if(dAction) dAction.classList.remove('hidden');
-
-                if (doc && !isInit) { 
-                    renderDataPentingGrid(doc.dataPenting, false); 
-                } 
+                els.view.forEach(id => safeRemoveCls(id, 'hidden')); els.edit.forEach(id => safeAddCls(id, 'hidden')); 
+                const dAction = document.getElementById('desktopActionArea'); if(dAction) dAction.classList.remove('hidden');
+                if (doc && !isInit) { renderDataPentingGrid(doc.dataPenting, false); } 
             } 
         }
         
         function renderDataPentingGrid(dataPenting, isEditMode) { 
-            const grid = document.getElementById('detailDataGrid'); 
-            if(!grid) return;
+            const grid = document.getElementById('detailDataGrid'); if(!grid) return;
             grid.innerHTML = ''; 
             
             if (!dataPenting || Object.keys(dataPenting).length === 0) { 
@@ -1721,39 +1556,22 @@
                 const isErrorData = (key === "Status" || key === "Peringatan" || key === "Error" || key === "Detail");
                 addDataPentingRow(key, value, isEditMode, isErrorData); 
             }
-            
             if(isEditMode) grid.insertAdjacentHTML('beforeend', `<button type="button" onclick="addDataPentingRow('', '', true)" class="w-full py-2 border border-slate-300 border-dashed text-slate-500 rounded-lg text-xs font-bold hover:bg-slate-50 mt-2">+ Tambah Baris</button>`); 
         }
 
         function addDataPentingRow(key, value, isEditMode = AppState.isEditingDoc, isErrorData = false) { 
-            const grid = document.getElementById('detailDataGrid'); 
-            if(!grid) return;
+            const grid = document.getElementById('detailDataGrid'); if(!grid) return;
 
             if (isEditMode) { 
-                const addBtn = grid.querySelector('button'); 
-                if(addBtn) addBtn.remove(); 
-                grid.insertAdjacentHTML('beforeend', ` 
-                    <div class="data-penting-row flex items-center space-x-2"> 
-                        <input type="text" placeholder="Kunci" value="${escapeHTML(key)}" class="dp-key w-1/3 border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-bold focus:border-indigo-500 outline-none"> 
-                        <input type="text" placeholder="Nilai" value="${escapeHTML(value)}" class="dp-val flex-1 border border-slate-300 rounded-lg px-2 py-1.5 text-xs focus:border-indigo-500 outline-none"> 
-                        <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-red-500 p-1.5 bg-white border border-slate-200 rounded-lg"><i class="ph-bold ph-trash text-sm"></i></button> 
-                    </div> 
-                `); 
+                const addBtn = grid.querySelector('button'); if(addBtn) addBtn.remove(); 
+                grid.insertAdjacentHTML('beforeend', `<div class="data-penting-row flex items-center space-x-2"><input type="text" placeholder="Kunci" value="${escapeHTML(key)}" class="dp-key w-1/3 border border-slate-300 rounded-lg px-2 py-1.5 text-xs font-bold focus:border-indigo-500 outline-none"><input type="text" placeholder="Nilai" value="${escapeHTML(value)}" class="dp-val flex-1 border border-slate-300 rounded-lg px-2 py-1.5 text-xs focus:border-indigo-500 outline-none"><button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-red-500 p-1.5 bg-white border border-slate-200 rounded-lg"><i class="ph-bold ph-trash text-sm"></i></button></div>`); 
                 grid.insertAdjacentHTML('beforeend', `<button type="button" onclick="addDataPentingRow('', '', true)" class="w-full py-2 border border-slate-300 border-dashed text-slate-500 rounded-lg text-xs font-bold hover:bg-slate-50 mt-2">+ Tambah Baris</button>`); 
             } else {
                 const bgStyle = isErrorData ? "bg-red-50 border-red-100" : "bg-white border-slate-200";
                 const labelStyle = isErrorData ? "text-red-500" : "text-slate-400";
                 const valueStyle = isErrorData ? "text-red-700" : "text-slate-700";
 
-                grid.insertAdjacentHTML('beforeend', `
-                    <div class="${bgStyle} p-2.5 rounded-lg border flex justify-between items-start">
-                        <div class="flex flex-col min-w-0 flex-1">
-                            <span class="text-[9px] font-bold ${labelStyle} uppercase tracking-widest">${escapeHTML(key.replace(/_/g, ' '))}</span>
-                            <span class="text-xs font-semibold ${valueStyle} break-words whitespace-pre-wrap">${escapeHTML(value)}</span>
-                        </div>
-                        ${!isErrorData ? `<button onclick="copyToClipboard('${escapeHTML(value)}', this)" class="text-slate-300 hover:text-indigo-600 p-1"><i class="ph-bold ph-copy text-sm"></i></button>` : ''}
-                    </div>
-                `); 
+                grid.insertAdjacentHTML('beforeend', `<div class="${bgStyle} p-2.5 rounded-lg border flex justify-between items-start"><div class="flex flex-col min-w-0 flex-1"><span class="text-[9px] font-bold ${labelStyle} uppercase tracking-widest">${escapeHTML(key.replace(/_/g, ' '))}</span><span class="text-xs font-semibold ${valueStyle} break-words whitespace-pre-wrap">${escapeHTML(value)}</span></div>${!isErrorData ? `<button onclick="copyToClipboard('${escapeHTML(value)}', this)" class="text-slate-300 hover:text-indigo-600 p-1"><i class="ph-bold ph-copy text-sm"></i></button>` : ''}</div>`); 
             }
         }
 
@@ -1765,12 +1583,9 @@
             }); 
             
             const payload = { 
-                docId: AppState.currentDetailDocId, 
-                namaFile: document.getElementById('editDetailTitle').value, 
-                kategori: document.getElementById('editDetailCategory').value, 
-                tglTerbit: document.getElementById('editDetailTglTerbit').value, 
-                tglKadaluwarsa: document.getElementById('editDetailTglKadaluwarsa').value, 
-                dataPenting: newDataPenting 
+                docId: AppState.currentDetailDocId, namaFile: document.getElementById('editDetailTitle').value, 
+                kategori: document.getElementById('editDetailCategory').value, tglTerbit: document.getElementById('editDetailTglTerbit').value, 
+                tglKadaluwarsa: document.getElementById('editDetailTglKadaluwarsa').value, dataPenting: newDataPenting 
             }; 
             
             showToast("Menyimpan...");
@@ -1779,43 +1594,28 @@
                 showToast("Tersimpan!"); 
                 const docIndex = AppState.documents.findIndex(d => d.docId === AppState.currentDetailDocId); 
                 if(docIndex > -1) { 
-                    AppState.documents[docIndex].namaFile = payload.namaFile; 
-                    AppState.documents[docIndex].kategori = payload.kategori; 
-                    AppState.documents[docIndex].tglTerbit = payload.tglTerbit; 
-                    AppState.documents[docIndex].tglKadaluwarsa = payload.tglKadaluwarsa; 
+                    AppState.documents[docIndex].namaFile = payload.namaFile; AppState.documents[docIndex].kategori = payload.kategori; 
+                    AppState.documents[docIndex].tglTerbit = payload.tglTerbit; AppState.documents[docIndex].tglKadaluwarsa = payload.tglKadaluwarsa; 
                     AppState.documents[docIndex].dataPenting = payload.dataPenting; 
                 } 
-                renderDocumentsGrid(); 
-                toggleEditDocMode(false); 
+                renderDocumentsGrid(); toggleEditDocMode(false); 
                 
                 const elTitle = document.getElementById('detailTitle'); if(elTitle) elTitle.textContent = payload.namaFile;
                 const elCat = document.getElementById('detailCategory'); if(elCat) elCat.textContent = payload.kategori;
                 const elTgl = document.getElementById('detailTglTerbit'); if(elTgl) elTgl.textContent = payload.tglTerbit || '-';
                 const elKad = document.getElementById('detailTglKadaluwarsa'); if(elKad) elKad.textContent = payload.tglKadaluwarsa || '-';
-                
             } else showToast(res.message, true); 
         }
 
         async function handleDeleteDoc() { 
-            if(!confirm("Hapus dokumen?")) return; 
-            
-            closeModal(); 
-            showToast("Menghapus...");
+            if(!confirm("Hapus dokumen?")) return; closeModal(); showToast("Menghapus...");
             const res = await fetchAPI('delete_document', { docId: AppState.currentDetailDocId }); 
-            if (res.success) { 
-                showToast("Dihapus!"); 
-                loadDocuments(); 
-            } else showToast(res.message, true); 
+            if (res.success) { showToast("Dihapus!"); loadDocuments(); } else showToast(res.message, true); 
         }
 
         async function handleReanalyzeDoc() { 
             const groqKeyLocal = getSecureStorage('arsipCerdasku_groqKey');
-            if (!groqKeyLocal) {
-                closeModal();
-                showToast("API Key Groq kosong!", true);
-                window.location.hash = '#settings';
-                return;
-            }
+            if (!groqKeyLocal) { closeModal(); showToast("API Key Groq kosong!", true); window.location.hash = '#settings'; return; }
 
             const desktopAction = document.getElementById('desktopActionArea');
             const rescanContainer = document.getElementById('rescanProgressContainer');
@@ -1830,60 +1630,105 @@
             ];
             startProgress('rescanProgressBar', 'rescanProgressPercent', 'rescanProgressStatus', steps);
 
-            const res = await fetchAPI('reanalyze_document', { 
-                docId: AppState.currentDetailDocId, 
-                groqKey: groqKeyLocal
-            }); 
-            
+            const res = await fetchAPI('reanalyze_document', { docId: AppState.currentDetailDocId, groqKey: groqKeyLocal }); 
             finishProgress('rescanProgressBar', 'rescanProgressPercent', 'rescanProgressStatus');
             
             setTimeout(() => {
                 if(rescanContainer) rescanContainer.classList.add('hidden');
                 if(desktopAction) desktopAction.classList.remove('hidden');
-                
-                if(res.success){ 
-                    showToast("Selesai!"); 
-                    loadDocuments(); 
-                    closeModal(); 
-                } else {
-                    showToast(res.message, true); 
-                }
+                if(res.success){ showToast("Selesai!"); loadDocuments(); closeModal(); } else { showToast(res.message, true); }
             }, 800);
         }
 
         async function handleShareDoc() { 
-            const targetEl = document.getElementById('shareTargetUser');
-            if(!targetEl) return;
-            const target = targetEl.value;
-            
-            if(!target) return showToast("Pilih anggota.", true);
-            
+            const targetEl = document.getElementById('shareTargetUser'); if(!targetEl) return;
+            const target = targetEl.value; if(!target) return showToast("Pilih anggota.", true);
             showToast("Memperbarui izin...");
             const expiryEl = document.getElementById('shareExpiry');
+            const res = await fetchAPI('share_document', { docId: AppState.currentDetailDocId, targetEmail: target, expiryHours: expiryEl ? expiryEl.value : '24' }); 
+            if(res.success) { showToast(res.message); loadDocuments(); } else showToast(res.message, true); 
+        }
+
+        async function requestDocumentAccess() {
+            showToast("Mengirim permintaan...", false);
+            const res = await fetchAPI('request_document', { docId: AppState.currentDetailDocId });
+            if (res.success) {
+                showToast("Permintaan terkirim ke Kepala Keluarga!");
+                loadDocuments();
+                const btnReq = document.getElementById('btnRequestAccess'), txtReq = document.getElementById('requestPendingText');
+                if(btnReq) btnReq.classList.add('hidden');
+                if(txtReq) txtReq.classList.remove('hidden');
+            } else {
+                showToast(res.message, true);
+            }
+        }
+
+        async function loadRequests() {
+            const isAdminOrIstri = AppState.user && (AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri');
+            if (!isAdminOrIstri) return;
+
+            const tBody = document.getElementById('requestsTableBody');
+            const loading = document.getElementById('loadingRequests');
+            const empty = document.getElementById('emptyRequests');
             
-            const res = await fetchAPI('share_document', { 
-                docId: AppState.currentDetailDocId, 
-                targetEmail: target, 
-                expiryHours: expiryEl ? expiryEl.value : '24'
-            }); 
-            if(res.success) showToast(res.message); else showToast(res.message, true); 
+            if(tBody) tBody.innerHTML = '';
+            if(loading) loading.classList.remove('hidden');
+            if(empty) empty.classList.add('hidden');
+
+            const res = await fetchAPI('get_requests');
+            if(loading) loading.classList.add('hidden');
+
+            if (res.success) {
+                AppState.requests = res.data || [];
+                if (AppState.requests.length === 0) {
+                    if(empty) empty.classList.remove('hidden');
+                } else {
+                    AppState.requests.forEach(req => {
+                        tBody.insertAdjacentHTML('beforeend', `
+                            <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="py-3 px-5 text-sm font-bold text-slate-800">${escapeHTML(req.namaFile)} <span class="block text-[9px] font-bold text-slate-400 uppercase mt-0.5 tracking-widest">${escapeHTML(req.kategori)}</span></td>
+                                <td class="py-3 px-5 text-xs font-semibold text-slate-700">${escapeHTML(req.reqName)} <span class="block text-[10px] text-slate-500 font-medium mt-0.5">${escapeHTML(req.reqEmail)}</span></td>
+                                <td class="py-3 px-5 text-right">
+                                    <div class="flex justify-end space-x-2 items-center">
+                                        <select id="dur_${req.docId}_${req.reqEmail}" class="border border-slate-200 rounded-lg text-[10px] font-bold p-2 outline-none bg-slate-50">
+                                            <option value="1">1 Jam</option><option value="24" selected>24 Jam</option><option value="999999">Permanen</option>
+                                        </select>
+                                        <button onclick="approveRequest('${req.docId}', '${req.reqEmail}')" class="bg-emerald-600 text-white px-3 py-2 rounded-lg text-[10px] font-bold shadow-sm hover:bg-emerald-700 active:scale-95 transition-all"><i class="ph-bold ph-check mr-1"></i> Izinkan</button>
+                                        <button onclick="rejectRequest('${req.docId}', '${req.reqEmail}')" class="bg-white border border-slate-200 text-red-500 px-2 py-2 rounded-lg text-lg hover:bg-red-50 active:scale-95 transition-all" title="Tolak"><i class="ph-bold ph-x"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                }
+            }
+        }
+
+        async function approveRequest(docId, reqEmail) {
+            const durEl = document.getElementById(`dur_${docId}_${reqEmail}`);
+            const expiryHours = durEl ? durEl.value : '24';
+            
+            showToast("Menyetujui akses...");
+            const res = await fetchAPI('share_document', { docId: docId, targetEmail: reqEmail, expiryHours: expiryHours });
+            if (res.success) { showToast("Akses diberikan!"); loadRequests(); loadDocuments(); } 
+            else showToast(res.message, true);
+        }
+
+        async function rejectRequest(docId, reqEmail) {
+            showToast("Menolak akses...");
+            const res = await fetchAPI('reject_request', { docId: docId, targetEmail: reqEmail });
+            if (res.success) { showToast("Permintaan ditolak."); loadRequests(); } 
+            else showToast(res.message, true);
         }
 
         // ==========================================
-        // 9. MANAJEMEN USER (ADMIN ONLY) 
+        // 9. MANAJEMEN USER & PROFIL
         // ==========================================
         async function loadUsersAndLogs() {
             const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
             const isAdmin = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga';
-            
-            if(isAdminOrIstri) { 
-                const resUsers = await fetchAPI('get_users'); 
-                if(resUsers.success) { AppState.users = resUsers.data; renderUsers(); } 
-            }
-            if(isAdmin) { 
-                const resLogs = await fetchAPI('get_logs'); 
-                if(resLogs.success) { AppState.logs = resLogs.data; renderLogs(); } 
-            }
+            if(isAdminOrIstri) { const resUsers = await fetchAPI('get_users'); if(resUsers.success) { AppState.users = resUsers.data; renderUsers(); } }
+            if(isAdmin) { const resLogs = await fetchAPI('get_logs'); if(resLogs.success) { AppState.logs = resLogs.data; renderLogs(); } }
         }
 
         function openAddUserModalUI() {
@@ -1914,6 +1759,12 @@
             const nm = document.getElementById('addUserName'); if(nm) nm.value = u.nama;
             const rl = document.getElementById('addUserRole'); if(rl) rl.value = u.role;
             const pr = document.getElementById('addUserProfesi'); if(pr) pr.value = u.profesi;
+            const tl = document.getElementById('addUserTglLahir'); 
+            if(tl) {
+                if (u.tglLahir) {
+                    try { const d = new Date(u.tglLahir); if(!isNaN(d.getTime())) tl.value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; } catch(e){}
+                } else { tl.value = ''; }
+            }
             const em = document.getElementById('addUserEmail'); if(em) { em.value = u.email; em.disabled = true; }
             const ph = document.getElementById('addUserPhone'); if(ph) ph.value = u.phone !== '-' ? u.phone : '';
             
@@ -1935,6 +1786,20 @@
             safeSetTxt('previewUserRole', escapeHTML(u.role));
             safeSetTxt('previewUserProfesi', escapeHTML(u.profesi || '-'));
             safeSetTxt('previewUserPhone', escapeHTML(u.phone || '-'));
+            safeSetTxt('previewUserAge', calculateAge(u.tglLahir));
+
+            // Birthday logic
+            const isBday = isBirthday(u.tglLahir);
+            const headerBg = document.getElementById('previewHeaderBg');
+            const bdayIcon = document.getElementById('previewBdayIcon');
+            
+            if (isBday) {
+                if(headerBg) { headerBg.classList.remove('bg-slate-50'); headerBg.classList.add('bday-bg'); }
+                if(bdayIcon) bdayIcon.classList.remove('hidden');
+            } else {
+                if(headerBg) { headerBg.classList.add('bg-slate-50'); headerBg.classList.remove('bday-bg'); }
+                if(bdayIcon) bdayIcon.classList.add('hidden');
+            }
 
             const imgEl = document.getElementById('previewUserImg');
             const initEl = document.getElementById('previewUserInitial');
@@ -1989,6 +1854,7 @@
                 role: getVal('addUserRole'),
                 profesi: getVal('addUserProfesi'),
                 phone: getVal('addUserPhone'),
+                tglLahir: getVal('addUserTglLahir'),
                 photoBase64: AppState.tempPhotoBase64,
                 photoMimeType: AppState.tempPhotoMime
             };
@@ -1996,7 +1862,7 @@
             const apiEndpoint = action === 'edit' ? 'update_user' : 'register_user';
             const res = await fetchAPI(apiEndpoint, payload);
 
-            if(btnText) btnText.textContent = 'Simpan'; 
+            if(btnText) btnText.textContent = 'Simpan Anggota'; 
             if(btnSpinner) btnSpinner.classList.add('hidden');
 
             if(res.success) {
@@ -2048,17 +1914,23 @@
 
                 const photoHtml = u.photoUrl ? `<img src="${u.photoUrl}" class="w-8 h-8 rounded border border-slate-200 object-cover mr-3">` : `<div class="w-8 h-8 rounded bg-slate-100 flex items-center justify-center text-slate-500 font-bold mr-3 border border-slate-200">${escapeHTML(u.nama.charAt(0))}</div>`;
                 
+                // Birthday logic & UI
+                const isBday = isBirthday(u.tglLahir);
+                const rowClass = isBday ? "bg-gradient-to-r from-amber-50 to-yellow-50/50 border-b border-amber-200" : "border-b border-slate-100 hover:bg-slate-50 transition-colors";
+                const nameDisplay = isBday ? `${escapeHTML(u.nama)} <span title="Ulang Tahun Hari Ini!" class="animate-bounce inline-block ml-1">🎂</span>` : escapeHTML(u.nama);
+                const ageText = calculateAge(u.tglLahir);
+
                 tbody.insertAdjacentHTML('beforeend', `
-                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                    <tr class="${rowClass}">
                         <td class="py-3 px-4 flex items-center">
                             ${photoHtml}
                             <div class="min-w-0">
-                                <div class="font-bold text-slate-800 text-sm truncate">${escapeHTML(u.nama)}</div>
-                                <div class="text-[9px] text-slate-400 truncate">${escapeHTML(u.email)}</div>
+                                <div class="font-bold ${isBday ? 'text-amber-800' : 'text-slate-800'} text-sm truncate flex items-center">${nameDisplay}</div>
+                                <div class="text-[9px] ${isBday ? 'text-amber-600 font-semibold' : 'text-slate-400'} truncate">Usia: ${escapeHTML(ageText)}</div>
                             </div>
                         </td>
                         <td class="py-3 px-4">
-                            <span class="px-1.5 py-0.5 rounded border text-[9px] font-bold ${roleBadge} uppercase mb-1 inline-block">${escapeHTML(u.role)}</span><br>
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${roleBadge} uppercase mb-1 inline-block">${escapeHTML(u.role)}</span><br>
                             ${statusBadge}
                         </td>
                         <td class="py-3 px-4 text-right">
@@ -2074,13 +1946,16 @@
             });
         }
 
+        // ==========================================
+        // 10. SYSTEM LOGS & SETTINGS
+        // ==========================================
         function renderLogs() {
             const tbody = document.getElementById('auditTableBody');
             if(!tbody) return;
             tbody.innerHTML = '';
             AppState.logs.forEach(log => {
                 tbody.insertAdjacentHTML('beforeend', `
-                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                         <td class="py-3 px-4 text-[9px] text-slate-400 font-medium">${escapeHTML(log.waktu || log.Timestamp)}</td>
                         <td class="py-3 px-4 text-xs font-bold text-slate-700">${escapeHTML(log.user || log.Email)}</td>
                         <td class="py-3 px-4 text-[9px] uppercase font-bold text-slate-500">${escapeHTML(log.aksi || log.Action)}</td>
@@ -2193,7 +2068,8 @@
             const payload = { 
                 nama: getVal('profNama'), 
                 profesi: getVal('profProfesi'), 
-                phone: getVal('profPhone') 
+                phone: getVal('profPhone'),
+                tglLahir: getVal('profTglLahir')
             };
             
             const btn = document.getElementById('btnSaveProfile');
@@ -2208,7 +2084,9 @@
             if(btn) btn.innerHTML = btnText;
             
             if(res.success) {
-                AppState.user.nama = payload.nama; AppState.user.profesi = payload.profesi; AppState.user.phone = payload.phone; AppState.user.initial = payload.nama.charAt(0).toUpperCase();
+                AppState.user.nama = payload.nama; AppState.user.profesi = payload.profesi; AppState.user.phone = payload.phone; 
+                AppState.user.initial = payload.nama.charAt(0).toUpperCase();
+                AppState.user.tglLahir = payload.tglLahir;
                 initUserSetup(); showToast("Profil diperbarui!");
             } else showToast(res.message, true);
         }
@@ -2357,6 +2235,22 @@
             
             if(window.toastTimer) clearTimeout(window.toastTimer);
             window.toastTimer = setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 3500);
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    showToast(`Error: ${err.message}`, true);
+                });
+                const icon = document.getElementById('fullscreenIcon');
+                if(icon) icon.classList.replace('ph-corners-out', 'ph-corners-in');
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    const icon = document.getElementById('fullscreenIcon');
+                    if(icon) icon.classList.replace('ph-corners-in', 'ph-corners-out');
+                }
+            }
         }
     </script>
 </body>
