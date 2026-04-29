@@ -40,9 +40,9 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Input & Form Styles */
-        .auth-input { background-color: #f1f5f9; border: 1px solid transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .auth-input:focus { background-color: #ffffff; border-color: #6366f1; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.1), 0 2px 4px -1px rgba(99, 102, 241, 0.06), 0 0 0 3px rgba(99, 102, 241, 0.15); }
+        /* Input & Form Styles - Diperbarui untuk tampilan HP yang mewah */
+        .auth-input { background-color: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .auth-input:focus { border-color: #6366f1; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.1), 0 0 0 3px rgba(99, 102, 241, 0.15); outline: none; }
         
         .progress-bar-fill { transition: width 0.4s ease-out; }
         .bday-bg { background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%); border-color: #fde047 !important; }
@@ -90,7 +90,8 @@
 
         <!-- Login View -->
         <div id="auth-login" class="w-full max-w-sm flex flex-col mt-auto mb-auto transition-opacity duration-300 relative z-10">
-            <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8">
+            <!-- Container Transparan di HP, Card di Desktop -->
+            <div class="bg-transparent md:bg-white md:rounded-3xl md:shadow-xl md:shadow-slate-200/50 md:border md:border-slate-100 p-2 md:p-8">
                 <div class="text-center mb-8">
                     <div class="mx-auto w-16 h-16 bg-gradient-to-tr from-indigo-50 to-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-5 border border-indigo-200 shadow-sm shadow-indigo-100">
                         <i class="ph-fill ph-vault text-3xl"></i>
@@ -114,7 +115,7 @@
                         </div>
                         <a href="#forgot" class="text-[11px] font-bold text-indigo-600 uppercase tracking-wider hover:text-indigo-800 transition-colors">Lupa Sandi?</a>
                     </div>
-                    <button type="submit" id="btnLoginSubmit" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/20 active:scale-95 flex justify-center items-center text-sm mt-6">
+                    <button type="submit" id="btnLoginSubmit" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/20 active:scale-95 flex justify-center items-center text-sm mt-6 shadow-md">
                         <span id="btnLoginText">Buka Brankas</span>
                         <div id="btnLoginSpinner" class="loader hidden ml-3"></div>
                     </button>
@@ -125,7 +126,7 @@
 
         <!-- Register View -->
         <div id="auth-register" class="hidden w-full max-w-sm flex flex-col mt-auto mb-auto transition-opacity duration-300 relative z-10">
-            <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8">
+            <div class="bg-transparent md:bg-white md:rounded-3xl md:shadow-xl md:shadow-slate-200/50 md:border md:border-slate-100 p-2 md:p-8">
                 <div class="text-center mb-6">
                     <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Daftar Anggota</h1>
                     <p class="text-xs text-slate-500 mt-2 font-medium">Isi data untuk bergabung ke brankas.</p>
@@ -145,7 +146,7 @@
                         <input type="password" id="regPassword" required placeholder="Kata Sandi (Min 6)" class="auth-input w-full rounded-xl py-3 pl-4 pr-12 text-sm font-semibold outline-none">
                         <button type="button" onclick="togglePassword('regPassword', 'regEyeIcon')" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-indigo-600 p-2 transition-colors"><i id="regEyeIcon" class="ph-bold ph-eye text-lg"></i></button>
                     </div>
-                    <button type="submit" id="btnRegSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95 mt-6 flex justify-center items-center text-sm">
+                    <button type="submit" id="btnRegSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95 mt-6 flex justify-center items-center text-sm shadow-md">
                         <span id="btnRegText">Kirim Pendaftaran</span>
                         <div id="btnRegSpinner" class="loader hidden ml-3"></div>
                     </button>
@@ -156,7 +157,7 @@
 
         <!-- Forgot View -->
         <div id="auth-forgot" class="hidden w-full max-w-sm flex flex-col mt-auto mb-auto transition-opacity duration-300 relative z-10">
-            <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8">
+            <div class="bg-transparent md:bg-white md:rounded-3xl md:shadow-xl md:shadow-slate-200/50 md:border md:border-slate-100 p-2 md:p-8">
                 <div class="text-center mb-6">
                     <div class="mx-auto w-14 h-14 bg-slate-50 text-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-200 shadow-sm"><i class="ph-fill ph-key text-2xl"></i></div>
                     <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Pulihkan Sandi</h1>
@@ -164,7 +165,7 @@
                 </div>
                 <form id="forgotForm" onsubmit="handleForgotSubmit(event)" class="space-y-4">
                     <input type="email" id="forgotEmail" required placeholder="Email Terdaftar" class="auth-input w-full rounded-xl py-3.5 px-4 text-sm font-semibold outline-none">
-                    <button type="submit" id="btnForgotSubmit" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/20 active:scale-95 flex justify-center items-center text-sm mt-2">
+                    <button type="submit" id="btnForgotSubmit" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/20 active:scale-95 flex justify-center items-center text-sm mt-2 shadow-md">
                         <span id="btnForgotText">Kirim Sandi Baru</span>
                         <div id="btnForgotSpinner" class="loader hidden ml-3"></div>
                     </button>
@@ -235,105 +236,126 @@
             </header>
 
             <!-- Main Content Area -->
-            <!-- pb-32 for mobile floating dock, md:pb-8 for desktop -->
-            <main class="flex-1 overflow-y-auto p-4 md:p-6 pb-32 md:pb-8 relative hide-scrollbar">
+            <!-- pb-40 ensures absolutely nothing is covered by the floating dock on mobile -->
+            <main class="flex-1 overflow-y-auto p-4 md:p-6 pb-40 md:pb-8 relative hide-scrollbar">
                 <div class="max-w-6xl mx-auto space-y-8">
                     
                     <!-- Dashboard -->
                     <div id="view-dashboard" class="view-section">
                         
-                        <!-- NEW HERO BANNER (TAHAP 1) -->
-                        <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-slate-900 rounded-3xl p-6 sm:p-8 mb-8 text-white relative overflow-hidden shadow-xl shadow-indigo-200/40 border border-indigo-500/30">
-                            <div class="absolute top-0 right-0 -mr-8 -mt-8 w-48 h-48 bg-white opacity-5 rounded-full blur-2xl"></div>
-                            <div class="absolute bottom-0 left-10 -mb-10 w-32 h-32 bg-indigo-400 opacity-20 rounded-full blur-xl"></div>
-                            <div class="absolute top-1/2 right-1/4 w-16 h-16 bg-white opacity-10 rounded-lg rotate-45 blur-md"></div>
+                        <!-- NEW HERO BANNER: Tampilan Profesional & Presisi -->
+                        <div class="bg-[#0f172a] rounded-3xl p-6 sm:p-8 mb-8 text-white relative overflow-hidden shadow-2xl shadow-slate-900/20 border border-slate-800">
+                            <!-- Efek pencahayaan halus (ambient light) -->
+                            <div class="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-indigo-600/30 via-transparent to-transparent pointer-events-none"></div>
+                            <div class="absolute -right-16 -top-16 w-80 h-80 bg-indigo-500/20 blur-3xl rounded-full pointer-events-none"></div>
+                            <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-blue-500/20 blur-3xl rounded-full pointer-events-none"></div>
 
-                            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                                 <div class="flex-1">
-                                    <h1 class="text-3xl sm:text-4xl font-black tracking-tight mb-2 drop-shadow-sm">Halo, <span id="welcomeName" class="text-indigo-200">User</span>! 👋</h1>
-                                    <p class="text-indigo-100/90 text-sm sm:text-base font-medium max-w-lg leading-relaxed">Mesin AI sedang memantau brankas Anda. Kelola dan temukan dokumen keluarga dengan kilat.</p>
-                                </div>
-                                <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/20 shadow-inner w-full lg:w-auto justify-between lg:justify-start">
-                                    <div>
-                                        <p class="text-[10px] sm:text-xs uppercase tracking-widest text-indigo-200 font-bold mb-1">Total Arsip</p>
-                                        <p class="text-4xl sm:text-5xl font-black leading-none tracking-tighter drop-shadow-md" id="statTotalDocs">0</p>
+                                    <div class="inline-flex items-center space-x-2 bg-slate-800/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-700/50 mb-5 shadow-sm">
+                                        <span class="relative flex h-2 w-2">
+                                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                        </span>
+                                        <span class="text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">Sistem AI Aktif</span>
                                     </div>
-                                    <div class="h-12 w-px bg-white/20 mx-2 sm:mx-4"></div>
-                                    <button onclick="window.location.hash='#upload'" class="bg-white text-indigo-700 hover:bg-indigo-50 px-5 py-3.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all hover:scale-105 active:scale-95 flex items-center shadow-lg uppercase tracking-wider">
-                                        <i class="ph-bold ph-plus mr-2 text-lg sm:text-xl"></i> Baru
+                                    <h1 class="text-3xl sm:text-4xl font-black tracking-tight mb-3 drop-shadow-sm">Halo, <span id="welcomeName" class="text-indigo-400">User</span>! 👋</h1>
+                                    <p class="text-slate-300/90 text-sm sm:text-base font-medium max-w-lg leading-relaxed">Mesin AI memantau brankas secara *real-time*. Kelola dan amankan dokumen keluarga Anda dengan cepat.</p>
+                                </div>
+                                
+                                <div class="flex items-stretch gap-3 w-full lg:w-auto">
+                                    <div class="bg-white/5 backdrop-blur-md px-6 py-5 rounded-2xl border border-white/10 flex-1 lg:min-w-[180px] flex flex-col justify-center relative overflow-hidden group shadow-inner">
+                                        <div class="absolute top-0 right-0 w-16 h-16 bg-white/5 rounded-bl-full -mr-4 -mt-4 transition-transform duration-500 group-hover:scale-110"></div>
+                                        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-extrabold mb-1.5">Total Arsip</p>
+                                        <div class="flex items-baseline space-x-2">
+                                            <p class="text-4xl sm:text-5xl font-black leading-none tracking-tighter text-white drop-shadow-md" id="statTotalDocs">0</p>
+                                            <span class="text-xs font-bold text-slate-400">Berkas</span>
+                                        </div>
+                                    </div>
+                                    <button onclick="window.location.hash='#upload'" class="bg-indigo-600 text-white hover:bg-indigo-500 px-6 sm:px-8 py-5 rounded-2xl text-sm font-black transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95 flex flex-col items-center justify-center gap-1.5 border border-indigo-500">
+                                        <i class="ph-bold ph-cloud-arrow-up text-2xl"></i>
+                                        <span class="uppercase tracking-widest text-[10px]">Unggah</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="expiringAlertContainer" class="hidden mb-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm relative overflow-hidden">
-                            <div class="absolute right-0 top-0 w-32 h-32 bg-amber-200/20 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                            <div class="bg-amber-100/80 text-amber-600 p-3 rounded-2xl border border-amber-200/50 flex-shrink-0 relative z-10"><i class="ph-fill ph-warning-circle text-2xl animate-pulse"></i></div>
-                            <div class="flex-1 relative z-10">
-                                <h3 class="text-sm font-extrabold text-amber-900">Perhatian Dokumen!</h3>
-                                <p id="expiringCountText" class="text-xs font-semibold text-amber-700 mt-1">Ada dokumen yang masa berlakunya segera habis.</p>
+                        <!-- Card Alert Terstruktur -->
+                        <div id="expiringAlertContainer" class="hidden mb-8 bg-orange-50 border border-orange-200/60 rounded-[1.5rem] p-1.5 shadow-sm relative overflow-hidden group transition-all hover:shadow-md">
+                            <div class="bg-white rounded-[1.25rem] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 relative z-10">
+                                <div class="bg-orange-100 text-orange-600 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 border border-orange-200/50">
+                                    <i class="ph-fill ph-warning-circle text-2xl animate-pulse"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2.5 mb-1">
+                                        <h3 class="text-sm font-extrabold text-slate-800 tracking-tight">Tinjauan Masa Berlaku</h3>
+                                        <span class="bg-orange-100 text-orange-700 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest border border-orange-200/50">Penting</span>
+                                    </div>
+                                    <p id="expiringCountText" class="text-xs font-semibold text-slate-500">Terdapat dokumen yang masa berlakunya segera habis.</p>
+                                </div>
+                                <button onclick="filterCategory('Kadaluwarsa'); window.location.hash='#documents'" class="w-full sm:w-auto text-xs font-black bg-orange-500 text-white px-6 py-3 rounded-xl hover:bg-orange-600 transition-all shadow-md shadow-orange-500/20 whitespace-nowrap active:scale-95 border border-orange-600/50">Tinjau Sekarang</button>
                             </div>
-                            <button onclick="filterCategory('Kadaluwarsa'); window.location.hash='#documents'" class="w-full sm:w-auto text-xs font-bold bg-amber-500 text-white px-5 py-2.5 rounded-xl hover:bg-amber-600 transition-all shadow-md shadow-amber-500/20 whitespace-nowrap active:scale-95 hover:-translate-y-0.5 relative z-10">Periksa Sekarang</button>
                         </div>
 
                         <div class="mb-10">
-                            <h2 class="text-xs font-extrabold text-slate-500 uppercase tracking-widest mb-4 flex items-center"><i class="ph-fill ph-chart-pie-slice mr-2 text-indigo-500 text-lg"></i> Distribusi Kategori File</h2>
-                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-                                <!-- Kategori Cards dengan efek hover modern -->
-                                <div class="bg-white p-4.5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Identitas'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-center mb-3.5">
-                                        <div class="bg-emerald-50 text-emerald-600 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-identification-card text-xl"></i></div>
-                                        <span class="text-base font-black text-slate-800" id="count-Identitas">0</span>
+                            <!-- Presisi Tipografi Heading -->
+                            <h2 class="text-base font-black text-slate-800 tracking-tight mb-5 flex items-center"><i class="ph-fill ph-chart-pie-slice mr-2.5 text-indigo-500 text-xl"></i> Distribusi Kategori Dokumen</h2>
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-5">
+                                <!-- Kategori Cards dengan presisi padding dan border -->
+                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Identitas'); window.location.hash='#documents'">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="bg-emerald-50 text-emerald-600 w-11 h-11 rounded-xl flex items-center justify-center border border-emerald-100 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-identification-card text-2xl"></i></div>
+                                        <span class="text-lg font-black text-slate-800" id="count-Identitas">0</span>
                                     </div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Identitas</p>
-                                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Identitas" class="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
+                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Identitas</p>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Identitas" class="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
-                                <div class="bg-white p-4.5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Pendidikan'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-center mb-3.5">
-                                        <div class="bg-orange-50 text-orange-600 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-graduation-cap text-xl"></i></div>
-                                        <span class="text-base font-black text-slate-800" id="count-Pendidikan">0</span>
+                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Pendidikan'); window.location.hash='#documents'">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="bg-orange-50 text-orange-600 w-11 h-11 rounded-xl flex items-center justify-center border border-orange-100 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-graduation-cap text-2xl"></i></div>
+                                        <span class="text-lg font-black text-slate-800" id="count-Pendidikan">0</span>
                                     </div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Pendidikan</p>
-                                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Pendidikan" class="bg-orange-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
+                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Pendidikan</p>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Pendidikan" class="bg-orange-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
-                                <div class="bg-white p-4.5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Profesi'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-center mb-3.5">
-                                        <div class="bg-blue-50 text-blue-600 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-briefcase text-xl"></i></div>
-                                        <span class="text-base font-black text-slate-800" id="count-Profesi">0</span>
+                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Profesi'); window.location.hash='#documents'">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="bg-blue-50 text-blue-600 w-11 h-11 rounded-xl flex items-center justify-center border border-blue-100 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-briefcase text-2xl"></i></div>
+                                        <span class="text-lg font-black text-slate-800" id="count-Profesi">0</span>
                                     </div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Profesi</p>
-                                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Profesi" class="bg-blue-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
+                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Profesi</p>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Profesi" class="bg-blue-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
-                                <div class="bg-white p-4.5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Keuangan'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-center mb-3.5">
-                                        <div class="bg-yellow-50 text-yellow-600 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-bank text-xl"></i></div>
-                                        <span class="text-base font-black text-slate-800" id="count-Keuangan">0</span>
+                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Keuangan'); window.location.hash='#documents'">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="bg-yellow-50 text-yellow-600 w-11 h-11 rounded-xl flex items-center justify-center border border-yellow-100 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-bank text-2xl"></i></div>
+                                        <span class="text-lg font-black text-slate-800" id="count-Keuangan">0</span>
                                     </div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Keuangan</p>
-                                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Keuangan" class="bg-yellow-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
+                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Keuangan</p>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Keuangan" class="bg-yellow-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
-                                <div class="bg-white p-4.5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Aset'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-center mb-3.5">
-                                        <div class="bg-purple-50 text-purple-600 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-house-line text-xl"></i></div>
-                                        <span class="text-base font-black text-slate-800" id="count-Aset">0</span>
+                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Aset'); window.location.hash='#documents'">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="bg-purple-50 text-purple-600 w-11 h-11 rounded-xl flex items-center justify-center border border-purple-100 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-house-line text-2xl"></i></div>
+                                        <span class="text-lg font-black text-slate-800" id="count-Aset">0</span>
                                     </div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Aset Berharga</p>
-                                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Aset" class="bg-purple-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
+                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Aset Berharga</p>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Aset" class="bg-purple-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
-                                <div class="bg-white p-4.5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Lainnya'); window.location.hash='#documents'">
-                                    <div class="flex justify-between items-center mb-3.5">
-                                        <div class="bg-slate-100 text-slate-600 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-file-text text-xl"></i></div>
-                                        <span class="text-base font-black text-slate-800" id="count-Lainnya">0</span>
+                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm card-hover group cursor-pointer" onclick="filterCategory('Lainnya'); window.location.hash='#documents'">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="bg-slate-100 text-slate-600 w-11 h-11 rounded-xl flex items-center justify-center border border-slate-200 group-hover:scale-110 transition-transform duration-300"><i class="ph-fill ph-file-text text-2xl"></i></div>
+                                        <span class="text-lg font-black text-slate-800" id="count-Lainnya">0</span>
                                     </div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Lainnya</p>
-                                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div id="bar-Lainnya" class="bg-slate-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
+                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5 truncate">Lainnya</p>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="bar-Lainnya" class="bg-slate-500 h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between mb-5">
-                            <h2 class="text-xs font-extrabold text-slate-500 uppercase tracking-widest flex items-center"><i class="ph-bold ph-clock-counter-clockwise mr-2 text-indigo-500 text-lg"></i> Aktivitas Terbaru</h2>
-                            <button onclick="window.location.hash='#documents'" class="text-[10px] font-extrabold text-indigo-600 hover:text-indigo-800 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-wider flex items-center group">Buka Lemari <i class="ph-bold ph-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i></button>
+                        <div class="flex items-center justify-between mb-5 mt-10">
+                            <h2 class="text-base font-black text-slate-800 tracking-tight flex items-center"><i class="ph-bold ph-clock-counter-clockwise mr-2.5 text-indigo-500 text-xl"></i> Aktivitas & Arsip Terbaru</h2>
+                            <button onclick="window.location.hash='#documents'" class="text-[10px] font-extrabold text-indigo-600 hover:text-indigo-800 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-wider flex items-center group bg-indigo-50/50 hover:bg-indigo-50 border border-transparent hover:border-indigo-100">Semua Arsip <i class="ph-bold ph-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i></button>
                         </div>
                         <div id="dashboardRecentGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
                     </div>
@@ -434,7 +456,6 @@
                     <div id="view-profile" class="view-section hidden">
                         <div class="flex justify-between items-center mb-6">
                             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Profil Akun</h1>
-                            <button onclick="handleLogout()" class="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center shadow-sm"><i class="ph-bold ph-sign-out mr-2 text-base"></i> Keluar</button>
                         </div>
                         
                         <div class="bg-white rounded-3xl border border-slate-200 max-w-3xl shadow-sm overflow-hidden">
@@ -459,7 +480,7 @@
                                     <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Profesi</label><input type="text" id="profProfesi" required class="auth-input w-full rounded-xl py-3.5 px-4 text-sm font-semibold outline-none"></div>
                                     <div class="sm:col-span-2"><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Nomor WhatsApp</label><input type="tel" id="profPhone" class="auth-input w-full rounded-xl py-3.5 px-4 text-sm font-semibold outline-none"></div>
                                 </div>
-                                <div class="pt-8 mt-2 border-t border-slate-100 flex justify-end"><button type="submit" id="btnSaveProfile" class="w-full sm:w-auto bg-slate-900 hover:bg-black text-white font-bold py-3.5 px-10 rounded-xl active:scale-95 transition-all duration-300 hover:shadow-lg text-sm">Simpan Perubahan</button></div>
+                                <div class="pt-8 mt-2 border-t border-slate-100 flex justify-end"><button type="submit" id="btnSaveProfile" class="w-full sm:w-auto bg-slate-900 hover:bg-black text-white font-bold py-3.5 px-10 rounded-xl active:scale-95 transition-all duration-300 shadow-md hover:shadow-lg text-sm">Simpan Perubahan</button></div>
                             </form>
                         </div>
 
@@ -480,6 +501,13 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+
+                        <!-- TOMBOL KELUAR DI BAGIAN BAWAH -->
+                        <div class="max-w-3xl mt-12 mb-6">
+                            <button onclick="handleLogout()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-4 rounded-2xl transition-all duration-300 flex items-center justify-center shadow-sm border border-red-100 active:scale-95 hover:shadow-md">
+                                <i class="ph-bold ph-sign-out mr-2.5 text-xl"></i> Keluar dari Aplikasi
+                            </button>
                         </div>
                     </div>
 
@@ -1123,7 +1151,11 @@
             document.getElementById('authContainer').classList.add('hidden'); document.getElementById('appContainer').classList.remove('hidden');
             initUserSetup(); startSessionPolling(); loadLoginHistory(); 
             
-            const loadPromises = [loadDocuments(), loadUsersAndLogs()];
+            // Perbaikan Race Condition Data Anggota dan Dokumen:
+            // Pastikan data Anggota dimuat terlebih dahulu sebelum dokumen me-render UI Dropdown Filter
+            await loadUsersAndLogs();
+            
+            const loadPromises = [loadDocuments()];
             const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
             if (isAdminOrIstri) loadPromises.push(loadRequests());
             
@@ -2062,7 +2094,14 @@
         // ==========================================
         async function loadUsersAndLogs() {
             const isAdminOrIstri = AppState.user.role === 'Admin' || AppState.user.role === 'Kepala Keluarga' || AppState.user.role === 'Istri';
-            if(isAdminOrIstri) { const resUsers = await fetchAPI('get_users'); if(resUsers.success) { AppState.users = resUsers.data; renderUsers(); } }
+            if(isAdminOrIstri) { 
+                const resUsers = await fetchAPI('get_users'); 
+                if(resUsers.success) { 
+                    AppState.users = resUsers.data; 
+                    renderUsers(); 
+                    populateOwnerFilter(); // FIX: Pastikan dropdown anggota langsung terisi saat data user ada
+                } 
+            }
             const resLogs = await fetchAPI('get_logs'); if(resLogs.success) { AppState.logs = resLogs.data; renderLogs(); }
         }
 
