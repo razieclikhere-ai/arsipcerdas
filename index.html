@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';">
+    <!-- PWA Meta Tags (Mobile Web App Capable) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#ffffff">
     <title>Arsip Cerdas - Smart Vault</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -15,53 +19,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
-    <!-- JSZip & FileSaver untuk Unduh Multi Dokumen -->
+    <!-- JSZip & FileSaver -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     
     <style>
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #ffffff; 
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .loader {
-            border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid #ffffff;
-            border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite;
-        }
-        .loader-indigo {
-            border: 2px solid #e0e7ff; border-top: 2px solid #4f46e5;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #ffffff; -webkit-tap-highlight-color: transparent; }
+        .loader { border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid #ffffff; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; }
+        .loader-indigo { border: 2px solid #e0e7ff; border-top: 2px solid #4f46e5; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .auth-input {
-            background-color: #f8fafc; border: 1px solid transparent; transition: all 0.2s ease;
-        }
-        .auth-input:focus {
-            background-color: #ffffff; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        /* Progress Bar Animation Smoothness */
-        .progress-bar-fill {
-            transition: width 0.4s ease-out;
-        }
-
-        /* Birthday Special Class */
-        .bday-bg {
-            background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%);
-            border-color: #fde047 !important;
-        }
-        .bday-text {
-            color: #b45309;
-        }
+        .auth-input { background-color: #f8fafc; border: 1px solid transparent; transition: all 0.2s ease; }
+        .auth-input:focus { background-color: #ffffff; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+        .progress-bar-fill { transition: width 0.4s ease-out; }
+        .bday-bg { background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%); border-color: #fde047 !important; }
+        .bday-text { color: #b45309; }
     </style>
 </head>
 <body class="text-slate-800 antialiased flex h-screen overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
@@ -72,9 +48,7 @@
             <span id="globalProgressText" class="text-indigo-700 flex items-center"><i class="ph-bold ph-arrows-clockwise animate-spin mr-1.5"></i> Memproses...</span>
             <span id="globalProgressPercent" class="text-slate-500">0%</span>
         </div>
-        <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-            <div id="globalProgressBar" class="bg-indigo-600 h-1.5 rounded-full progress-bar-fill" style="width: 0%"></div>
-        </div>
+        <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden"><div id="globalProgressBar" class="bg-indigo-600 h-1.5 rounded-full progress-bar-fill" style="width: 0%"></div></div>
         <p id="globalProgressSubtext" class="text-[9px] text-slate-400 font-medium mt-2 text-center">Mohon tunggu sebentar.</p>
     </div>
 
@@ -101,14 +75,10 @@
             </div>
             
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <input type="email" id="loginEmail" required placeholder="Alamat Email" class="auth-input w-full rounded-xl py-3.5 px-4 text-sm font-medium outline-none">
-                </div>
+                <div><input type="email" id="loginEmail" required placeholder="Alamat Email" class="auth-input w-full rounded-xl py-3.5 px-4 text-sm font-medium outline-none"></div>
                 <div class="relative">
                     <input type="password" id="loginPassword" required placeholder="Kata Sandi" class="auth-input w-full rounded-xl py-3.5 pl-4 pr-12 text-sm font-medium outline-none">
-                    <button type="button" onclick="togglePassword('loginPassword', 'loginEyeIcon')" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-indigo-600 p-2">
-                        <i id="loginEyeIcon" class="ph-bold ph-eye text-lg"></i>
-                    </button>
+                    <button type="button" onclick="togglePassword('loginPassword', 'loginEyeIcon')" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-indigo-600 p-2"><i id="loginEyeIcon" class="ph-bold ph-eye text-lg"></i></button>
                 </div>
                 <div class="flex justify-between items-center px-1">
                     <div class="flex items-center space-x-2">
@@ -121,9 +91,7 @@
                     <span id="btnLoginText">Buka Brankas</span>
                     <div id="btnLoginSpinner" class="loader hidden ml-2"></div>
                 </button>
-                <div class="text-center pt-4">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Belum punya akun? <a href="#register" class="text-indigo-600">Daftar Anggota</a></p>
-                </div>
+                <div class="text-center pt-4"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Belum punya akun? <a href="#register" class="text-indigo-600">Daftar Anggota</a></p></div>
             </form>
         </div>
 
@@ -135,17 +103,14 @@
             </div>
             <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3">
                 <input type="text" id="regName" required placeholder="Nama Lengkap" class="auth-input w-full rounded-xl py-3 px-4 text-sm font-medium outline-none">
-                
                 <div class="grid grid-cols-2 gap-3">
                     <input type="text" id="regProfesi" required placeholder="Profesi" class="auth-input w-full rounded-xl py-3 px-4 text-sm font-medium outline-none">
                     <input type="tel" id="regPhone" required placeholder="No. WA" class="auth-input w-full rounded-xl py-3 px-4 text-sm font-medium outline-none">
                 </div>
-                
                 <div class="grid grid-cols-1">
                     <label class="block text-[10px] font-bold text-slate-400 mb-1 ml-1 uppercase tracking-wider">Tanggal Lahir</label>
                     <input type="date" id="regTglLahir" required class="auth-input w-full rounded-xl py-3 px-4 text-sm font-medium outline-none text-slate-600">
                 </div>
-
                 <input type="email" id="regEmail" required placeholder="Email Login" class="auth-input w-full rounded-xl py-3 px-4 text-sm font-medium outline-none">
                 <div class="relative">
                     <input type="password" id="regPassword" required placeholder="Kata Sandi (Min 6)" class="auth-input w-full rounded-xl py-3 pl-4 pr-12 text-sm font-medium outline-none">
@@ -235,7 +200,6 @@
                 <div class="max-w-6xl mx-auto space-y-8">
                     <!-- Dashboard -->
                     <div id="view-dashboard" class="view-section">
-                        <!-- Hero Banner Infographic -->
                         <div class="bg-indigo-600 rounded-3xl p-6 sm:p-8 mb-6 text-white relative overflow-hidden shadow-md shadow-indigo-200/50">
                             <div class="absolute top-0 right-0 -mr-8 -mt-8 w-48 h-48 bg-white opacity-5 rounded-full"></div>
                             <div class="absolute bottom-0 left-10 -mb-10 w-32 h-32 bg-indigo-800 opacity-30 rounded-full"></div>
@@ -244,7 +208,7 @@
                             <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                                 <div>
                                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Halo, <span id="welcomeName">User</span>! 👋</h1>
-                                    <p class="text-indigo-100 text-sm font-medium max-w-md">Mesin AI Groq sedang memantau brankas Anda. Kelola dan temukan dokumen keluarga dengan kilat.</p>
+                                    <p class="text-indigo-100 text-sm font-medium max-w-md">Mesin AI sedang memantau brankas Anda. Kelola dan temukan dokumen keluarga dengan kilat.</p>
                                 </div>
                                 <div class="flex items-center gap-4 bg-indigo-700/50 p-4 rounded-2xl border border-indigo-500/40">
                                     <div>
@@ -259,7 +223,6 @@
                             </div>
                         </div>
 
-                        <!-- Smart Alert -->
                         <div id="expiringAlertContainer" class="hidden mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start sm:items-center gap-4 shadow-sm animate-pulse">
                             <div class="bg-amber-100 text-amber-600 p-2.5 rounded-xl border border-amber-200 flex-shrink-0"><i class="ph-fill ph-warning-circle text-2xl"></i></div>
                             <div class="flex-1">
@@ -269,7 +232,6 @@
                             <button onclick="filterCategory('Kadaluwarsa'); window.location.hash='#documents'" class="text-xs font-bold bg-amber-600 text-white px-4 py-2 rounded-xl hover:bg-amber-700 transition-colors shadow-sm whitespace-nowrap active:scale-95">Periksa</button>
                         </div>
 
-                        <!-- Infografis Distribusi Kategori -->
                         <div class="mb-8">
                             <h2 class="text-xs font-extrabold text-slate-500 uppercase tracking-widest mb-4 flex items-center"><i class="ph-fill ph-chart-pie-slice mr-2 text-indigo-500 text-lg"></i> Distribusi Kategori File</h2>
                             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
@@ -324,12 +286,9 @@
                             </div>
                         </div>
 
-                        <!-- Aktivitas Terbaru -->
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="text-xs font-extrabold text-slate-500 uppercase tracking-widest flex items-center"><i class="ph-bold ph-clock-counter-clockwise mr-2 text-indigo-500 text-lg"></i> Aktivitas Terbaru</h2>
-                            <button onclick="window.location.hash='#documents'" class="text-[10px] font-extrabold text-indigo-600 hover:text-white hover:bg-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-wider">
-                                Buka Lemari &rarr;
-                            </button>
+                            <button onclick="window.location.hash='#documents'" class="text-[10px] font-extrabold text-indigo-600 hover:text-white hover:bg-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-wider">Buka Lemari &rarr;</button>
                         </div>
                         <div id="dashboardRecentGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
                     </div>
@@ -389,7 +348,7 @@
                     <!-- Permintaan Akses -->
                     <div id="view-requests" class="view-section hidden">
                         <div class="flex justify-between items-center mb-6">
-                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Permintaan Buka Akses</h1>
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Permintaan Akses</h1>
                             <button onclick="loadRequests()" class="bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 p-2 rounded-lg transition-colors shadow-sm" title="Refresh Permintaan"><i class="ph-bold ph-arrows-clockwise text-lg sm:text-xl"></i></button>
                         </div>
                         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
@@ -420,7 +379,6 @@
                     <div id="view-profile" class="view-section hidden">
                         <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-6">Profil Akun</h1>
                         
-                        <!-- Profil Details -->
                         <div class="bg-white rounded-2xl border border-slate-200 max-w-2xl shadow-sm">
                             <div id="profileHeader" class="p-6 sm:p-8 flex items-center space-x-5 border-b border-slate-100 bg-slate-50 rounded-t-2xl transition-colors">
                                 <div class="w-20 h-20 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-3xl font-extrabold" id="profileBigInitial">U</div>
@@ -446,7 +404,6 @@
                             </form>
                         </div>
 
-                        <!-- Riwayat Aktivitas Login -->
                         <div class="bg-white rounded-2xl border border-slate-200 max-w-2xl mt-6 shadow-sm">
                             <div class="p-6 flex justify-between items-center border-b border-slate-100 bg-slate-50 rounded-t-2xl">
                                 <h3 class="text-base font-bold text-slate-800">Riwayat Perangkat Login</h3>
@@ -457,11 +414,7 @@
                             <div class="overflow-x-auto hide-scrollbar">
                                 <table class="w-full text-left text-sm min-w-[500px]">
                                     <thead class="bg-white text-slate-400 text-[10px] uppercase tracking-widest font-bold border-b border-slate-100">
-                                        <tr>
-                                            <th class="py-3 px-6">Waktu</th>
-                                            <th class="py-3 px-6">Perangkat / OS</th>
-                                            <th class="py-3 px-6">Status</th>
-                                        </tr>
+                                        <tr><th class="py-3 px-6">Waktu</th><th class="py-3 px-6">Perangkat / OS</th><th class="py-3 px-6">Status</th></tr>
                                     </thead>
                                     <tbody id="loginHistoryBody" class="divide-y divide-slate-50 text-slate-600 font-medium">
                                         <tr><td colspan="3" class="text-center py-8 text-slate-400 text-xs">Memuat riwayat...</td></tr>
@@ -473,16 +426,28 @@
 
                     <div id="view-settings" class="view-section hidden">
                         <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-6">Konfigurasi Sistem</h1>
-                        <div class="bg-white rounded-2xl border border-slate-200 max-w-2xl shadow-sm">
-                            <form id="settingsForm" onsubmit="handleSettingsUpdate(event)" class="p-6 sm:p-8 space-y-8">
-                                <div><h3 class="text-sm font-extrabold text-slate-800 mb-2">Groq AI API Key</h3><input type="password" id="setGroqApi" placeholder="gsk_..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm outline-none font-mono"></div>
-                                <div class="border-t border-slate-100 pt-6"><h3 class="text-sm font-extrabold text-slate-800 mb-4">Gateway WhatsApp</h3><div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div class="bg-white rounded-2xl border border-slate-200 max-w-2xl shadow-sm p-6 sm:p-8">
+                            
+                            <!-- Notice Security API -->
+                            <div class="bg-emerald-50 text-emerald-800 p-5 rounded-2xl border border-emerald-200 mb-8 flex items-start gap-4">
+                                <div class="bg-emerald-100 p-2.5 rounded-xl shrink-0"><i class="ph-fill ph-shield-check text-2xl text-emerald-600"></i></div>
+                                <div>
+                                    <h3 class="font-bold text-sm mb-1">Keamanan AI Ditingkatkan</h3>
+                                    <p class="text-xs font-medium opacity-80 leading-relaxed">Kunci Rahasia API Groq kini telah dipindahkan dan dienkripsi secara permanen di dalam server Backend Google Apps Script. Form input API di Frontend telah dihapus demi keamanan keluarga Anda.</p>
+                                </div>
+                            </div>
+
+                            <form id="settingsForm" onsubmit="handleSettingsUpdate(event)" class="space-y-8">
+                                <div>
+                                    <h3 class="text-sm font-extrabold text-slate-800 mb-4 flex items-center"><i class="ph-fill ph-whatsapp-logo text-emerald-500 mr-2 text-xl"></i> Gateway WhatsApp Notifikasi</h3>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                         <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">URL Webhook</label><input type="url" id="setWaUrl" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-xs outline-none font-mono"></div>
                                         <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">API Token</label><input type="password" id="setWaToken" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-xs outline-none font-mono"></div>
                                         <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">Device ID</label><input type="text" id="setWaDevice" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-xs outline-none font-mono"></div>
                                         <div><label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">No. Target Admin</label><input type="tel" id="setWaTarget" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-xs outline-none font-mono"></div>
-                                </div></div>
-                                <div class="pt-6 border-t border-slate-100"><button type="submit" id="btnSaveSettings" class="w-full sm:w-auto bg-slate-900 text-white font-bold py-3 px-8 rounded-xl active:scale-95 transition-transform text-sm">Simpan & Update</button></div>
+                                    </div>
+                                </div>
+                                <div class="pt-6 border-t border-slate-100"><button type="submit" id="btnSaveSettings" class="w-full sm:w-auto bg-slate-900 text-white font-bold py-3 px-8 rounded-xl active:scale-95 transition-transform text-sm">Simpan Pengaturan WhatsApp</button></div>
                             </form>
                         </div>
                     </div>
@@ -589,12 +554,10 @@
     <div id="docDetailModal" class="fixed inset-0 bg-slate-900/50 hidden z-[60] flex items-end sm:items-center justify-center sm:p-4 backdrop-blur-sm">
         <div class="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-4xl flex flex-col h-[92vh] sm:h-[85vh] shadow-2xl relative overflow-hidden">
             
-            <!-- Handle indicator for mobile -->
             <div class="flex sm:hidden w-full justify-center pt-3 pb-1 bg-white absolute top-0 left-0 right-0 z-50">
                 <div class="w-12 h-1.5 bg-slate-200 rounded-full"></div>
             </div>
 
-            <!-- Header -->
             <div class="px-5 pb-4 pt-8 sm:pt-4 border-b border-slate-100 flex justify-between items-center flex-shrink-0 bg-white z-40">
                 <div class="flex items-center min-w-0 pr-4">
                     <div id="detailIcon" class="w-10 h-10 rounded-xl bg-slate-50 text-indigo-600 flex items-center justify-center mr-3 border border-slate-200"><i class="ph-fill ph-file-text text-xl"></i></div>
@@ -609,10 +572,8 @@
             </div>
             
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden bg-white">
-                <!-- Preview Frame (Dioptimalkan untuk Estetika Smartphone) -->
+                <!-- Preview Frame -->
                 <div class="w-full md:w-1/2 h-[45vh] md:h-full bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col relative flex-shrink-0 group">
-                    
-                    <!-- Header & Action Overlay -->
                     <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-20 pointer-events-none">
                         <span class="text-[9px] font-bold text-slate-300 bg-slate-900/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/50 uppercase tracking-widest shadow-sm">Pratinjau</span>
                         <a id="detailViewLink" href="#" target="_blank" class="pointer-events-auto text-[10px] font-bold text-white bg-indigo-500/80 backdrop-blur-md border border-indigo-400/50 px-3 py-1.5 rounded-lg shadow-lg hover:bg-indigo-500 transition-all flex items-center active:scale-95">
@@ -620,15 +581,12 @@
                         </a>
                     </div>
                     
-                    <!-- Canvas Viewer -->
                     <div class="flex-1 w-full h-full relative flex items-center justify-center overflow-hidden">
-                        <!-- Grid Pattern -->
                         <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
                         
                         <iframe id="detailPreviewIframe" src="" class="absolute inset-0 w-full h-full border-0 hidden bg-white z-10"></iframe>
                         <img id="detailPreviewImg" src="" class="absolute inset-0 w-full h-full object-contain hidden transition-transform duration-300 group-hover:scale-[1.02] z-10 p-0 md:p-6">
                         
-                        <!-- Placeholder Area -->
                         <div id="detailPreviewPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center w-full h-full p-6 text-center z-10 bg-slate-900">
                             <div class="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg mb-4 border border-slate-700">
                                 <i id="placeholderIcon" class="ph-fill ph-eye-slash text-3xl text-slate-500"></i>
@@ -689,7 +647,7 @@
                             <button onclick="convertDoc('jpg')" id="btnToJpg" class="bg-white border border-slate-200 text-slate-700 py-2.5 rounded-xl text-[10px] font-bold hover:bg-slate-50 flex justify-center items-center"><i class="ph-fill ph-image mr-1 text-blue-500"></i> Ke JPG</button>
                             <button onclick="resizeDoc()" id="btnCompress" class="col-span-2 bg-slate-800 text-white py-2.5 rounded-xl text-[10px] font-bold active:scale-95 flex justify-center items-center transition-transform"><i class="ph-bold ph-arrows-in mr-1 text-emerald-400"></i> Kompres Ukuran</button>
                         </div>
-                        <p id="toolProcessingText" class="text-[9px] text-indigo-600 font-bold text-center mt-3 hidden animate-pulse">Memproses file di perangkat Anda...</p>
+                        <p id="toolProcessingText" class="text-[9px] text-indigo-600 font-bold text-center mt-3 hidden animate-pulse">Mengambil data dari Proxy Server...</p>
                     </div>
 
                     <!-- Admin Area -->
@@ -845,6 +803,17 @@
             if (!str) return '';
             const buf = await crypto.subtle.digest("SHA-256", new TextEncoder("utf-8").encode(str));
             return Array.prototype.map.call(new Uint8Array(buf), x=>(('00'+x.toString(16)).slice(-2))).join('');
+        }
+
+        // PENGURAI BASE64 KE FILE UNTUK PROXY
+        function base64ToBlob(base64, mime) {
+            const byteCharacters = atob(base64);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            return new Blob([byteArray], {type: mime});
         }
 
         function getSecureStorage(key) {
@@ -1162,10 +1131,9 @@
             }
 
             if (isAdmin) {
-                safeRemoveClass('nav-audit', 'hidden'); safeAddClass('nav-audit', 'flex');
                 safeRemoveClass('nav-settings', 'hidden'); safeAddClass('nav-settings', 'flex');
             } else {
-                safeAddClass('nav-audit', 'hidden'); safeAddClass('nav-settings', 'hidden');
+                safeAddClass('nav-settings', 'hidden');
             }
 
             safeSetText('profileDisplayName', escapeHTML(AppState.user.nama));
@@ -1188,7 +1156,7 @@
         }
 
         // ==========================================
-        // 6. UPLOAD, PROGRESS & PROFESSIONAL SCAN TO PDF
+        // 6. UPLOAD & OCR (BEBAS API GROQ DI FRONTEND)
         // ==========================================
         function openUploadModalUI() {
             document.getElementById('uploadModal').classList.remove('hidden');
@@ -1249,13 +1217,6 @@
             e.preventDefault();
             if (!AppState.selectedFile || !AppState.selectedFileBase64) return showToast("Pilih file!", true);
             
-            const groqKeyLocal = getSecureStorage('arsipCerdasku_groqKey');
-            if (!groqKeyLocal) {
-                showToast("API Key Groq AI kosong!", true);
-                window.location.hash = '#settings';
-                return;
-            }
-
             const btnText = document.getElementById('btnText');
             if(btnText) btnText.textContent = 'Mengekstrak...'; 
             
@@ -1292,7 +1253,8 @@
             }
 
             const katInput = document.getElementById('kategoriInput'), ownInput = document.getElementById('uploadOwnerInput');
-            const payload = { fileBase64: finalBase64, mimeType: finalMimeType, fileName: finalFileName, kategori: katInput ? katInput.value : 'Lainnya', groqKey: groqKeyLocal, targetOwner: ownInput ? ownInput.value : '' };
+            // Menghapus Groq Key dari Payload - Diserahkan sepenuhnya ke Backend!
+            const payload = { fileBase64: finalBase64, mimeType: finalMimeType, fileName: finalFileName, kategori: katInput ? katInput.value : 'Lainnya', targetOwner: ownInput ? ownInput.value : '' };
             
             const res = await fetchAPI('upload_document', payload);
             finishProgress('uploadProgressBar', 'uploadProgressPercent', 'uploadProgressStatus');
@@ -1441,7 +1403,6 @@
             updateDashboardInfographics();
         }
 
-        // FUNGSI BARU: Mode Pemilihan
         function toggleSelectionMode() {
             AppState.isSelectionMode = !AppState.isSelectionMode;
             if(!AppState.isSelectionMode) AppState.selectedDocs.clear();
@@ -1483,6 +1444,7 @@
             document.getElementById('selectionCount').textContent = AppState.selectedDocs.size;
         }
 
+        // --- MENGGUNAKAN API INTERNAL UNTUK UNDUH FILE ---
         async function downloadSelectedDocs() {
             if(AppState.selectedDocs.size === 0) return showToast("Pilih minimal 1 dokumen", true);
             const docIds = Array.from(AppState.selectedDocs);
@@ -1498,7 +1460,7 @@
             const gBar = document.getElementById('globalProgressBar');
             const gSub = document.getElementById('globalProgressSubtext');
             
-            if(gSub) gSub.textContent = "Mengunduh file ke penyimpanan lokal Anda.";
+            if(gSub) gSub.textContent = "Mengunduh file ke penyimpanan lokal Anda secara aman.";
             
             for(let i=0; i<docIds.length; i++) {
                 const doc = AppState.documents.find(d => d.docId === docIds[i]);
@@ -1510,15 +1472,15 @@
                 if(gBar) gBar.style.width = pct + '%';
 
                 try {
-                    const directLink = getDriveDirectLink(doc.link);
-                    const proxyLink = `https://api.allorigins.win/raw?url=${encodeURIComponent(directLink)}`;
-                    const response = await fetch(proxyLink);
-                    if(!response.ok) continue;
-                    const blob = await response.blob();
+                    // Panggil Proxy Backend yang Aman
+                    const res = await fetchAPI('get_drive_file_base64', { docId: doc.docId });
+                    if(!res.success) continue;
+                    
+                    const blob = base64ToBlob(res.base64, res.mimeType);
                     
                     let ext = "pdf";
-                    if(blob.type.includes('jpeg') || blob.type.includes('jpg')) ext = 'jpg';
-                    else if(blob.type.includes('png')) ext = 'png';
+                    if(res.mimeType.includes('jpeg') || res.mimeType.includes('jpg')) ext = 'jpg';
+                    else if(res.mimeType.includes('png')) ext = 'png';
                     
                     let filename = `${doc.namaFile}.${ext}`;
                     filename = filename.replace(/[/\\?%*:|"<>]/g, '-'); // sanitize
@@ -1648,19 +1610,18 @@
         // ==========================================
         // 8. DOC DETAIL, TOOLS & ACTION HANDLERS
         // ==========================================
-        function getDriveDirectLink(url) {
-            const match = url.match(/\/d\/(.+?)\//) || url.match(/id=([a-zA-Z0-9_-]+)/);
-            if(match) return `https://drive.google.com/uc?export=download&id=${match[1]}`; return url;
-        }
 
         async function convertDoc(targetType) {
             const docId = AppState.currentDetailDocId; const doc = AppState.documents.find(d => d.docId === docId); if (!doc) return;
             const ptText = document.getElementById('toolProcessingText'); if(ptText) ptText.classList.remove('hidden');
 
-            const proxyLink = `https://api.allorigins.win/raw?url=${encodeURIComponent(getDriveDirectLink(doc.link))}`;
             try {
-                const response = await fetch(proxyLink); if (!response.ok) throw new Error("CORS Error");
-                const blob = await response.blob(); const mime = blob.type;
+                // Gunakan Proxy Internal Aman
+                const res = await fetchAPI('get_drive_file_base64', { docId: docId });
+                if(!res.success) throw new Error(res.message);
+                
+                const blob = base64ToBlob(res.base64, res.mimeType);
+                const mime = res.mimeType;
 
                 if (targetType === 'pdf') {
                     if (mime === 'application/pdf') { if(ptText) ptText.classList.add('hidden'); return showToast("File sudah PDF!", true); }
@@ -1686,17 +1647,20 @@
                         showToast("Terunduh sebagai JPG!"); if(ptText) ptText.classList.add('hidden');
                     }; fileReader.readAsArrayBuffer(blob);
                 }
-            } catch(e) { if(ptText) ptText.classList.add('hidden'); showToast("Gagal. Unduh manual di Drive.", true); }
+            } catch(e) { if(ptText) ptText.classList.add('hidden'); showToast(e.message || "Gagal mengonversi file.", true); }
         }
 
         async function resizeDoc() {
             const docId = AppState.currentDetailDocId; const doc = AppState.documents.find(d => d.docId === docId); if (!doc) return;
             const ptText = document.getElementById('toolProcessingText'); if(ptText) ptText.classList.remove('hidden');
-            const proxyLink = `https://api.allorigins.win/raw?url=${encodeURIComponent(getDriveDirectLink(doc.link))}`;
 
             try {
-                const response = await fetch(proxyLink); if (!response.ok) throw new Error("CORS");
-                const blob = await response.blob(); const mime = blob.type;
+                // Gunakan Proxy Internal Aman
+                const res = await fetchAPI('get_drive_file_base64', { docId: docId });
+                if(!res.success) throw new Error(res.message);
+
+                const blob = base64ToBlob(res.base64, res.mimeType);
+                const mime = res.mimeType;
 
                 if (mime.startsWith('image/')) {
                     const img = new Image(); img.src = URL.createObjectURL(blob);
@@ -1719,7 +1683,7 @@
                         showToast("PDF dikompres!"); if(ptText) ptText.classList.add('hidden');
                     }; fileReader.readAsArrayBuffer(blob);
                 }
-            } catch(e) { if(ptText) ptText.classList.add('hidden'); showToast("Gagal kompres. File diproteksi.", true); }
+            } catch(e) { if(ptText) ptText.classList.add('hidden'); showToast(e.message || "Gagal kompres file.", true); }
         }
 
         function openDocumentDetailUI(docId) {
@@ -1928,9 +1892,7 @@
         }
 
         async function handleReanalyzeDoc() { 
-            const groqKeyLocal = getSecureStorage('arsipCerdasku_groqKey');
-            if (!groqKeyLocal) { closeModal(); showToast("API Key Groq kosong!", true); window.location.hash = '#settings'; return; }
-
+            // Kita tidak perlu mengecek GroqKey di local storage lagi karena di-handle Backend
             const desktopAction = document.getElementById('desktopActionArea');
             const rescanContainer = document.getElementById('rescanProgressContainer');
             
@@ -1944,7 +1906,8 @@
             ];
             startProgress('rescanProgressBar', 'rescanProgressPercent', 'rescanProgressStatus', steps);
 
-            const res = await fetchAPI('reanalyze_document', { docId: AppState.currentDetailDocId, groqKey: groqKeyLocal }); 
+            // Fetch tanpa mengirim API Key
+            const res = await fetchAPI('reanalyze_document', { docId: AppState.currentDetailDocId }); 
             finishProgress('rescanProgressBar', 'rescanProgressPercent', 'rescanProgressStatus');
             
             setTimeout(() => {
@@ -2356,7 +2319,8 @@
             ];
             startProgress('globalProgressBar', 'globalProgressPercent', 'globalProgressText', steps);
             
-            const res = await fetchAPI('sync_drive', { groqKey: getSecureStorage('arsipCerdasku_groqKey') });
+            // Perhatikan bahwa parameter GroqKey sudah tidak dikirim
+            const res = await fetchAPI('sync_drive');
             
             finishProgress('globalProgressBar', 'globalProgressPercent', 'globalProgressText', 'Selesai disinkronkan!');
             setTimeout(() => { if(toastProg) toastProg.classList.add('-translate-y-24', 'opacity-0'); }, 1500);
@@ -2416,13 +2380,11 @@
             
             const getVal = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
             
-            const groqVal = getVal('setGroqApi');
             const waUrl = getVal('setWaUrl');
             const waToken = getVal('setWaToken');
             const waDevice = getVal('setWaDevice');
             const waTarget = getVal('setWaTarget');
             
-            setSecureStorage('arsipCerdasku_groqKey', groqVal);
             setSecureStorage('arsipCerdasku_waUrl', waUrl);
             setSecureStorage('arsipCerdasku_waToken', waToken);
             setSecureStorage('arsipCerdasku_waDevice', waDevice);
@@ -2474,7 +2436,7 @@
 
             if (viewName === 'settings') {
                 const safeSetVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
-                safeSetVal('setGroqApi', getSecureStorage('arsipCerdasku_groqKey'));
+                // API Key Groq sudah tidak ditarik dari storage karena ditangani Backend
                 safeSetVal('setWaUrl', getSecureStorage('arsipCerdasku_waUrl'));
                 safeSetVal('setWaToken', getSecureStorage('arsipCerdasku_waToken'));
                 safeSetVal('setWaDevice', getSecureStorage('arsipCerdasku_waDevice'));
@@ -2549,6 +2511,22 @@
             
             if(window.toastTimer) clearTimeout(window.toastTimer);
             window.toastTimer = setTimeout(() => toast.classList.add('translate-y-32', 'opacity-0'), 3500);
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    showToast(`Error: ${err.message}`, true);
+                });
+                const icon = document.getElementById('fullscreenIcon');
+                if(icon) icon.classList.replace('ph-corners-out', 'ph-corners-in');
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    const icon = document.getElementById('fullscreenIcon');
+                    if(icon) icon.classList.replace('ph-corners-in', 'ph-corners-out');
+                }
+            }
         }
     </script>
 </body>
